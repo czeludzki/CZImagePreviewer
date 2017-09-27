@@ -1,0 +1,6 @@
+framework module Pods_CZImagePreviewer_Example {
+  umbrella header "Pods-CZImagePreviewer_Example-umbrella.h"
+
+  export *
+  module * { export * }
+}

@@ -7,13 +7,14 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		436FE22E1F7B5382006112F8 /* ImagePreviewDemoController.m in Sources */ = {isa = PBXBuildFile; fileRef = 436FE22B1F7B5382006112F8 /* ImagePreviewDemoController.m */; };
+		436FE22F1F7B5382006112F8 /* ImageCollectionViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 436FE22D1F7B5382006112F8 /* ImageCollectionViewCell.m */; };
 		6003F58E195388D20070C39A /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6003F58D195388D20070C39A /* Foundation.framework */; };
 		6003F590195388D20070C39A /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6003F58F195388D20070C39A /* CoreGraphics.framework */; };
 		6003F592195388D20070C39A /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6003F591195388D20070C39A /* UIKit.framework */; };
 		6003F598195388D20070C39A /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 6003F596195388D20070C39A /* InfoPlist.strings */; };
 		6003F59A195388D20070C39A /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 6003F599195388D20070C39A /* main.m */; };
 		6003F59E195388D20070C39A /* CZImagePreviewerAppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 6003F59D195388D20070C39A /* CZImagePreviewerAppDelegate.m */; };
-		6003F5A7195388D20070C39A /* CZImagePreviewerViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 6003F5A6195388D20070C39A /* CZImagePreviewerViewController.m */; };
 		6003F5A9195388D20070C39A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 6003F5A8195388D20070C39A /* Images.xcassets */; };
 		6003F5B0195388D20070C39A /* XCTest.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6003F5AF195388D20070C39A /* XCTest.framework */; };
 		6003F5B1195388D20070C39A /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6003F58D195388D20070C39A /* Foundation.framework */; };
@@ -37,7 +38,11 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		395D359E57E0960A97F44D24 /* LICENSE */ = {isa = PBXFileReference; includeInIndex = 1; name = LICENSE; path = ../LICENSE; sourceTree = "<group>"; };
+		395D359E57E0960A97F44D24 /* LICENSE */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; name = LICENSE; path = ../LICENSE; sourceTree = "<group>"; };
+		436FE22A1F7B5381006112F8 /* ImagePreviewDemoController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ImagePreviewDemoController.h; sourceTree = "<group>"; };
+		436FE22B1F7B5382006112F8 /* ImagePreviewDemoController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ImagePreviewDemoController.m; sourceTree = "<group>"; };
+		436FE22C1F7B5382006112F8 /* ImageCollectionViewCell.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ImageCollectionViewCell.h; sourceTree = "<group>"; };
+		436FE22D1F7B5382006112F8 /* ImageCollectionViewCell.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ImageCollectionViewCell.m; sourceTree = "<group>"; };
 		6003F58A195388D20070C39A /* CZImagePreviewer_Example.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = CZImagePreviewer_Example.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		6003F58D195388D20070C39A /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		6003F58F195388D20070C39A /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
@@ -48,8 +53,6 @@
 		6003F59B195388D20070C39A /* CZImagePreviewer-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "CZImagePreviewer-Prefix.pch"; sourceTree = "<group>"; };
 		6003F59C195388D20070C39A /* CZImagePreviewerAppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CZImagePreviewerAppDelegate.h; sourceTree = "<group>"; };
 		6003F59D195388D20070C39A /* CZImagePreviewerAppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CZImagePreviewerAppDelegate.m; sourceTree = "<group>"; };
-		6003F5A5195388D20070C39A /* CZImagePreviewerViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CZImagePreviewerViewController.h; sourceTree = "<group>"; };
-		6003F5A6195388D20070C39A /* CZImagePreviewerViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CZImagePreviewerViewController.m; sourceTree = "<group>"; };
 		6003F5A8195388D20070C39A /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
 		6003F5AE195388D20070C39A /* CZImagePreviewer_Tests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = CZImagePreviewer_Tests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		6003F5AF195388D20070C39A /* XCTest.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = XCTest.framework; path = Library/Frameworks/XCTest.framework; sourceTree = DEVELOPER_DIR; };
@@ -59,11 +62,11 @@
 		606FC2411953D9B200FFA9A0 /* Tests-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Tests-Prefix.pch"; sourceTree = "<group>"; };
 		647CE368A6CD46EA82F6DC52 /* Pods-CZImagePreviewer_Tests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-CZImagePreviewer_Tests.release.xcconfig"; path = "Pods/Target Support Files/Pods-CZImagePreviewer_Tests/Pods-CZImagePreviewer_Tests.release.xcconfig"; sourceTree = "<group>"; };
 		6C0D85587A05106E76D8F059 /* Pods-CZImagePreviewer_Example.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-CZImagePreviewer_Example.release.xcconfig"; path = "Pods/Target Support Files/Pods-CZImagePreviewer_Example/Pods-CZImagePreviewer_Example.release.xcconfig"; sourceTree = "<group>"; };
-		703723393B12CB07C72A4C46 /* CZImagePreviewer.podspec */ = {isa = PBXFileReference; includeInIndex = 1; name = CZImagePreviewer.podspec; path = ../CZImagePreviewer.podspec; sourceTree = "<group>"; };
+		703723393B12CB07C72A4C46 /* CZImagePreviewer.podspec */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; name = CZImagePreviewer.podspec; path = ../CZImagePreviewer.podspec; sourceTree = "<group>"; };
 		70BC7E351F8E13BFA9E69D28 /* Pods_CZImagePreviewer_Tests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_CZImagePreviewer_Tests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		71719F9E1E33DC2100824A3D /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		873B8AEA1B1F5CCA007FD442 /* Main.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = Main.storyboard; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
-		C24C24F784579AFB5BA0ECA6 /* README.md */ = {isa = PBXFileReference; includeInIndex = 1; name = README.md; path = ../README.md; sourceTree = "<group>"; };
+		C24C24F784579AFB5BA0ECA6 /* README.md */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = net.daringfireball.markdown; name = README.md; path = ../README.md; sourceTree = "<group>"; };
 		C443CD93E2A194DA3514B40D /* Pods-CZImagePreviewer_Example.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-CZImagePreviewer_Example.debug.xcconfig"; path = "Pods/Target Support Files/Pods-CZImagePreviewer_Example/Pods-CZImagePreviewer_Example.debug.xcconfig"; sourceTree = "<group>"; };
 		E4D420439C8E379B744C8F34 /* Pods-CZImagePreviewer_Tests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-CZImagePreviewer_Tests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-CZImagePreviewer_Tests/Pods-CZImagePreviewer_Tests.debug.xcconfig"; sourceTree = "<group>"; };
 		E76990FD8F2B6E183CD85AC8 /* Pods_CZImagePreviewer_Example.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_CZImagePreviewer_Example.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -143,11 +146,13 @@
 		6003F593195388D20070C39A /* Example for CZImagePreviewer */ = {
 			isa = PBXGroup;
 			children = (
+				436FE22C1F7B5382006112F8 /* ImageCollectionViewCell.h */,
+				436FE22D1F7B5382006112F8 /* ImageCollectionViewCell.m */,
+				436FE22A1F7B5381006112F8 /* ImagePreviewDemoController.h */,
+				436FE22B1F7B5382006112F8 /* ImagePreviewDemoController.m */,
 				6003F59C195388D20070C39A /* CZImagePreviewerAppDelegate.h */,
 				6003F59D195388D20070C39A /* CZImagePreviewerAppDelegate.m */,
 				873B8AEA1B1F5CCA007FD442 /* Main.storyboard */,
-				6003F5A5195388D20070C39A /* CZImagePreviewerViewController.h */,
-				6003F5A6195388D20070C39A /* CZImagePreviewerViewController.m */,
 				71719F9D1E33DC2100824A3D /* LaunchScreen.storyboard */,
 				6003F5A8195388D20070C39A /* Images.xcassets */,
 				6003F594195388D20070C39A /* Supporting Files */,
@@ -335,10 +340,14 @@
 			inputPaths = (
 				"${SRCROOT}/Pods/Target Support Files/Pods-CZImagePreviewer_Example/Pods-CZImagePreviewer_Example-frameworks.sh",
 				"${BUILT_PRODUCTS_DIR}/CZImagePreviewer/CZImagePreviewer.framework",
+				"${BUILT_PRODUCTS_DIR}/Masonry/Masonry.framework",
+				"${BUILT_PRODUCTS_DIR}/SDWebImage/SDWebImage.framework",
 			);
 			name = "[CP] Embed Pods Frameworks";
 			outputPaths = (
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/CZImagePreviewer.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Masonry.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SDWebImage.framework",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -404,7 +413,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				6003F59E195388D20070C39A /* CZImagePreviewerAppDelegate.m in Sources */,
-				6003F5A7195388D20070C39A /* CZImagePreviewerViewController.m in Sources */,
+				436FE22E1F7B5382006112F8 /* ImagePreviewDemoController.m in Sources */,
+				436FE22F1F7B5382006112F8 /* ImageCollectionViewCell.m in Sources */,
 				6003F59A195388D20070C39A /* main.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
