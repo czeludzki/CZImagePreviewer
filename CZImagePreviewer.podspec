@@ -25,7 +25,7 @@ Pod::Spec.new do |s|
   s.frameworks   = "UIKit"
   s.requires_arc = true
 
-  s.dependency 'Masonry', '~> 1.1.0'
+  s.dependency 'Masonry'
   s.dependency 'SDWebImage'
 
 end
