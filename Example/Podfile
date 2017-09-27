@@ -1,0 +1,11 @@
+use_frameworks!
+
+target 'CZImagePreviewer_Example' do
+  pod 'CZImagePreviewer', :path => '../'
+
+  target 'CZImagePreviewer_Tests' do
+    inherit! :search_paths
+
+    
+  end
+end
