@@ -22,7 +22,6 @@ Pod::Spec.new do |s|
 
   s.source_files = 'CZImagePreviewer/Classes/**/*'
 
-  # s.public_header_files = 'Pod/Classes/**/*.h'
   s.frameworks = 'UIKit'
   s.dependency "Masonry"
   s.dependency "SDWebImage"
