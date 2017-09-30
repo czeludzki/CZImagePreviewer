@@ -125,6 +125,9 @@ static NSString *CZImagePreviewCollectionCellID = @"CZImagePreviewCollectionCell
     UICollectionView *collectionView = [[UICollectionView alloc] initWithFrame:CGRectZero collectionViewLayout:layout];
     collectionView.showsHorizontalScrollIndicator = NO;
     collectionView.showsVerticalScrollIndicator = NO;
+    if (@available(iOS 11.0, *)) {
+        collectionView.contentInsetAdjustmentBehavior = UIScrollViewContentInsetAdjustmentNever;
+    }
     
     collectionView.pagingEnabled = YES;
     collectionView.delegate = self;
@@ -208,7 +211,7 @@ static NSString *CZImagePreviewCollectionCellID = @"CZImagePreviewCollectionCell
 #pragma mark - CZImagePreviewCollectionCell
 - (void)imagePreviewCollectionCell:(CZImagePreviewCollectionCell *)cell scrollViewDidScrollWithProgress:(double)progress
 {
-    self.collectionView.backgroundColor = RMColorRGBA(1, 1, 1, progress);
+    
 }
 
 #pragma mark - Action
@@ -419,9 +422,9 @@ static NSString *CZImagePreviewCollectionCellID = @"CZImagePreviewCollectionCell
         case UIInterfaceOrientationLandscapeLeft:case UIInterfaceOrientationLandscapeRight:{
             if (currentOrientation != UIInterfaceOrientationPortrait) break;
             [self.collectionView mas_remakeConstraints:^(MASConstraintMaker *make) {
-                make.center.mas_equalTo(weakSelf.view);
-                make.width.mas_equalTo(weakSelf.view.mas_height);
-                make.height.mas_equalTo(weakSelf.view.mas_width);
+                make.center.mas_equalTo(CGPointZero);
+                make.width.mas_equalTo(UIWindowHeight);
+                make.height.mas_equalTo(UIWindowWidth);
             }];
         }
             break;
