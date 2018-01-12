@@ -51,6 +51,10 @@ typedef NS_ENUM(NSInteger,ImagePreviewScrollingStatus){
  此值是记录旋转之前的indexPath.item,在旋转之后重设contentOffset时使用
  */
 @property (assign, nonatomic) NSInteger indexPathItemBeforeRotate;
+/**
+ 记录show前的屏幕方向
+ */
+@property (assign, nonatomic) UIInterfaceOrientation enterOrientation;
 @end
 
 @implementation CZImagePreviewer
@@ -138,7 +142,7 @@ static NSString *CZImagePreviewCollectionCellID = @"CZImagePreviewCollectionCell
     [collectionView mas_makeConstraints:^(MASConstraintMaker *make) {
         make.edges.mas_equalTo(UIEdgeInsetsMake(0, 0, 0, 0));
     }];
-
+    
     UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(tap:)];
     [self.view addGestureRecognizer:tap];
     
@@ -296,7 +300,9 @@ static NSString *CZImagePreviewCollectionCellID = @"CZImagePreviewCollectionCell
 - (void)showWithImageContainer:(UIView *)container andPresentedController:(UIViewController *)presentedController
 {
     __weak __typeof (self) weakSelf = self;
-
+    // 进入时, 记录当前 statusBar 方向
+    self.enterOrientation = [[UIApplication sharedApplication] statusBarOrientation];
+    
     UIViewController *rootViewController = [UIApplication sharedApplication].keyWindow.rootViewController;
     UIViewController *presentVC = presentedController ? presentedController : rootViewController;
     self.modalPresentationStyle = UIModalPresentationOverCurrentContext;
@@ -347,8 +353,8 @@ static NSString *CZImagePreviewCollectionCellID = @"CZImagePreviewCollectionCell
     CGRect containerRectOnKeyWindow = [container convertRect:container.bounds toView:[[UIApplication sharedApplication].delegate window]];
     CGRect intersectionRect = CGRectIntersection([UIScreen mainScreen].bounds, containerRectOnKeyWindow);  // 容器与window的交汇Rect
     UIInterfaceOrientation orientation = [UIApplication sharedApplication].statusBarOrientation;
-    if (orientation != UIInterfaceOrientationPortrait) {
-        [self rotate2Orientation:UIInterfaceOrientationPortrait];
+    if (orientation != self.enterOrientation) {
+        [self rotate2Orientation:self.enterOrientation];
         needRotateBack = YES;
     }
     
@@ -362,13 +368,13 @@ static NSString *CZImagePreviewCollectionCellID = @"CZImagePreviewCollectionCell
         }else{
             final_X = containerRectOnKeyWindow.origin.x - visibleImageView.zoomingScrollView.contentInset.left;
         }
-    
+        
         if (visibleImageView.zoomingImageView.frame.size.height >= self.view.frame.size.height || visibleImageView.zoomingScrollView.contentOffset.y > 0) {
             final_Y = containerRectOnKeyWindow.origin.y - visibleImageView.zoomingScrollView.contentInset.top + visibleImageView.zoomingScrollView.contentOffset.y;
         }else{
             final_Y = containerRectOnKeyWindow.origin.y - visibleImageView.zoomingScrollView.contentInset.top;
         }
-    
+        
         CGRect finalRect = CGRectMake(final_X, final_Y, containerRectOnKeyWindow.size.width, containerRectOnKeyWindow.size.height);
         
         [UIView animateWithDuration:.3f animations:^{
@@ -504,3 +510,4 @@ static NSString *CZImagePreviewCollectionCellID = @"CZImagePreviewCollectionCell
 }
 
 @end
+
