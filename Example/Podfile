@@ -3,7 +3,7 @@ use_frameworks!
 target 'CZImagePreviewer_Example' do
   pod 'CZImagePreviewer', :path => '../'
   pod 'Masonry'
-  pod ‘SDWebImage’
+  pod 'AFNetworking'
   
   target 'CZImagePreviewer_Tests' do
     inherit! :search_paths

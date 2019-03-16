@@ -11,7 +11,7 @@
 
 typedef void(^SaveImageBlock)(BOOL successed,NSError *error);
 
-@class CZImagePreviewer,CZImagePreviewImageItem;
+@class CZImagePreviewer;
 
 @protocol CZImagePreviewDelegate <NSObject>
 @optional
@@ -39,8 +39,8 @@ typedef void(^SaveImageBlock)(BOOL successed,NSError *error);
 @property (strong, nonatomic) UIImage *placeholderImage;
 // images 里面装的可以是UIImage NSString(图片地址) NSURL
 // 重点:数组中的类型要和参数 image 类型一致
-- (instancetype)initWithImages:(NSArray <id>*)images displayingIndex:(NSInteger)index;
-+ (instancetype)imagePreViewWithImages:(NSArray <id>*)images displayingIndex:(NSInteger)index;
+- (instancetype)initWithImages:(NSArray <CZImagePreviewImageItem *>*)images displayingIndex:(NSInteger)index;
++ (instancetype)imagePreViewWithImages:(NSArray <CZImagePreviewImageItem *>*)images displayingIndex:(NSInteger)index;
 /**
  *  显示
  *

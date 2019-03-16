@@ -9,7 +9,7 @@
 Pod::Spec.new do |s|
 
   s.name         = "CZImagePreviewer"
-  s.version      = "0.1.2"
+  s.version      = "0.1.5"
   s.summary      = "iOS下的图片浏览工具"
   s.description  = "iOS下的图片浏览工具,支持手势dismiss"
 
@@ -26,6 +26,6 @@ Pod::Spec.new do |s|
   s.requires_arc = true
 
   s.dependency 'Masonry'
-  s.dependency 'SDWebImage'
+  s.dependency 'AFNetworking'
 
 end

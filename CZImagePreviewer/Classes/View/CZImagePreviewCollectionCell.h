@@ -11,7 +11,7 @@
 
 @class CZImagePreviewCollectionCell;
 @protocol CZImagePreviewCollectionCellDelegate <NSObject>
-- (void)imagePreviewCollectionCell:(CZImagePreviewCollectionCell *)cell scrollViewDidScrollWithVelocity:(CGPoint)velocity;
+- (void)imagePreviewCollectionCell:(CZImagePreviewCollectionCell *)cell scrollViewDidScroll:(UIScrollView *)scrollView;
 @end
 
 @interface CZImagePreviewCollectionCell : UICollectionViewCell

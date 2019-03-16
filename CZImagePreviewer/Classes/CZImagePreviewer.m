@@ -10,14 +10,15 @@
 #import "CZImagePreviewImageItem.h"
 #import "CZImagePreviewCollectionCell.h"
 #import "Masonry.h"
-#import "CZImagePreviewer_Macro.h"
 
-#define k_ImageViewMargin 10
-
-typedef NS_ENUM(NSInteger,ImagePreviewScrollingStatus){
-    ImagePreviewScrollingStatus_Stop = 0,
-    ImagePreviewScrollingStatus_Right = 1,
-    ImagePreviewScrollingStatus_Left = 2
+/**
+ 滑动的方向枚举
+ */
+typedef NS_ENUM(NSInteger,ImagePreviewerDragDirection) {
+    ImagePreviewerDragDirection_up = 0,
+    ImagePreviewerDragDirection_left = 1,
+    ImagePreviewerDragDirection_down = 2,
+    ImagePreviewerDragDirection_right = 3,
 };
 
 @interface CZImagePreviewer ()<UICollectionViewDelegate,UICollectionViewDataSource,UICollectionViewDelegateFlowLayout, CZImagePreviewCollectionCellDelegate, UIGestureRecognizerDelegate>
@@ -25,10 +26,6 @@ typedef NS_ENUM(NSInteger,ImagePreviewScrollingStatus){
 @property (strong, nonatomic) NSIndexPath *currentIndex;
 @property (weak, nonatomic) UICollectionView *collectionView;
 @property (weak, nonatomic) UIPanGestureRecognizer *panOnView;
-/**
- *  记录传入的数组中元素的类型是什么
- */
-@property (assign, nonatomic) ImagesClassType imagesClassType;
 /**
  *  图片数据
  */
@@ -38,7 +35,7 @@ typedef NS_ENUM(NSInteger,ImagePreviewScrollingStatus){
  */
 @property (assign, nonatomic) UIStatusBarStyle applicationDefaultStatusBarStyle;
 /**
- *  为了在viewWillLayoutSubviews中设置初始滚动到的地方,该只是为了记录他只设置了一次
+ *  为了在viewWillLayoutSubviews中设置初始滚动到的地方,该值是为了记录他只设置了一次
  */
 @property (assign, nonatomic) BOOL hasSetStartDisplaycell;
 /**
@@ -68,49 +65,19 @@ static NSString *CZImagePreviewCollectionCellID = @"CZImagePreviewCollectionCell
     return _images;
 }
 
-+ (instancetype)imagePreViewWithImages:(NSArray *)images displayingIndex:(NSInteger)index
++ (instancetype)imagePreViewWithImages:(NSArray <CZImagePreviewImageItem *>*)images displayingIndex:(NSInteger)index
 {
     CZImagePreviewer *preview = [[CZImagePreviewer alloc] initWithImages:images displayingIndex:index];
     return preview;
 }
 
-- (instancetype)initWithImages:(NSArray *)images displayingIndex:(NSInteger)index
+- (instancetype)initWithImages:(NSArray <CZImagePreviewImageItem *>*)images displayingIndex:(NSInteger)index
 {
     if (self = [super init]) {
         self.applicationDefaultStatusBarStyle = [UIApplication sharedApplication].statusBarStyle;
         self.currentIndex = [NSIndexPath indexPathForItem:index inSection:0];
-        if ([images.firstObject isKindOfClass:[UIImage class]]) {
-            self.imagesClassType = ImagesClassType_UIImage;
-        }else if ([images.firstObject isKindOfClass:[NSString class]]){
-            self.imagesClassType = ImagesClassType_NSString;
-        }else if ([images.firstObject isKindOfClass:[NSURL class]]){
-            self.imagesClassType = ImagesClassType_NSURL;
-        }else{
-            self.imagesClassType = ImagesClassType_Illegal;
-        }
         
-        NSAssert(self.imagesClassType != ImagesClassType_Illegal, @"CZImagePreview在init方法中传入了非法的类型,只支持 UIImage NSString NSURL 类型");
-        
-        for (id imageData in images) {
-            CZImagePreviewImageItem *item;
-            switch (self.imagesClassType) {
-                case ImagesClassType_UIImage:{
-                    item = [CZImagePreviewImageItem imageItemWithImage:imageData orURL:nil orImageUrlStr:nil andType:ImagesClassType_UIImage andPlaceholderImage:self.placeholderImage ? self.placeholderImage : nil];
-                }
-                    break;
-                case ImagesClassType_NSURL:{
-                    item = [CZImagePreviewImageItem imageItemWithImage:nil orURL:imageData orImageUrlStr:nil andType:ImagesClassType_NSURL andPlaceholderImage:self.placeholderImage ? self.placeholderImage : nil];
-                }
-                    break;
-                case ImagesClassType_NSString:{
-                    item = [CZImagePreviewImageItem imageItemWithImage:nil orURL:nil orImageUrlStr:imageData andType:ImagesClassType_NSString andPlaceholderImage:self.placeholderImage ? self.placeholderImage : nil];
-                }
-                    break;
-                default:
-                    break;
-            }
-            [self.images addObject:item];
-        }
+        [self.images addObjectsFromArray:images];
         
         [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(deviceOrientationDidChange:) name:UIDeviceOrientationDidChangeNotification object:nil];
     }
@@ -140,7 +107,7 @@ static NSString *CZImagePreviewCollectionCellID = @"CZImagePreviewCollectionCell
     [self.view addSubview:collectionView];
     self.collectionView = collectionView;
     [collectionView mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.edges.mas_equalTo(UIEdgeInsetsMake(0, 0, 0, 0));
+        make.edges.mas_equalTo(UIEdgeInsetsZero);
     }];
     
     UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(tap:)];
@@ -170,7 +137,7 @@ static NSString *CZImagePreviewCollectionCellID = @"CZImagePreviewCollectionCell
 #pragma mark - ScrollViewDelegate
 - (void)scrollViewDidScroll:(UIScrollView *)scrollView
 {
-    self.currentIndex = [NSIndexPath indexPathForItem:(scrollView.contentOffset.x + self.collectionView.bounds.size.width * 0.5) / self.collectionView.bounds.size.width inSection:0];
+    self.currentIndex = [NSIndexPath indexPathForItem:((scrollView.contentOffset.x + [UIApplication sharedApplication].keyWindow.bounds.size.width * 0.5) / [UIApplication sharedApplication].keyWindow.bounds.size.width) inSection:0];
 }
 
 #pragma mark - CollectionViewDelegate
@@ -201,7 +168,7 @@ static NSString *CZImagePreviewCollectionCellID = @"CZImagePreviewCollectionCell
 
 - (CGSize)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout *)collectionViewLayout sizeForItemAtIndexPath:(NSIndexPath *)indexPath
 {
-    return CGSizeMake(UIWindowWidth, UIWindowHeight);
+    return CGSizeMake([UIApplication sharedApplication].keyWindow.bounds.size.width, [UIApplication sharedApplication].keyWindow.bounds.size.height);
 }
 
 - (UICollectionViewCell *)collectionView:(UICollectionView *)collectionView cellForItemAtIndexPath:(NSIndexPath *)indexPath
@@ -210,12 +177,6 @@ static NSString *CZImagePreviewCollectionCellID = @"CZImagePreviewCollectionCell
     imageView.item = self.images[indexPath.item];
     imageView.delegate = self;
     return imageView;
-}
-
-#pragma mark - CZImagePreviewCollectionCell
-- (void)imagePreviewCollectionCell:(CZImagePreviewCollectionCell *)cell scrollViewDidScrollWithProgress:(double)progress
-{
-    
 }
 
 #pragma mark - Action
@@ -251,7 +212,9 @@ static NSString *CZImagePreviewCollectionCellID = @"CZImagePreviewCollectionCell
 {
     __weak __typeof (self) weakSelf = self;
     CZImagePreviewCollectionCell *visibleImageView = (CZImagePreviewCollectionCell *)[self.collectionView cellForItemAtIndexPath:self.currentIndex];
-    CGPoint translationInView = [sender translationInView:self.view];
+    CGPoint translationInView = [self adaptivePointWithOrientation:[sender translationInView:self.view]];
+    CGPoint velocityInView = [self adaptivePointWithOrientation:[sender velocityInView:self.view]];
+    
     static CGFloat defaultZoomScale;
     static CGPoint normalCenter;
     switch (sender.state) {
@@ -261,23 +224,22 @@ static NSString *CZImagePreviewCollectionCellID = @"CZImagePreviewCollectionCell
         }
             break;
         case UIGestureRecognizerStateChanged:{
-            float progress = (1 - (fabs(translationInView.y) / UIWindowHeight));
-            NSLog(@"translationInView = %@",NSStringFromCGPoint(translationInView));
+            float progress = (1 - (fabs(translationInView.y) / [UIApplication sharedApplication].keyWindow.bounds.size.height));
             CGAffineTransform scaleTransform = CGAffineTransformMakeScale(progress * defaultZoomScale, progress * defaultZoomScale);
             visibleImageView.zoomingImageView.transform = scaleTransform;
             visibleImageView.zoomingImageView.center = CGPointMake(normalCenter.x + translationInView.x, normalCenter.y + translationInView.y);
-            self.collectionView.backgroundColor = RMColorRGBA(1, 1, 1, progress);
+            self.collectionView.backgroundColor = [UIColor colorWithRed:1/255 green:1/255 blue:1/255 alpha:progress];
         }
             break;
         case UIGestureRecognizerStateEnded: case UIGestureRecognizerStateFailed: case UIGestureRecognizerStateCancelled:{
-            CGPoint velocity = [sender velocityInView:self.view];
-            if (fabs(velocity.y) > 1500) {
+            visibleImageView.zoomingScrollView.scrollEnabled = YES;
+            if (fabs(velocityInView.y) > 1200) {
                 [self dismiss];
             }else{
                 [UIView animateWithDuration:.3f animations:^{
                     visibleImageView.zoomingScrollView.zoomScale = defaultZoomScale;
                     visibleImageView.zoomingImageView.center = normalCenter;
-                    weakSelf.collectionView.backgroundColor = RMColorRGBA(1, 1, 1, 1);
+                    weakSelf.collectionView.backgroundColor = [UIColor colorWithRed:1/255 green:1/255 blue:1/255 alpha:1];
                 }];
             }
         }
@@ -288,13 +250,38 @@ static NSString *CZImagePreviewCollectionCellID = @"CZImagePreviewCollectionCell
 }
 
 #pragma mark - CZImagePreviewCollectionCellDelegate
-- (void)imagePreviewCollectionCell:(CZImagePreviewCollectionCell *)cell scrollViewDidScrollWithVelocity:(CGPoint)velocity
+- (void)imagePreviewCollectionCell:(CZImagePreviewCollectionCell *)cell scrollViewDidScroll:(UIScrollView *)scrollView
 {
     
 }
 
 #pragma mark - UIGestureRecognizerDelegate
+- (BOOL)gestureRecognizerShouldBegin:(UIPanGestureRecognizer *)gestureRecognizer
+{
+    if (gestureRecognizer == self.panOnView){
+        CZImagePreviewCollectionCell *cell = (CZImagePreviewCollectionCell *)[self.collectionView cellForItemAtIndexPath:self.currentIndex];
+        // 判断滑动的方向
+        ImagePreviewerDragDirection direction = [self dragDirectionWithPanGesture:gestureRecognizer];
+        // 如果是向上滑动, 判断 cell.scrollView 是否已经滑动到底部, 如果是, 使 self.panOnView 手势有效, 且 使 ScrollView.scrollEnabled 失效
+        CGFloat maxOffsetY = floor(cell.zoomingScrollView.contentSize.height - cell.zoomingScrollView.bounds.size.height);
+        if (direction == ImagePreviewerDragDirection_up && cell.zoomingScrollView.contentOffset.y >= maxOffsetY) {
+            cell.zoomingScrollView.scrollEnabled = NO;
+            return YES;
+        }
+        // 如果是向下滑动, 判断 cell.scrollView 是否已经滑动到顶部, 如果是, 使 self.panOnView 手势有效, 且 使 ScrollView.scrollEnabled 失效
+        if (direction == ImagePreviewerDragDirection_down && cell.zoomingScrollView.contentOffset.y <= 0) {
+            cell.zoomingScrollView.scrollEnabled = NO;
+            return YES;
+        }
+        return NO;
+    }
+    return YES;
+}
 
+- (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldRecognizeSimultaneouslyWithGestureRecognizer:(nonnull UIGestureRecognizer *)otherGestureRecognizer
+{
+    return NO;
+}
 
 #pragma mark - Show && Dismiss
 - (void)showWithImageContainer:(UIView *)container andPresentedController:(UIViewController *)presentedController
@@ -429,8 +416,8 @@ static NSString *CZImagePreviewCollectionCellID = @"CZImagePreviewCollectionCell
             if (currentOrientation != UIInterfaceOrientationPortrait) break;
             [self.collectionView mas_remakeConstraints:^(MASConstraintMaker *make) {
                 make.center.mas_equalTo(CGPointZero);
-                make.width.mas_equalTo(UIWindowHeight);
-                make.height.mas_equalTo(UIWindowWidth);
+                make.width.mas_equalTo([UIApplication sharedApplication].keyWindow.bounds.size.height);
+                make.height.mas_equalTo([UIApplication sharedApplication].keyWindow.bounds.size.width);
             }];
         }
             break;
@@ -445,8 +432,12 @@ static NSString *CZImagePreviewCollectionCellID = @"CZImagePreviewCollectionCell
     }
     [[UIApplication sharedApplication] setStatusBarOrientation:orientation];
     CGAffineTransform transform = [self getTranformWithOrientation:orientation];
+    // 旋转前, 先将 self.view 置黑
+    self.view.backgroundColor = [UIColor blackColor];
     [UIView animateWithDuration:.3f animations:^{
         weakSelf.collectionView.transform = transform;
+    } completion:^(BOOL finished) {
+        weakSelf.view.backgroundColor = [UIColor clearColor];
     }];
     [self.collectionView reloadData];
     self.needResetContentOffsetAfterRotate = YES;
@@ -456,7 +447,7 @@ static NSString *CZImagePreviewCollectionCellID = @"CZImagePreviewCollectionCell
 - (void)resetContentOffsetAfterRotate
 {
     if (!self.needResetContentOffsetAfterRotate) return;
-    [self.collectionView setContentOffset:CGPointMake(UIWindowWidth * self.indexPathItemBeforeRotate, 0) animated:NO];
+    [self.collectionView setContentOffset:CGPointMake([UIApplication sharedApplication].keyWindow.bounds.size.width * self.indexPathItemBeforeRotate, 0) animated:NO];
     self.needResetContentOffsetAfterRotate = NO;
 }
 
@@ -478,9 +469,28 @@ static NSString *CZImagePreviewCollectionCellID = @"CZImagePreviewCollectionCell
     self.hasSetStartDisplaycell = YES;
 }
 
-- (void)dealloc
+#pragma mark - Helper
+// 根据旋转的方向, 调整point
+- (CGPoint)adaptivePointWithOrientation:(CGPoint)point
 {
-    NSLog(@"ImagePreview dealloc");
+    if ([UIApplication sharedApplication].statusBarOrientation == UIInterfaceOrientationLandscapeLeft) {
+        return CGPointMake(point.y, point.x);
+    }
+    if ([UIApplication sharedApplication].statusBarOrientation == UIInterfaceOrientationLandscapeRight) {
+        return CGPointMake(-1 * point.y, -1 * point.x);
+    }
+    return point;
+}
+
+// 获取手势的移动方向
+- (ImagePreviewerDragDirection)dragDirectionWithPanGesture:(UIPanGestureRecognizer *)panGes
+{
+    CGPoint velocityInView = [self adaptivePointWithOrientation:[panGes velocityInView:nil]];
+    NSLog(@"    velocityInView = %@\n    translationInView = %@", [NSValue valueWithCGPoint:velocityInView], [NSValue valueWithCGPoint:[panGes translationInView:nil]]);
+    ImagePreviewerDragDirection direction_vertical = velocityInView.y > 0 ? ImagePreviewerDragDirection_down : ImagePreviewerDragDirection_up;
+    ImagePreviewerDragDirection direction_horizontal = velocityInView.x > 0 ? ImagePreviewerDragDirection_left : ImagePreviewerDragDirection_right;
+    ImagePreviewerDragDirection primary_direction = fabs(velocityInView.x) > fabs(velocityInView.y) ? direction_horizontal : direction_vertical;
+    return primary_direction;
 }
 
 - (void)saveImage:(UIImage *)image successed:(SaveImageBlock)block
@@ -507,6 +517,11 @@ static NSString *CZImagePreviewCollectionCellID = @"CZImagePreviewCollectionCell
     if (self.images.count == 0) {
         [self dismiss];
     }
+}
+
+- (void)dealloc
+{
+    NSLog(@"ImagePreview dealloc");
 }
 
 @end

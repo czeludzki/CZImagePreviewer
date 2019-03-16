@@ -7,9 +7,8 @@
 //
 
 #import "CZImagePreviewCollectionCell.h"
-#import "CZImagePreviewer_Macro.h"
 #import "Masonry.h"
-#import "UIImageView+WebCache.h"
+#import "UIImageView+AFNetworking.h"
 
 @interface CZImagePreviewCollectionCell ()<UIScrollViewDelegate>
 /**
@@ -29,7 +28,7 @@
 - (CGFloat)defatulScale
 {
     //以 Screen.width 或者 Screen.height 最大的那个为基准
-    _defatulScale = MIN(UIWindowWidth / self.item.image.size.width, UIWindowHeight / self.item.image.size.height);
+    _defatulScale = MIN([UIApplication sharedApplication].keyWindow.bounds.size.width / self.zoomingImageView.image.size.width, [UIApplication sharedApplication].keyWindow.bounds.size.height / self.zoomingImageView.image.size.height);
     return _defatulScale;
 }
 
@@ -42,9 +41,7 @@
 - (void)setItem:(CZImagePreviewImageItem *)item
 {
     _item = item;
-    
     __weak __typeof (self) weakSelf = self;
-    self.zoomingImageView.image = _item.placeholderImage ? _item.placeholderImage : nil;
     if (_item.image) {
         [self.assFlower removeFromSuperview];
         [self.noImageWaring removeFromSuperview];
@@ -52,32 +49,18 @@
         [self updateScrollViewConfig];
         return;
     }
-    if(_item.imageUrlStr){
-        [self showAssFlower];
-        [self.zoomingImageView sd_setImageWithURL:[NSURL URLWithString:_item.imageUrlStr] placeholderImage:_item.placeholderImage completed:^(UIImage *image, NSError *error, SDImageCacheType cacheType, NSURL *imageURL) {
-            if (!error) {
-                _item.image = image;
-                [weakSelf.assFlower removeFromSuperview];
-                [weakSelf.noImageWaring removeFromSuperview];
-                [weakSelf updateScrollViewConfig];
-            }else{
-                [weakSelf.assFlower removeFromSuperview];
-                [weakSelf showWarningLabel];
-            }
-        }];
-        return;
-    }
     if(_item.imageURL){
         [self showAssFlower];
-        [self.zoomingImageView sd_setImageWithURL:_item.imageURL placeholderImage:_item.placeholderImage completed:^(UIImage *image, NSError *error, SDImageCacheType cacheType, NSURL *imageURL) {
-            if (!error) {
-                [weakSelf.assFlower removeFromSuperview];
-                item.image = image;
-                [weakSelf updateScrollViewConfig];
-            }else{
-                [weakSelf.assFlower removeFromSuperview];
-                [weakSelf showWarningLabel];
-            }
+        NSURL *url = [NSURL URLWithString:_item.imageURL];
+        NSURLRequest *request = [NSURLRequest requestWithURL:url];
+        [self.zoomingImageView setImageWithURLRequest:request placeholderImage:_item.placeholderImage success:^(NSURLRequest * _Nonnull request, NSHTTPURLResponse * _Nullable response, UIImage * _Nonnull image) {
+            weakSelf.zoomingImageView.image = image;
+            [weakSelf.assFlower removeFromSuperview];
+            [weakSelf.noImageWaring removeFromSuperview];
+            [weakSelf updateScrollViewConfig];
+        } failure:^(NSURLRequest * _Nonnull request, NSHTTPURLResponse * _Nullable response, NSError * _Nonnull error) {
+            [weakSelf.assFlower removeFromSuperview];
+            [weakSelf showWarningLabel];
         }];
         return;
     }
@@ -102,7 +85,7 @@
 #pragma mark - ScrollViewDelegate
 - (void)scrollViewDidZoom:(UIScrollView *)scrollView
 {
-    CGSize scaledSize = (CGSize){floorf(self.item.image.size.width * scrollView.zoomScale), floorf(self.item.image.size.height * scrollView.zoomScale)};
+    CGSize scaledSize = (CGSize){floorf(self.zoomingImageView.image.size.width * scrollView.zoomScale), floorf(self.zoomingImageView.image.size.height * scrollView.zoomScale)};
     //调整位置 使其居中
     CGFloat top_bottom_Margin = MAX(0, floorf((CGRectGetHeight(self.zoomingScrollView.frame) - scaledSize.height) * 0.5f));
     CGFloat left_right_Margin = MAX(0, floorf((CGRectGetWidth(self.zoomingScrollView.frame) - scaledSize.width) * 0.5f));
@@ -116,9 +99,8 @@
 
 - (void)scrollViewDidScroll:(UIScrollView *)scrollView
 {
-    CGPoint velocityInView = [scrollView.panGestureRecognizer velocityInView:scrollView];
-    if ([self.delegate respondsToSelector:@selector(imagePreviewCollectionCell:scrollViewDidScrollWithVelocity:)]) {
-        [self.delegate imagePreviewCollectionCell:self scrollViewDidScrollWithVelocity:velocityInView];
+    if ([self.delegate respondsToSelector:@selector(imagePreviewCollectionCell:scrollViewDidScroll:)]) {
+        [self.delegate imagePreviewCollectionCell:self scrollViewDidScroll:scrollView];
     }
 }
 
@@ -129,12 +111,17 @@
 - (void)layoutScrollView
 {
     UIScrollView *zoomingScrollView = [[UIScrollView alloc] init];
+    if (@available(iOS 11.0, *)) {
+        zoomingScrollView.contentInsetAdjustmentBehavior = UIScrollViewContentInsetAdjustmentNever;
+    }
     zoomingScrollView.showsVerticalScrollIndicator = NO;
     zoomingScrollView.showsHorizontalScrollIndicator = NO;
     zoomingScrollView.bounces = YES;
     zoomingScrollView.clipsToBounds = NO;
     zoomingScrollView.delegate = self;
     zoomingScrollView.backgroundColor = [UIColor clearColor];
+    zoomingScrollView.alwaysBounceVertical = NO;
+    zoomingScrollView.alwaysBounceHorizontal = NO;
     [self.contentView addSubview:zoomingScrollView];
     self.zoomingScrollView = zoomingScrollView;
     [zoomingScrollView mas_makeConstraints:^(MASConstraintMaker *make) {
@@ -150,8 +137,8 @@
     self.zoomingImageView = zoomingImageView;
     [zoomingImageView mas_makeConstraints:^(MASConstraintMaker *make) {
         make.edges.mas_equalTo(UIEdgeInsetsZero);
-        make.height.mas_equalTo(UIWindowHeight);
-        make.width.mas_equalTo(UIWindowWidth);
+        make.height.mas_equalTo([UIApplication sharedApplication].keyWindow.bounds.size.height);
+        make.width.mas_equalTo([UIApplication sharedApplication].keyWindow.bounds.size.width);
     }];
 }
 
@@ -204,7 +191,7 @@
 
 - (void)updateScrollViewConfig
 {
-    CGSize imgSize = self.item.image.size;
+    CGSize imgSize = self.zoomingImageView.image.size;
     [self.zoomingImageView mas_updateConstraints:^(MASConstraintMaker *make) {
         make.width.mas_equalTo(imgSize.width);
         make.height.mas_equalTo(imgSize.height);
@@ -213,7 +200,7 @@
     
     //配置scrollview minZoomScale || maxZoomScale
     self.zoomingScrollView.minimumZoomScale = self.defatulScale;
-    CGFloat maxZoomScale = (imgSize.height * imgSize.width) / (UIWindowWidth * UIWindowHeight * UIScreen.mainScreen.scale * UIScreen.mainScreen.scale);
+    CGFloat maxZoomScale = (imgSize.height * imgSize.width) / ([UIApplication sharedApplication].keyWindow.bounds.size.width * [UIApplication sharedApplication].keyWindow.bounds.size.height * UIScreen.mainScreen.scale * UIScreen.mainScreen.scale);
     self.zoomingScrollView.maximumZoomScale = maxZoomScale > 1 ? maxZoomScale : 2;
     
     //初始缩放系数
