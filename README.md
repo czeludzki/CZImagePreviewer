@@ -11,15 +11,29 @@ To run the example project, clone the repo, and run `pod install` from the Examp
 
 Create and show
 ```
-CZImagePreviewer *imagePreview = [CZImagePreviewer imagePreViewWithImages:(NSArray <CZImagePreviewerItem>*)items displayingIndex:indexPath.item];
-// when the previewer show(previewer is a subclass of UIViewController), tell previewer where is the image's container.
-[imagePreview showWithImageContainer:[collectionView cellForItemAtIndexPath:indexPath] andPresentedController:self];
+CZImagePreviewer *imagePreviewer = [[CZImagePreviewer alloc] init];
+imagePreviewer.delegate = <CZImagePreviewerDelegate>obj;
+imagePreviewer.dataSource = <CZImagePreviewerDataSource>obj;
+// when the previewer show(previewer is a subclass of UIViewController), tell previewer where is the image's container and displaying image's index.
+- (void)showWithImageContainer:(UIView *)container currentIndex:(NSInteger)currentIndex presentedController:(UIViewController *)presentedController;
+```
+
+dataSource
+```
+- (NSInteger)numberOfItemInImagePreviewer:(CZImagePreviewer *)previewer;
+/**
+previewer image's data source
+@return colud be these type of object: UIImage, NSString, NSURL
+*/
+- (id)imagePreviewer:(CZImagePreviewer *)previewer imageAtIndex:(NSInteger)index;
 ```
 
 delegate
 ```
 // when previewer will dismiss, tells it where to return the image's container.
-- (UIView *)imagePreviewWillDismissWithDisplayingImage:(CZImagePreviewImageItem *)imageItem andDisplayIndex:(NSInteger)index;
+- (UIView *)imagePreviewer:(CZImagePreviewer *)previewer willDismissWithDisplayingImageAtIndex:(NSInteger)index;
+// longPress operation on previewer
+- (void)imagePreviewer:(CZImagePreviewer *)imagePreview didLongPressWithImageAtIndex:(NSInteger)index;
 ```
 
 ## Requirements

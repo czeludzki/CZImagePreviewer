@@ -58,4 +58,5 @@ typedef void(^SaveImageBlock)(BOOL successed,NSError *error);
 
 - (void)saveImage:(UIImage *)image successed:(SaveImageBlock)block;
 - (void)deleImageAtIndex:(NSInteger)index;
+- (void)reloadData;
 @end

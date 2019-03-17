@@ -28,7 +28,7 @@
 - (CGFloat)defatulScale
 {
     //以 Screen.width 或者 Screen.height 最大的那个为基准
-    _defatulScale = MIN([UIApplication sharedApplication].keyWindow.bounds.size.width / self.zoomingImageView.image.size.width, [UIApplication sharedApplication].keyWindow.bounds.size.height / self.zoomingImageView.image.size.height);
+    _defatulScale = MIN([UIScreen mainScreen].bounds.size.width / self.zoomingImageView.image.size.width, [UIScreen mainScreen].bounds.size.height / self.zoomingImageView.image.size.height);
     return _defatulScale;
 }
 
@@ -137,8 +137,8 @@
     self.zoomingImageView = zoomingImageView;
     [zoomingImageView mas_makeConstraints:^(MASConstraintMaker *make) {
         make.edges.mas_equalTo(UIEdgeInsetsZero);
-        make.height.mas_equalTo([UIApplication sharedApplication].keyWindow.bounds.size.height);
-        make.width.mas_equalTo([UIApplication sharedApplication].keyWindow.bounds.size.width);
+        make.height.mas_equalTo([UIScreen mainScreen].bounds.size.height);
+        make.width.mas_equalTo([UIScreen mainScreen].bounds.size.width);
     }];
 }
 
@@ -200,7 +200,7 @@
     
     //配置scrollview minZoomScale || maxZoomScale
     self.zoomingScrollView.minimumZoomScale = self.defatulScale;
-    CGFloat maxZoomScale = (imgSize.height * imgSize.width) / ([UIApplication sharedApplication].keyWindow.bounds.size.width * [UIApplication sharedApplication].keyWindow.bounds.size.height * UIScreen.mainScreen.scale * UIScreen.mainScreen.scale);
+    CGFloat maxZoomScale = (imgSize.height * imgSize.width) / ([UIScreen mainScreen].bounds.size.width * [UIScreen mainScreen].bounds.size.height * UIScreen.mainScreen.scale * UIScreen.mainScreen.scale);
     self.zoomingScrollView.maximumZoomScale = maxZoomScale > 1 ? maxZoomScale : 2;
     
     //初始缩放系数

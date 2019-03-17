@@ -114,7 +114,7 @@ static NSString *CZImagePreviewCollectionCellID = @"CZImagePreviewCollectionCell
 #pragma mark - ScrollViewDelegate
 - (void)scrollViewDidScroll:(UIScrollView *)scrollView
 {
-    self.currentIndex = [NSIndexPath indexPathForItem:((scrollView.contentOffset.x + [UIApplication sharedApplication].keyWindow.bounds.size.width * 0.5) / [UIApplication sharedApplication].keyWindow.bounds.size.width) inSection:0];
+    self.currentIndex = [NSIndexPath indexPathForItem:((scrollView.contentOffset.x + [UIScreen mainScreen].bounds.size.width * 0.5) / [UIScreen mainScreen].bounds.size.width) inSection:0];
 }
 
 #pragma mark - CollectionViewDelegate
@@ -145,7 +145,7 @@ static NSString *CZImagePreviewCollectionCellID = @"CZImagePreviewCollectionCell
 
 - (CGSize)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout *)collectionViewLayout sizeForItemAtIndexPath:(NSIndexPath *)indexPath
 {
-    return CGSizeMake([UIApplication sharedApplication].keyWindow.bounds.size.width, [UIApplication sharedApplication].keyWindow.bounds.size.height);
+    return CGSizeMake([UIScreen mainScreen].bounds.size.width, [UIScreen mainScreen].bounds.size.height);
 }
 
 - (UICollectionViewCell *)collectionView:(UICollectionView *)collectionView cellForItemAtIndexPath:(NSIndexPath *)indexPath
@@ -189,8 +189,7 @@ static NSString *CZImagePreviewCollectionCellID = @"CZImagePreviewCollectionCell
     CZImagePreviewCollectionCell *visibleImageView = (CZImagePreviewCollectionCell *)[self.collectionView cellForItemAtIndexPath:self.currentIndex];
     CGPoint translationInView = [self adaptivePointWithOrientation:[sender translationInView:self.view]];
     CGPoint velocityInView = [self adaptivePointWithOrientation:[sender velocityInView:self.view]];
-    float progress = (fabs(translationInView.y) / [UIApplication sharedApplication].keyWindow.bounds.size.height);
-    NSLog(@"progress = %.2f", progress);
+    float progress = (fabs(translationInView.y) / [UIScreen mainScreen].bounds.size.height);
     
     static CGFloat defaultZoomScale;
     static CGPoint normalCenter;
@@ -393,8 +392,8 @@ static NSString *CZImagePreviewCollectionCellID = @"CZImagePreviewCollectionCell
             if (currentOrientation != UIInterfaceOrientationPortrait) break;
             [self.collectionView mas_remakeConstraints:^(MASConstraintMaker *make) {
                 make.center.mas_equalTo(CGPointZero);
-                make.width.mas_equalTo([UIApplication sharedApplication].keyWindow.bounds.size.height);
-                make.height.mas_equalTo([UIApplication sharedApplication].keyWindow.bounds.size.width);
+                make.width.mas_equalTo([UIScreen mainScreen].bounds.size.height);
+                make.height.mas_equalTo([UIScreen mainScreen].bounds.size.width);
             }];
         }
             break;
@@ -424,7 +423,7 @@ static NSString *CZImagePreviewCollectionCellID = @"CZImagePreviewCollectionCell
 - (void)resetContentOffsetAfterRotate
 {
     if (!self.needResetContentOffsetAfterRotate) return;
-    [self.collectionView setContentOffset:CGPointMake([UIApplication sharedApplication].keyWindow.bounds.size.width * self.indexPathItemBeforeRotate, 0) animated:NO];
+    [self.collectionView setContentOffset:CGPointMake([UIScreen mainScreen].bounds.size.width * self.indexPathItemBeforeRotate, 0) animated:NO];
     self.needResetContentOffsetAfterRotate = NO;
 }
 
@@ -463,7 +462,7 @@ static NSString *CZImagePreviewCollectionCellID = @"CZImagePreviewCollectionCell
 - (ImagePreviewerDragDirection)dragDirectionWithPanGesture:(UIPanGestureRecognizer *)panGes
 {
     CGPoint velocityInView = [self adaptivePointWithOrientation:[panGes velocityInView:nil]];
-    NSLog(@"    velocityInView = %@\n    translationInView = %@", [NSValue valueWithCGPoint:velocityInView], [NSValue valueWithCGPoint:[panGes translationInView:nil]]);
+//    NSLog(@"    velocityInView = %@\n    translationInView = %@", [NSValue valueWithCGPoint:velocityInView], [NSValue valueWithCGPoint:[panGes translationInView:nil]]);
     ImagePreviewerDragDirection direction_vertical = velocityInView.y > 0 ? ImagePreviewerDragDirection_down : ImagePreviewerDragDirection_up;
     ImagePreviewerDragDirection direction_horizontal = velocityInView.x > 0 ? ImagePreviewerDragDirection_left : ImagePreviewerDragDirection_right;
     ImagePreviewerDragDirection primary_direction = fabs(velocityInView.x) > fabs(velocityInView.y) ? direction_horizontal : direction_vertical;
@@ -514,9 +513,9 @@ static NSString *CZImagePreviewCollectionCellID = @"CZImagePreviewCollectionCell
     }
 }
 
-- (void)dealloc
+- (void)reloadData
 {
-    NSLog(@"ImagePreview dealloc");
+    [self.collectionView reloadData];
 }
 
 @end
