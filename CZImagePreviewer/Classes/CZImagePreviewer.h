@@ -7,7 +7,7 @@
 //
 
 #import <UIKit/UIKit.h>
-#import "CZImagePreviewImageItem.h"
+#import "CZImagePreviewerItem.h"
 
 typedef void(^SaveImageBlock)(BOOL successed,NSError *error);
 
@@ -23,11 +23,11 @@ typedef void(^SaveImageBlock)(BOOL successed,NSError *error);
     if YES :会有将当前显示的图片返回到该容器的动画效果
     if NO :则采用默认的动画效果dismiss
  */
-- (UIView *)imagePreviewWillDismissWithDisplayingImage:(CZImagePreviewImageItem *)imageItem andDisplayIndex:(NSInteger)index;
+- (UIView *)imagePreviewWillDismissWithDisplayingImage:(CZImagePreviewerItem *)imageItem andDisplayIndex:(NSInteger)index;
 /**
  *  长按以后的操作,注意,如要呼出 UIAlertController 推荐使用 [imagePreview presentViewController:alertViewController]
  */
-- (void)imagePreview:(CZImagePreviewer *)imagePreview didLongPressWithImageItem:(CZImagePreviewImageItem *)imageItem andDisplayIndex:(NSInteger)index;
+- (void)imagePreview:(CZImagePreviewer *)imagePreview didLongPressWithImageItem:(CZImagePreviewerItem *)imageItem andDisplayIndex:(NSInteger)index;
 @end
 
 
@@ -39,12 +39,13 @@ typedef void(^SaveImageBlock)(BOOL successed,NSError *error);
 @property (strong, nonatomic) UIImage *placeholderImage;
 // images 里面装的可以是UIImage NSString(图片地址) NSURL
 // 重点:数组中的类型要和参数 image 类型一致
-- (instancetype)initWithImages:(NSArray <CZImagePreviewImageItem *>*)images displayingIndex:(NSInteger)index;
-+ (instancetype)imagePreViewWithImages:(NSArray <CZImagePreviewImageItem *>*)images displayingIndex:(NSInteger)index;
+- (instancetype)initWithImages:(NSArray <CZImagePreviewerItem *>*)images displayingIndex:(NSInteger)index;
++ (instancetype)imagePreViewWithImages:(NSArray <CZImagePreviewerItem *>*)images displayingIndex:(NSInteger)index;
 /**
  *  显示
  *
- *  @param container 所点击的图片容器 : 如果为空,就不会有返回到该容器的动画效果
+ *  @param container 所点击的图片容器 : if nil, 就不会有返回到该容器的动画效果
+ *  @param presentedController 负责 present previewer 的 controller, if nil, will let the keyWindow.rootViewContoller do this
  */
 - (void)showWithImageContainer:(UIView *)container andPresentedController:(UIViewController *)presentedController;
 - (void)dismiss;

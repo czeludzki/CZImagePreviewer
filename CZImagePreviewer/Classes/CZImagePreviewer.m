@@ -7,7 +7,7 @@
 //
 
 #import "CZImagePreviewer.h"
-#import "CZImagePreviewImageItem.h"
+#import "CZImagePreviewerItem.h"
 #import "CZImagePreviewCollectionCell.h"
 #import "Masonry.h"
 
@@ -29,7 +29,7 @@ typedef NS_ENUM(NSInteger,ImagePreviewerDragDirection) {
 /**
  *  图片数据
  */
-@property (nonatomic, strong) NSMutableArray <CZImagePreviewImageItem *>*images;
+@property (nonatomic, strong) NSMutableArray <CZImagePreviewerItem *>*images;
 /**
  *  app本来的statusBar样式,如果 在info.plist 中没设置 UIViewControllerBasedStatusBarAppearance NO ,自动变化statuBarStyle的功能将不会生效
  */
@@ -65,13 +65,13 @@ static NSString *CZImagePreviewCollectionCellID = @"CZImagePreviewCollectionCell
     return _images;
 }
 
-+ (instancetype)imagePreViewWithImages:(NSArray <CZImagePreviewImageItem *>*)images displayingIndex:(NSInteger)index
++ (instancetype)imagePreViewWithImages:(NSArray <CZImagePreviewerItem *>*)images displayingIndex:(NSInteger)index
 {
     CZImagePreviewer *preview = [[CZImagePreviewer alloc] initWithImages:images displayingIndex:index];
     return preview;
 }
 
-- (instancetype)initWithImages:(NSArray <CZImagePreviewImageItem *>*)images displayingIndex:(NSInteger)index
+- (instancetype)initWithImages:(NSArray <CZImagePreviewerItem *>*)images displayingIndex:(NSInteger)index
 {
     if (self = [super init]) {
         self.applicationDefaultStatusBarStyle = [UIApplication sharedApplication].statusBarStyle;
@@ -200,7 +200,7 @@ static NSString *CZImagePreviewCollectionCellID = @"CZImagePreviewCollectionCell
 - (void)longPress:(UILongPressGestureRecognizer *)sender
 {
     if (sender.state == UIGestureRecognizerStateBegan) {
-        CZImagePreviewImageItem *currentItem = self.images[self.currentIndex.item];
+        CZImagePreviewerItem *currentItem = self.images[self.currentIndex.item];
         if (currentItem.image == nil) return;
         if ([self.delegate respondsToSelector:@selector(imagePreview:didLongPressWithImageItem:andDisplayIndex:)]) {
             [self.delegate imagePreview:self didLongPressWithImageItem:currentItem andDisplayIndex:self.currentIndex.item];
@@ -214,6 +214,8 @@ static NSString *CZImagePreviewCollectionCellID = @"CZImagePreviewCollectionCell
     CZImagePreviewCollectionCell *visibleImageView = (CZImagePreviewCollectionCell *)[self.collectionView cellForItemAtIndexPath:self.currentIndex];
     CGPoint translationInView = [self adaptivePointWithOrientation:[sender translationInView:self.view]];
     CGPoint velocityInView = [self adaptivePointWithOrientation:[sender velocityInView:self.view]];
+    float progress = (fabs(translationInView.y) / [UIApplication sharedApplication].keyWindow.bounds.size.height);
+    NSLog(@"progress = %.2f", progress);
     
     static CGFloat defaultZoomScale;
     static CGPoint normalCenter;
@@ -224,16 +226,15 @@ static NSString *CZImagePreviewCollectionCellID = @"CZImagePreviewCollectionCell
         }
             break;
         case UIGestureRecognizerStateChanged:{
-            float progress = (1 - (fabs(translationInView.y) / [UIApplication sharedApplication].keyWindow.bounds.size.height));
-            CGAffineTransform scaleTransform = CGAffineTransformMakeScale(progress * defaultZoomScale, progress * defaultZoomScale);
+            CGAffineTransform scaleTransform = CGAffineTransformMakeScale((1 - progress) * defaultZoomScale, (1 - progress) * defaultZoomScale);
             visibleImageView.zoomingImageView.transform = scaleTransform;
             visibleImageView.zoomingImageView.center = CGPointMake(normalCenter.x + translationInView.x, normalCenter.y + translationInView.y);
-            self.collectionView.backgroundColor = [UIColor colorWithRed:1/255 green:1/255 blue:1/255 alpha:progress];
+            self.collectionView.backgroundColor = [UIColor colorWithRed:1/255 green:1/255 blue:1/255 alpha:(1 - progress)];
         }
             break;
         case UIGestureRecognizerStateEnded: case UIGestureRecognizerStateFailed: case UIGestureRecognizerStateCancelled:{
             visibleImageView.zoomingScrollView.scrollEnabled = YES;
-            if (fabs(velocityInView.y) > 1200) {
+            if (fabs(velocityInView.y) > 1200 || progress > .3f) {
                 [self dismiss];
             }else{
                 [UIView animateWithDuration:.3f animations:^{

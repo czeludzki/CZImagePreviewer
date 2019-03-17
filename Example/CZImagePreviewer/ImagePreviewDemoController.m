@@ -70,7 +70,7 @@
 {
     NSMutableArray *items = [NSMutableArray array];
     for (NSString *url in self.imagePaths) {
-        CZImagePreviewImageItem *item = [[CZImagePreviewImageItem alloc] init];
+        CZImagePreviewerItem *item = [[CZImagePreviewerItem alloc] init];
         item.imageURL = url;
 //        item.image = [UIImage imageNamed:@"backgroundImage2"];
         [items addObject:item];
@@ -81,7 +81,7 @@
 }
 
 #pragma mark - CZImagePreviewDelegate
-- (UIView *)imagePreviewWillDismissWithDisplayingImage:(CZImagePreviewImageItem *)imageItem andDisplayIndex:(NSInteger)index
+- (UIView *)imagePreviewWillDismissWithDisplayingImage:(CZImagePreviewerItem *)imageItem andDisplayIndex:(NSInteger)index
 {
     return [self.collectionView cellForItemAtIndexPath:[NSIndexPath indexPathForItem:index inSection:0]];
 }

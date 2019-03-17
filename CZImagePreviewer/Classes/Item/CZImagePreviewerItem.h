@@ -9,7 +9,7 @@
 #import <Foundation/Foundation.h>
 #import <UIKit/UIKit.h>
 
-@interface CZImagePreviewImageItem : NSObject
+@interface CZImagePreviewerItem : NSObject
 @property (copy, nonatomic) NSString *imageURL;
 @property (strong, nonatomic) UIImage *image;
 @property (strong, nonatomic) UIImage *placeholderImage;

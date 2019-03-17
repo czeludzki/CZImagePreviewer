@@ -7,7 +7,7 @@
 //
 
 #import <UIKit/UIKit.h>
-#import "CZImagePreviewImageItem.h"
+#import "CZImagePreviewerItem.h"
 
 @class CZImagePreviewCollectionCell;
 @protocol CZImagePreviewCollectionCellDelegate <NSObject>
@@ -18,7 +18,7 @@
 @property (nonatomic, assign, readonly, getter=isZooming) BOOL zooming;
 @property (weak, nonatomic) UIScrollView *zoomingScrollView;
 @property (weak, nonatomic) UIImageView *zoomingImageView;
-@property (strong, nonatomic) CZImagePreviewImageItem *item;
+@property (strong, nonatomic) CZImagePreviewerItem *item;
 @property (weak, nonatomic) id delegate;
 /**
  正常状态的scale

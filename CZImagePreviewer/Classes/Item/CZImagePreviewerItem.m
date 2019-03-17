@@ -6,8 +6,8 @@
 //  Copyright © 2016年 siu. All rights reserved.
 //
 
-#import "CZImagePreviewImageItem.h"
+#import "CZImagePreviewerItem.h"
 
-@implementation CZImagePreviewImageItem
+@implementation CZImagePreviewerItem
 
 @end

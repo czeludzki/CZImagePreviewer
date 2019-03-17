@@ -38,7 +38,7 @@
     return _zooming;
 }
 
-- (void)setItem:(CZImagePreviewImageItem *)item
+- (void)setItem:(CZImagePreviewerItem *)item
 {
     _item = item;
     __weak __typeof (self) weakSelf = self;

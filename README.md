@@ -9,6 +9,19 @@
 
 To run the example project, clone the repo, and run `pod install` from the Example directory first.
 
+Create and show
+```
+CZImagePreviewer *imagePreview = [CZImagePreviewer imagePreViewWithImages:(NSArray <CZImagePreviewerItem>*)items displayingIndex:indexPath.item];
+// when the previewer show(previewer is a subclass of UIViewController), tell previewer where is the image's container.
+[imagePreview showWithImageContainer:[collectionView cellForItemAtIndexPath:indexPath] andPresentedController:self];
+```
+
+delegate
+```
+// when previewer will dismiss, tells it where to return the image's container.
+- (UIView *)imagePreviewWillDismissWithDisplayingImage:(CZImagePreviewImageItem *)imageItem andDisplayIndex:(NSInteger)index;
+```
+
 ## Requirements
 
 ## Installation
