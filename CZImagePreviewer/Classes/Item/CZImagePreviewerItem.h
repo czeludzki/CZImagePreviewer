@@ -13,5 +13,5 @@
 @property (copy, nonatomic) NSString *imageURL;
 @property (strong, nonatomic) UIImage *image;
 @property (strong, nonatomic) UIImage *placeholderImage;
-
+- (instancetype)initWithImage:(id)img placeholderImg:(UIImage *)placeholder;
 @end

@@ -27,10 +27,6 @@ typedef NS_ENUM(NSInteger,ImagePreviewerDragDirection) {
 @property (weak, nonatomic) UICollectionView *collectionView;
 @property (weak, nonatomic) UIPanGestureRecognizer *panOnView;
 /**
- *  图片数据
- */
-@property (nonatomic, strong) NSMutableArray <CZImagePreviewerItem *>*images;
-/**
  *  app本来的statusBar样式,如果 在info.plist 中没设置 UIViewControllerBasedStatusBarAppearance NO ,自动变化statuBarStyle的功能将不会生效
  */
 @property (assign, nonatomic) UIStatusBarStyle applicationDefaultStatusBarStyle;
@@ -57,38 +53,19 @@ typedef NS_ENUM(NSInteger,ImagePreviewerDragDirection) {
 @implementation CZImagePreviewer
 static NSString *CZImagePreviewCollectionCellID = @"CZImagePreviewCollectionCellID";
 #pragma mark - Getter && Setter
-- (NSMutableArray *)images
-{
-    if (!_images) {
-        _images = [NSMutableArray array];
-    }
-    return _images;
-}
 
-+ (instancetype)imagePreViewWithImages:(NSArray <CZImagePreviewerItem *>*)images displayingIndex:(NSInteger)index
-{
-    CZImagePreviewer *preview = [[CZImagePreviewer alloc] initWithImages:images displayingIndex:index];
-    return preview;
-}
-
-- (instancetype)initWithImages:(NSArray <CZImagePreviewerItem *>*)images displayingIndex:(NSInteger)index
+#pragma mark - LifeCycle
+- (instancetype)init
 {
     if (self = [super init]) {
-        self.applicationDefaultStatusBarStyle = [UIApplication sharedApplication].statusBarStyle;
-        self.currentIndex = [NSIndexPath indexPathForItem:index inSection:0];
-        
-        [self.images addObjectsFromArray:images];
-        
         [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(deviceOrientationDidChange:) name:UIDeviceOrientationDidChangeNotification object:nil];
     }
     return self;
 }
 
-#pragma mark - LifeCycle
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-    NSAssert(self.images.count != 0, @"CZImagePreview init] images参数不能为空");
     self.view.backgroundColor = [UIColor clearColor];
     [UIApplication sharedApplication].keyWindow.windowLevel = UIWindowLevelStatusBar + 1;
     UICollectionViewFlowLayout *layout = [[UICollectionViewFlowLayout alloc] init];
@@ -148,7 +125,7 @@ static NSString *CZImagePreviewCollectionCellID = @"CZImagePreviewCollectionCell
 
 - (NSInteger)collectionView:(UICollectionView *)collectionView numberOfItemsInSection:(NSInteger)section
 {
-    return self.images.count;
+    return [self numberOfItemInPreviewer];
 }
 
 - (CGFloat)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout *)collectionViewLayout minimumInteritemSpacingForSectionAtIndex:(NSInteger)section
@@ -174,7 +151,7 @@ static NSString *CZImagePreviewCollectionCellID = @"CZImagePreviewCollectionCell
 - (UICollectionViewCell *)collectionView:(UICollectionView *)collectionView cellForItemAtIndexPath:(NSIndexPath *)indexPath
 {
     CZImagePreviewCollectionCell *imageView = [collectionView dequeueReusableCellWithReuseIdentifier:CZImagePreviewCollectionCellID forIndexPath:indexPath];
-    imageView.item = self.images[indexPath.item];
+    imageView.item = [self itemAtIndex:indexPath.item];
     imageView.delegate = self;
     return imageView;
 }
@@ -200,10 +177,8 @@ static NSString *CZImagePreviewCollectionCellID = @"CZImagePreviewCollectionCell
 - (void)longPress:(UILongPressGestureRecognizer *)sender
 {
     if (sender.state == UIGestureRecognizerStateBegan) {
-        CZImagePreviewerItem *currentItem = self.images[self.currentIndex.item];
-        if (currentItem.image == nil) return;
-        if ([self.delegate respondsToSelector:@selector(imagePreview:didLongPressWithImageItem:andDisplayIndex:)]) {
-            [self.delegate imagePreview:self didLongPressWithImageItem:currentItem andDisplayIndex:self.currentIndex.item];
+        if ([self.delegate respondsToSelector:@selector(imagePreviewer:didLongPressWithImageAtIndex:)]) {
+            [self.delegate imagePreviewer:self didLongPressWithImageAtIndex:self.currentIndex.item];
         }
     }
 }
@@ -285,9 +260,12 @@ static NSString *CZImagePreviewCollectionCellID = @"CZImagePreviewCollectionCell
 }
 
 #pragma mark - Show && Dismiss
-- (void)showWithImageContainer:(UIView *)container andPresentedController:(UIViewController *)presentedController
+- (void)showWithImageContainer:(UIView *)container currentIndex:(NSInteger)currentIndex presentedController:(UIViewController *)presentedController
 {
     __weak __typeof (self) weakSelf = self;
+    self.applicationDefaultStatusBarStyle = [UIApplication sharedApplication].statusBarStyle;
+    self.currentIndex = [NSIndexPath indexPathForItem:currentIndex inSection:0];
+    
     // 进入时, 记录当前 statusBar 方向
     self.enterOrientation = [[UIApplication sharedApplication] statusBarOrientation];
     
@@ -333,10 +311,8 @@ static NSString *CZImagePreviewCollectionCellID = @"CZImagePreviewCollectionCell
     // 获得当前显示的imageView
     __block CZImagePreviewCollectionCell *visibleImageView = (CZImagePreviewCollectionCell *)[self.collectionView cellForItemAtIndexPath:self.currentIndex];
     UIView *container = nil;
-    if ([self.delegate respondsToSelector:@selector(imagePreviewWillDismissWithDisplayingImage:andDisplayIndex:)]) {
-        if (self.images.count != 0) {
-            container = [self.delegate imagePreviewWillDismissWithDisplayingImage:self.images[self.currentIndex.item] andDisplayIndex:self.currentIndex.item];
-        }
+    if ([self.delegate respondsToSelector:@selector(imagePreviewer:willDismissWithDisplayingImageAtIndex:)]) {
+        container = [self.delegate imagePreviewer:self willDismissWithDisplayingImageAtIndex:self.currentIndex.item];
     }
     CGRect containerRectOnKeyWindow = [container convertRect:container.bounds toView:[[UIApplication sharedApplication].delegate window]];
     CGRect intersectionRect = CGRectIntersection([UIScreen mainScreen].bounds, containerRectOnKeyWindow);  // 容器与window的交汇Rect
@@ -494,6 +470,25 @@ static NSString *CZImagePreviewCollectionCellID = @"CZImagePreviewCollectionCell
     return primary_direction;
 }
 
+- (NSInteger)numberOfItemInPreviewer
+{
+    if ([self.dataSource respondsToSelector:@selector(numberOfItemInImagePreviewer:)]) {
+        return [self.dataSource numberOfItemInImagePreviewer:self];
+    }
+    return 0;
+}
+
+- (CZImagePreviewerItem *)itemAtIndex:(NSInteger)index
+{
+    if ([self.dataSource respondsToSelector:@selector(imagePreviewer:imageAtIndex:)]) {
+        id img = [self.dataSource imagePreviewer:self imageAtIndex:index];
+        CZImagePreviewerItem *item = [[CZImagePreviewerItem alloc] initWithImage:img placeholderImg:self.placeholderImage];
+        return item;
+    }else{
+        return nil;
+    }
+}
+
 - (void)saveImage:(UIImage *)image successed:(SaveImageBlock)block
 {
     UIImageWriteToSavedPhotosAlbum(image, self, @selector(image:didFinishSavingWithError:contextInfo:), nil);
@@ -511,11 +506,10 @@ static NSString *CZImagePreviewCollectionCellID = @"CZImagePreviewCollectionCell
 
 - (void)deleImageAtIndex:(NSInteger)index
 {
-    [self.images removeObjectAtIndex:index];
     [self.collectionView deleteItemsAtIndexPaths:@[self.currentIndex]];
     CZImagePreviewCollectionCell *cell = self.collectionView.visibleCells.firstObject;
     self.currentIndex = [self.collectionView indexPathForCell:cell];
-    if (self.images.count == 0) {
+    if ([self numberOfItemInPreviewer] == 0) {
         [self dismiss];
     }
 }
