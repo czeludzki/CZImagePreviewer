@@ -27,10 +27,6 @@ typedef NS_ENUM(NSInteger,ImagePreviewerDragDirection) {
 @property (weak, nonatomic) UICollectionView *collectionView;
 @property (weak, nonatomic) UIPanGestureRecognizer *panOnView;
 /**
- *  app本来的statusBar样式,如果 在info.plist 中没设置 UIViewControllerBasedStatusBarAppearance NO ,自动变化statuBarStyle的功能将不会生效
- */
-@property (assign, nonatomic) UIStatusBarStyle applicationDefaultStatusBarStyle;
-/**
  *  为了在viewWillLayoutSubviews中设置初始滚动到的地方,该值是为了记录他只设置了一次
  */
 @property (assign, nonatomic) BOOL hasSetStartDisplaycell;
@@ -67,7 +63,6 @@ static NSString *CZImagePreviewCollectionCellID = @"CZImagePreviewCollectionCell
 {
     [super viewDidLoad];
     self.view.backgroundColor = [UIColor clearColor];
-    [UIApplication sharedApplication].keyWindow.windowLevel = UIWindowLevelStatusBar + 1;
     UICollectionViewFlowLayout *layout = [[UICollectionViewFlowLayout alloc] init];
     layout.scrollDirection = UICollectionViewScrollDirectionHorizontal;
     UICollectionView *collectionView = [[UICollectionView alloc] initWithFrame:CGRectZero collectionViewLayout:layout];
@@ -262,9 +257,8 @@ static NSString *CZImagePreviewCollectionCellID = @"CZImagePreviewCollectionCell
 - (void)showWithImageContainer:(UIView *)container currentIndex:(NSInteger)currentIndex presentedController:(UIViewController *)presentedController
 {
     __weak __typeof (self) weakSelf = self;
-    self.applicationDefaultStatusBarStyle = [UIApplication sharedApplication].statusBarStyle;
+    [UIApplication sharedApplication].keyWindow.windowLevel = UIWindowLevelStatusBar + 1;
     self.currentIndex = [NSIndexPath indexPathForItem:currentIndex inSection:0];
-    
     // 进入时, 记录当前 statusBar 方向
     self.enterOrientation = [[UIApplication sharedApplication] statusBarOrientation];
     

@@ -20,7 +20,7 @@
             self.imageURL = [((NSURL *)img) absoluteString];
         }
         if ([img isKindOfClass:UIImage.class]) {
-            self.imageURL = img;
+            self.image = img;
         }
         self.placeholderImage = placeholder;
     }
