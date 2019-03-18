@@ -56,7 +56,7 @@ typedef void(^SaveImageBlock)(BOOL successed,NSError *error);
 - (void)showWithImageContainer:(UIView *)container currentIndex:(NSInteger)currentIndex presentedController:(UIViewController *)presentedController;
 - (void)dismiss;
 
-- (void)saveImage:(UIImage *)image successed:(SaveImageBlock)block;
+- (void)saveImageAtIndex:(NSInteger)index successed:(SaveImageBlock)block;
 - (void)deleImageAtIndex:(NSInteger)index;
 - (void)reloadData;
 @end

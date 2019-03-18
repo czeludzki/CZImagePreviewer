@@ -482,9 +482,10 @@ static NSString *CZImagePreviewCollectionCellID = @"CZImagePreviewCollectionCell
     }
 }
 
-- (void)saveImage:(UIImage *)image successed:(SaveImageBlock)block
+- (void)saveImageAtIndex:(NSInteger)index successed:(SaveImageBlock)block
 {
-    UIImageWriteToSavedPhotosAlbum(image, self, @selector(image:didFinishSavingWithError:contextInfo:), nil);
+    CZImagePreviewCollectionCell *cell = (CZImagePreviewCollectionCell *)[self.collectionView cellForItemAtIndexPath:[NSIndexPath indexPathForItem:index inSection:0]];
+    UIImageWriteToSavedPhotosAlbum(cell.zoomingImageView.image, self, @selector(image:didFinishSavingWithError:contextInfo:), nil);
     self.saveImageBlock = block;
 }
 
