@@ -14,20 +14,25 @@ PODS:
   - AFNetworking/Serialization (3.2.1)
   - AFNetworking/UIKit (3.2.1):
     - AFNetworking/NSURLSession
-  - CZImagePreviewer (0.1.2):
+  - CZImagePreviewer (1.0.2):
     - AFNetworking
     - Masonry
   - Masonry (1.1.0)
+  - SDWebImage (5.9.4):
+    - SDWebImage/Core (= 5.9.4)
+  - SDWebImage/Core (5.9.4)
 
 DEPENDENCIES:
   - AFNetworking
   - CZImagePreviewer (from `../`)
   - Masonry
+  - SDWebImage
 
 SPEC REPOS:
-  https://github.com/cocoapods/specs.git:
+  trunk:
     - AFNetworking
     - Masonry
+    - SDWebImage
 
 EXTERNAL SOURCES:
   CZImagePreviewer:
@@ -35,9 +40,10 @@ EXTERNAL SOURCES:
 
 SPEC CHECKSUMS:
   AFNetworking: b6f891fdfaed196b46c7a83cf209e09697b94057
-  CZImagePreviewer: 983ebe30ec0031e8c39c99856683502212a404c7
+  CZImagePreviewer: 4a86e7dda5c0cdb83af3aa3c656cd5d4bea7ca58
   Masonry: 678fab65091a9290e40e2832a55e7ab731aad201
+  SDWebImage: b69257f4ab14e9b6a2ef53e910fdf914d8f757c1
 
-PODFILE CHECKSUM: 57891400546ecd7935e03efe25a29c5aa823c184
+PODFILE CHECKSUM: e8f639e7a34ab7d4ce8e5cf31ff1a187e70d6c42
 
-COCOAPODS: 1.6.0.rc.2
+COCOAPODS: 1.9.3

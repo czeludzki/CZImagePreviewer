@@ -7,6 +7,11 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		2A35D5462556827500420468 /* CyImageBrowser.m in Sources */ = {isa = PBXBuildFile; fileRef = 2A35D53C2556827500420468 /* CyImageBrowser.m */; };
+		2A35D5472556827500420468 /* UIImage+CyShowRect.m in Sources */ = {isa = PBXBuildFile; fileRef = 2A35D53E2556827500420468 /* UIImage+CyShowRect.m */; };
+		2A35D5482556827500420468 /* CyZoomScrollView.m in Sources */ = {isa = PBXBuildFile; fileRef = 2A35D5412556827500420468 /* CyZoomScrollView.m */; };
+		2A35D5492556827500420468 /* CyBrowerInfos.m in Sources */ = {isa = PBXBuildFile; fileRef = 2A35D5432556827500420468 /* CyBrowerInfos.m */; };
+		2A35D54A2556827500420468 /* CyBrowerCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 2A35D5452556827500420468 /* CyBrowerCell.m */; };
 		433FBA03200E37D200BE938D /* CZImagePreviewerTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 433FBA02200E37D200BE938D /* CZImagePreviewerTableViewController.m */; };
 		433FBA06200E391800BE938D /* CZImagePreviewerTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 433FBA05200E391800BE938D /* CZImagePreviewerTableViewCell.m */; };
 		433FBA09200E3A7200BE938D /* TestImageView.m in Sources */ = {isa = PBXBuildFile; fileRef = 433FBA08200E3A7200BE938D /* TestImageView.m */; };
@@ -41,6 +46,17 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		2A35D53B2556827400420468 /* CyBrowerCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CyBrowerCell.h; sourceTree = "<group>"; };
+		2A35D53C2556827500420468 /* CyImageBrowser.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CyImageBrowser.m; sourceTree = "<group>"; };
+		2A35D53D2556827500420468 /* CyZoomScrollView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CyZoomScrollView.h; sourceTree = "<group>"; };
+		2A35D53E2556827500420468 /* UIImage+CyShowRect.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIImage+CyShowRect.m"; sourceTree = "<group>"; };
+		2A35D53F2556827500420468 /* CyImageBrowser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CyImageBrowser.h; sourceTree = "<group>"; };
+		2A35D5402556827500420468 /* CyBrowerInfos.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CyBrowerInfos.h; sourceTree = "<group>"; };
+		2A35D5412556827500420468 /* CyZoomScrollView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CyZoomScrollView.m; sourceTree = "<group>"; };
+		2A35D5422556827500420468 /* UIImage+CyShowRect.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIImage+CyShowRect.h"; sourceTree = "<group>"; };
+		2A35D5432556827500420468 /* CyBrowerInfos.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CyBrowerInfos.m; sourceTree = "<group>"; };
+		2A35D5442556827500420468 /* CYBrowerMacro.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CYBrowerMacro.h; sourceTree = "<group>"; };
+		2A35D5452556827500420468 /* CyBrowerCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CyBrowerCell.m; sourceTree = "<group>"; };
 		395D359E57E0960A97F44D24 /* LICENSE */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; name = LICENSE; path = ../LICENSE; sourceTree = "<group>"; };
 		433FBA01200E37D200BE938D /* CZImagePreviewerTableViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CZImagePreviewerTableViewController.h; sourceTree = "<group>"; };
 		433FBA02200E37D200BE938D /* CZImagePreviewerTableViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CZImagePreviewerTableViewController.m; sourceTree = "<group>"; };
@@ -118,6 +134,24 @@
 			name = Pods;
 			sourceTree = "<group>";
 		};
+		2A35D53A2556825F00420468 /* CYBrowser */ = {
+			isa = PBXGroup;
+			children = (
+				2A35D53B2556827400420468 /* CyBrowerCell.h */,
+				2A35D5452556827500420468 /* CyBrowerCell.m */,
+				2A35D5402556827500420468 /* CyBrowerInfos.h */,
+				2A35D5432556827500420468 /* CyBrowerInfos.m */,
+				2A35D5442556827500420468 /* CYBrowerMacro.h */,
+				2A35D53F2556827500420468 /* CyImageBrowser.h */,
+				2A35D53C2556827500420468 /* CyImageBrowser.m */,
+				2A35D53D2556827500420468 /* CyZoomScrollView.h */,
+				2A35D5412556827500420468 /* CyZoomScrollView.m */,
+				2A35D5422556827500420468 /* UIImage+CyShowRect.h */,
+				2A35D53E2556827500420468 /* UIImage+CyShowRect.m */,
+			);
+			path = CYBrowser;
+			sourceTree = "<group>";
+		};
 		6003F581195388D10070C39A = {
 			isa = PBXGroup;
 			children = (
@@ -168,6 +202,7 @@
 				433FBA05200E391800BE938D /* CZImagePreviewerTableViewCell.m */,
 				433FBA07200E3A7200BE938D /* TestImageView.h */,
 				433FBA08200E3A7200BE938D /* TestImageView.m */,
+				2A35D53A2556825F00420468 /* CYBrowser */,
 				71719F9D1E33DC2100824A3D /* LaunchScreen.storyboard */,
 				6003F5A8195388D20070C39A /* Images.xcassets */,
 				6003F594195388D20070C39A /* Supporting Files */,
@@ -280,6 +315,7 @@
 			developmentRegion = English;
 			hasScannedForEncodings = 0;
 			knownRegions = (
+				English,
 				en,
 				Base,
 			);
@@ -327,12 +363,14 @@
 				"${BUILT_PRODUCTS_DIR}/AFNetworking/AFNetworking.framework",
 				"${BUILT_PRODUCTS_DIR}/CZImagePreviewer/CZImagePreviewer.framework",
 				"${BUILT_PRODUCTS_DIR}/Masonry/Masonry.framework",
+				"${BUILT_PRODUCTS_DIR}/SDWebImage/SDWebImage.framework",
 			);
 			name = "[CP] Embed Pods Frameworks";
 			outputPaths = (
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/AFNetworking.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/CZImagePreviewer.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Masonry.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SDWebImage.framework",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -383,11 +421,16 @@
 			buildActionMask = 2147483647;
 			files = (
 				433FBA06200E391800BE938D /* CZImagePreviewerTableViewCell.m in Sources */,
+				2A35D5492556827500420468 /* CyBrowerInfos.m in Sources */,
+				2A35D54A2556827500420468 /* CyBrowerCell.m in Sources */,
 				6003F59E195388D20070C39A /* CZImagePreviewerAppDelegate.m in Sources */,
 				436FE22E1F7B5382006112F8 /* ImagePreviewDemoController.m in Sources */,
 				433FBA09200E3A7200BE938D /* TestImageView.m in Sources */,
 				436FE22F1F7B5382006112F8 /* ImageCollectionViewCell.m in Sources */,
+				2A35D5472556827500420468 /* UIImage+CyShowRect.m in Sources */,
+				2A35D5482556827500420468 /* CyZoomScrollView.m in Sources */,
 				433FBA03200E37D200BE938D /* CZImagePreviewerTableViewController.m in Sources */,
+				2A35D5462556827500420468 /* CyImageBrowser.m in Sources */,
 				6003F59A195388D20070C39A /* main.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

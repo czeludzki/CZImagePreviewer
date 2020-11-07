@@ -11,8 +11,7 @@
 #endif
 
 #import "CZImagePreviewer.h"
-#import "CZImagePreviewer_Macro.h"
-#import "CZImagePreviewImageItem.h"
+#import "CZImagePreviewerItem.h"
 #import "CZImagePreviewCollectionCell.h"
 
 FOUNDATION_EXPORT double CZImagePreviewerVersionNumber;
