@@ -19,7 +19,7 @@
 @property (weak, nonatomic) UIScrollView *zoomingScrollView;
 @property (weak, nonatomic) UIImageView *zoomingImageView;
 @property (strong, nonatomic) CZImagePreviewerItem *item;
-@property (weak, nonatomic) id delegate;
+@property (weak, nonatomic) id<CZImagePreviewCollectionCellDelegate>delegate;
 /**
  正常状态的scale
  */

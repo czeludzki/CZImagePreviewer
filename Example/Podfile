@@ -2,8 +2,6 @@ use_frameworks!
 
 target 'CZImagePreviewer_Example' do
   pod 'CZImagePreviewer', :path => '../'
-  pod 'Masonry'
-  pod 'AFNetworking'
   pod 'SDWebImage'
   
   target 'CZImagePreviewer_Tests' do

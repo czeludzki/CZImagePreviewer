@@ -7,12 +7,12 @@
 //
 
 #import "ImageCollectionViewCell.h"
-#import "UIImageView+AFNetworking.h"
+#import "UIImageView+WebCache.h"
 
 @implementation ImageCollectionViewCell
 - (void)setImageURL:(NSString *)imageURL
 {
     _imageURL = imageURL;
-    [self.imageView setImageWithURL:[NSURL URLWithString:_imageURL]];
+    [self.imageView sd_setImageWithURL:[NSURL URLWithString:_imageURL]];
 }
 @end

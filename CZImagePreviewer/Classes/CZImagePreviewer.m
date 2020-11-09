@@ -9,7 +9,6 @@
 #import "CZImagePreviewer.h"
 #import "CZImagePreviewerItem.h"
 #import "CZImagePreviewCollectionCell.h"
-#import "Masonry.h"
 
 /**
  滑动的方向枚举
@@ -39,7 +38,7 @@ typedef NS_ENUM(NSInteger,ImagePreviewerDragDirection) {
 /**
  此值是记录旋转之前的indexPath.item,在旋转之后重设contentOffset时使用
  */
-@property (assign, nonatomic) NSInteger indexPathItemBeforeRotate;
+@property (assign, nonatomic) NSIndexPath *indexPathBeforeRotate;
 /**
  记录show前的屏幕方向
  */
@@ -54,7 +53,7 @@ static NSString *CZImagePreviewCollectionCellID = @"CZImagePreviewCollectionCell
 - (instancetype)init
 {
     if (self = [super init]) {
-        [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(deviceOrientationDidChange:) name:UIDeviceOrientationDidChangeNotification object:nil];
+//        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(deviceOrientationDidChange:) name:UIDeviceOrientationDidChangeNotification object:nil];
     }
     return self;
 }
@@ -62,7 +61,7 @@ static NSString *CZImagePreviewCollectionCellID = @"CZImagePreviewCollectionCell
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-    self.view.backgroundColor = [UIColor clearColor];
+    self.view.backgroundColor = UIColor.blackColor;
     UICollectionViewFlowLayout *layout = [[UICollectionViewFlowLayout alloc] init];
     layout.scrollDirection = UICollectionViewScrollDirectionHorizontal;
     UICollectionView *collectionView = [[UICollectionView alloc] initWithFrame:CGRectZero collectionViewLayout:layout];
@@ -78,9 +77,7 @@ static NSString *CZImagePreviewCollectionCellID = @"CZImagePreviewCollectionCell
     [collectionView registerClass:[CZImagePreviewCollectionCell class] forCellWithReuseIdentifier:CZImagePreviewCollectionCellID];
     [self.view addSubview:collectionView];
     self.collectionView = collectionView;
-    [collectionView mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.edges.mas_equalTo(UIEdgeInsetsZero);
-    }];
+    collectionView.frame = self.view.bounds;
     
     UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(tap:)];
     [self.view addGestureRecognizer:tap];
@@ -161,7 +158,7 @@ static NSString *CZImagePreviewCollectionCellID = @"CZImagePreviewCollectionCell
 - (void)doubleTap:(UITapGestureRecognizer *)sender
 {
     CZImagePreviewCollectionCell *displayImageView = (CZImagePreviewCollectionCell *)[self.collectionView cellForItemAtIndexPath:self.currentIndex];
-    if (displayImageView.zooming) {
+    if (displayImageView.isZooming) {
         [displayImageView clearScaleWithAnimate:YES];
     }else{
         CGPoint touchLocation = [sender locationInView:sender.view];
@@ -374,50 +371,38 @@ static NSString *CZImagePreviewCollectionCellID = @"CZImagePreviewCollectionCell
 - (void)rotate2Orientation:(UIInterfaceOrientation)orientation
 {
     __weak __typeof (self) weakSelf = self;
-    UIInterfaceOrientation currentOrientation = [UIApplication sharedApplication].statusBarOrientation;
-    //判断如果当前方向和要旋转的方向一致,那么不做任何操作
-    if (currentOrientation == orientation) {
-        return;
-    }
+    NSLog(@"orientation = %ld", orientation);
     // 保存当前indexPath
     NSIndexPath *currentIndexPath = self.currentIndex;
     switch (orientation) {
         case UIInterfaceOrientationLandscapeLeft:case UIInterfaceOrientationLandscapeRight:{
-            if (currentOrientation != UIInterfaceOrientationPortrait) break;
-            [self.collectionView mas_remakeConstraints:^(MASConstraintMaker *make) {
-                make.center.mas_equalTo(CGPointZero);
-                make.width.mas_equalTo([UIScreen mainScreen].bounds.size.height);
-                make.height.mas_equalTo([UIScreen mainScreen].bounds.size.width);
-            }];
+            self.collectionView.frame = CGRectMake(0, 0, UIScreen.mainScreen.bounds.size.height, UIScreen.mainScreen.bounds.size.width);
         }
             break;
         case UIInterfaceOrientationPortrait:{
-            [self.collectionView mas_remakeConstraints:^(MASConstraintMaker *make) {
-                make.edges.mas_equalTo(UIEdgeInsetsZero);
-            }];
+            self.collectionView.frame = UIScreen.mainScreen.bounds;
         }
             break;
         default:
             break;
     }
-    [[UIApplication sharedApplication] setStatusBarOrientation:orientation];
     CGAffineTransform transform = [self getTranformWithOrientation:orientation];
-    // 旋转前, 先将 self.view 置黑
-    self.view.backgroundColor = [UIColor blackColor];
     [UIView animateWithDuration:.3f animations:^{
         weakSelf.collectionView.transform = transform;
+        weakSelf.collectionView.center = weakSelf.view.center;
     } completion:^(BOOL finished) {
-        weakSelf.view.backgroundColor = [UIColor clearColor];
+//        weakSelf.view.backgroundColor = [UIColor clearColor];
     }];
     [self.collectionView reloadData];
     self.needResetContentOffsetAfterRotate = YES;
-    self.indexPathItemBeforeRotate = currentIndexPath.item;
+    self.indexPathBeforeRotate = currentIndexPath;
 }
 
 - (void)resetContentOffsetAfterRotate
 {
     if (!self.needResetContentOffsetAfterRotate) return;
-    [self.collectionView setContentOffset:CGPointMake([UIScreen mainScreen].bounds.size.width * self.indexPathItemBeforeRotate, 0) animated:NO];
+//    [self.collectionView setContentOffset:CGPointMake([UIScreen mainScreen].bounds.size.width * self.indexPathItemBeforeRotate, 0) animated:NO];
+//    [self.collectionView scrollToItemAtIndexPath:self.indexPathBeforeRotate atScrollPosition:UICollectionViewScrollPositionLeft animated:NO];
     self.needResetContentOffsetAfterRotate = NO;
 }
 

@@ -8,7 +8,7 @@
 
 #import "CZImagePreviewerTableViewController.h"
 #import "CZImagePreviewerTableViewCell.h"
-#import <UIImageView+AFNetworking.h>
+#import <UIImageView+WebCache.h>
 
 @interface CZImagePreviewerTableViewController ()
 @property (nonatomic, strong) NSMutableArray *dataSources;
@@ -90,7 +90,7 @@
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
     CZImagePreviewerTableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"TESTID" forIndexPath:indexPath];
-    [cell.testImageView setImageWithURL:[NSURL URLWithString:self.dataSources[indexPath.row]]];
+    [cell.testImageView sd_setImageWithURL:[NSURL URLWithString:self.dataSources[indexPath.row]]];
     return cell;
 }
 

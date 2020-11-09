@@ -22,10 +22,7 @@
   "frameworks": "UIKit",
   "requires_arc": true,
   "dependencies": {
-    "Masonry": [
-
-    ],
-    "AFNetworking": [
+    "SDWebImage": [
 
     ]
   }

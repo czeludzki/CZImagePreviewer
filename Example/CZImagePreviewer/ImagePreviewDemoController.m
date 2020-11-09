@@ -9,7 +9,6 @@
 #import "ImagePreviewDemoController.h"
 #import "ImageCollectionViewCell.h"
 #import "CZImagePreviewer.h"
-#import "CyImageBrowser.h"
 
 @interface ImagePreviewDemoController () <UICollectionViewDelegateFlowLayout,UICollectionViewDataSource, CZImagePreviewDelegate, CZImagePreviewDataSource>
 @property (strong, nonatomic) NSMutableArray *imagePaths;
@@ -70,22 +69,10 @@
 
 - (void)collectionView:(UICollectionView *)collectionView didSelectItemAtIndexPath:(NSIndexPath *)indexPath
 {
-//    CZImagePreviewer *imagePreview = [[CZImagePreviewer alloc] init];
-//    imagePreview.delegate = self;
-//    imagePreview.dataSource = self;
-//    [imagePreview showWithImageContainer:[collectionView cellForItemAtIndexPath:indexPath] currentIndex:indexPath.item presentedController:self];
-    
-    CyBrowerInfos *infos = [[CyBrowerInfos alloc] init];
-    NSMutableArray <CyBrowerInfo *>*array = [NSMutableArray array];
-    for (NSString *url in self.imagePaths) {
-        CyBrowerInfo *item = [[CyBrowerInfo alloc] init];
-        item.image = url;
-        [array addObject:item];
-    }
-    infos.items = array;
-    infos.currentIndex = 1;
-    CyImageBrowser *browser = [CyImageBrowser cyImageBrower];
-    [browser showBrowerInfos:infos];
+    CZImagePreviewer *imagePreview = [[CZImagePreviewer alloc] init];
+    imagePreview.delegate = self;
+    imagePreview.dataSource = self;
+    [imagePreview showWithImageContainer:[collectionView cellForItemAtIndexPath:indexPath] currentIndex:indexPath.item presentedController:self];
 }
 
 #pragma mark - CZImagePreviewDataSource

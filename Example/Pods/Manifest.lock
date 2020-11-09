@@ -1,37 +1,16 @@
 PODS:
-  - AFNetworking (3.2.1):
-    - AFNetworking/NSURLSession (= 3.2.1)
-    - AFNetworking/Reachability (= 3.2.1)
-    - AFNetworking/Security (= 3.2.1)
-    - AFNetworking/Serialization (= 3.2.1)
-    - AFNetworking/UIKit (= 3.2.1)
-  - AFNetworking/NSURLSession (3.2.1):
-    - AFNetworking/Reachability
-    - AFNetworking/Security
-    - AFNetworking/Serialization
-  - AFNetworking/Reachability (3.2.1)
-  - AFNetworking/Security (3.2.1)
-  - AFNetworking/Serialization (3.2.1)
-  - AFNetworking/UIKit (3.2.1):
-    - AFNetworking/NSURLSession
   - CZImagePreviewer (1.0.2):
-    - AFNetworking
-    - Masonry
-  - Masonry (1.1.0)
+    - SDWebImage
   - SDWebImage (5.9.4):
     - SDWebImage/Core (= 5.9.4)
   - SDWebImage/Core (5.9.4)
 
 DEPENDENCIES:
-  - AFNetworking
   - CZImagePreviewer (from `../`)
-  - Masonry
   - SDWebImage
 
 SPEC REPOS:
   trunk:
-    - AFNetworking
-    - Masonry
     - SDWebImage
 
 EXTERNAL SOURCES:
@@ -39,11 +18,9 @@ EXTERNAL SOURCES:
     :path: "../"
 
 SPEC CHECKSUMS:
-  AFNetworking: b6f891fdfaed196b46c7a83cf209e09697b94057
-  CZImagePreviewer: 4a86e7dda5c0cdb83af3aa3c656cd5d4bea7ca58
-  Masonry: 678fab65091a9290e40e2832a55e7ab731aad201
+  CZImagePreviewer: 6c5ff5a90645eecb057f7ed517d2a1bd04ee3994
   SDWebImage: b69257f4ab14e9b6a2ef53e910fdf914d8f757c1
 
-PODFILE CHECKSUM: e8f639e7a34ab7d4ce8e5cf31ff1a187e70d6c42
+PODFILE CHECKSUM: eecfc2ae36c41265c854b63af7880c08f8cfb2c6
 
 COCOAPODS: 1.9.3
