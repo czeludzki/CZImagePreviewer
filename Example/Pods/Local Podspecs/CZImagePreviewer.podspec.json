@@ -12,7 +12,7 @@
     "czeludzki": "czeludzki@gmail.com"
   },
   "platforms": {
-    "ios": "8.0"
+    "ios": "11.0"
   },
   "source": {
     "git": "https://github.com/czeludzki/CZImagePreviewer.git",
