@@ -71,7 +71,7 @@
     CZImagePreviewer *imagePreview = [[CZImagePreviewer alloc] init];
     imagePreview.delegate = self;
     imagePreview.dataSource = self;
-    [imagePreview showWithImageContainer:[collectionView cellForItemAtIndexPath:indexPath] currentIndex:indexPath.item presentedController:self];
+    [imagePreview showWithImageContainer:[collectionView cellForItemAtIndexPath:indexPath] currentIndex:indexPath.item presentedController:nil];
 }
 
 #pragma mark - CZImagePreviewDataSource
@@ -110,6 +110,16 @@
 - (BOOL)shouldAutorotate
 {
     return NO;
+}
+
+- (UIInterfaceOrientationMask)supportedInterfaceOrientations
+{
+    return UIInterfaceOrientationMaskPortrait;
+}
+
+- (UIInterfaceOrientation)preferredInterfaceOrientationForPresentation
+{
+    return UIInterfaceOrientationPortrait;
 }
 
 @end

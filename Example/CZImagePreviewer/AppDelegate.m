@@ -6,9 +6,9 @@
 //  Copyright (c) 2017 czeludzki. All rights reserved.
 //
 
-#import "CZImagePreviewerAppDelegate.h"
+#import "AppDelegate.h"
 
-@implementation CZImagePreviewerAppDelegate
+@implementation AppDelegate
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {

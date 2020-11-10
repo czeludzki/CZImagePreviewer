@@ -58,7 +58,8 @@ static NSString *CZImagePreviewCollectionCellID = @"CZImagePreviewCollectionCell
 - (instancetype)init
 {
     if (self = [super init]) {
-        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(deviceOrientationDidChange:) name:UIDeviceOrientationDidChangeNotification object:nil];
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(applicationWillChangeStatusBarOrientationNotification:) name:UIApplicationWillChangeStatusBarOrientationNotification object:nil];
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(applicationDidChangeStatusBarOrientationNotification:) name:UIApplicationDidChangeStatusBarOrientationNotification object:nil];
     }
     return self;
 }
@@ -108,7 +109,6 @@ static NSString *CZImagePreviewCollectionCellID = @"CZImagePreviewCollectionCell
 {
     [super viewDidLayoutSubviews];
     [self setStartDisplayCell];
-    [self resetContentOffsetAfterRotate];
 }
 
 #pragma mark - ScrollViewDelegate
@@ -140,7 +140,7 @@ static NSString *CZImagePreviewCollectionCellID = @"CZImagePreviewCollectionCell
 
 - (CGSize)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout *)collectionViewLayout sizeForItemAtIndexPath:(NSIndexPath *)indexPath
 {
-    return CGSizeMake(collectionView.bounds.size.width, collectionView.bounds.size.height);
+    return CGSizeMake(UIScreen.mainScreen.bounds.size.width, UIScreen.mainScreen.bounds.size.height);
 }
 
 - (UICollectionViewCell *)collectionView:(UICollectionView *)collectionView cellForItemAtIndexPath:(NSIndexPath *)indexPath
@@ -257,14 +257,18 @@ static NSString *CZImagePreviewCollectionCellID = @"CZImagePreviewCollectionCell
 - (void)showWithImageContainer:(UIView *)container currentIndex:(NSInteger)currentIndex presentedController:(UIViewController *)presentedController
 {
     __weak __typeof (self) weakSelf = self;
-    [UIApplication sharedApplication].keyWindow.windowLevel = UIWindowLevelStatusBar + 1;
+    [UIApplication sharedApplication].keyWindow.windowLevel = UIWindowLevelStatusBar;
     self.currentIndex = [NSIndexPath indexPathForItem:currentIndex inSection:0];
     // 进入时, 记录当前 statusBar 方向
     self.enterOrientation = UIDevice.currentDevice.orientation;
     self.currentOrientation = UIDevice.currentDevice.orientation;
     UIViewController *rootViewController = [UIApplication sharedApplication].keyWindow.rootViewController;
     UIViewController *presentVC = presentedController ? presentedController : rootViewController;
-    self.modalPresentationStyle = UIModalPresentationOverCurrentContext;
+    // 如果 modalPresentationStyle = UIModalPresentationOverFullScreen 且presentVC.shouldAutorotate 返回NO 会导致此控制器不能旋转, 但是不这么设置会导致 self.view.background 设置为透明都不能看到上一级控制器
+    self.modalPresentationStyle = UIModalPresentationFullScreen;
+    self.modalTransitionStyle = UIModalTransitionStyleCrossDissolve;
+    self.definesPresentationContext = YES;
+    presentVC.definesPresentationContext = YES;
     self.collectionView.backgroundColor = [UIColor clearColor];
     self.view.backgroundColor = [UIColor clearColor];
     self.view.alpha = 0;
@@ -309,11 +313,6 @@ static NSString *CZImagePreviewCollectionCellID = @"CZImagePreviewCollectionCell
     }
     CGRect containerRectOnKeyWindow = [container convertRect:container.bounds toView:[[UIApplication sharedApplication].delegate window]];
     CGRect intersectionRect = CGRectIntersection([UIScreen mainScreen].bounds, containerRectOnKeyWindow);  // 容器与window的交汇Rect
-    UIDeviceOrientation orientation = UIDevice.currentDevice.orientation;
-    if (orientation != self.enterOrientation) {
-        [self rotate2Orientation:(UIInterfaceOrientation)self.enterOrientation];
-        needRotateBack = YES;
-    }
     
     if (!needRotateBack && container && !container.hidden && container.superview && !(CGRectIsEmpty(intersectionRect) || CGRectIsNull(intersectionRect))) {   // 有容器且容器显示在屏幕上
         // 计算偏移量
@@ -355,79 +354,27 @@ static NSString *CZImagePreviewCollectionCellID = @"CZImagePreviewCollectionCell
 #pragma Rotate
 - (BOOL)shouldAutorotate
 {
-    return NO;
+    return YES;
 }
 
-- (void)deviceOrientationDidChange:(NSNotification *)sender
+- (UIInterfaceOrientationMask)supportedInterfaceOrientations
 {
-    UIDeviceOrientation orientation = [UIDevice currentDevice].orientation;
-    UIInterfaceOrientation interfaceOrientation = (UIInterfaceOrientation)orientation;
-    
-    if (interfaceOrientation == UIInterfaceOrientationPortrait ||
-        interfaceOrientation == UIInterfaceOrientationLandscapeLeft ||
-        interfaceOrientation == UIInterfaceOrientationLandscapeRight)
-    {
-        [self rotate2Orientation:interfaceOrientation];
-        self.currentOrientation = orientation;
-    }
+    return UIInterfaceOrientationMaskAllButUpsideDown;
 }
 
-- (void)rotate2Orientation:(UIInterfaceOrientation)orientation
+- (void)applicationWillChangeStatusBarOrientationNotification:(NSNotification *)sender
 {
-    __weak __typeof (self) weakSelf = self;
-    NSLog(@"orientation = %ld self.currentIndex.item = %ld", orientation, self.currentIndex.item);
-    if (orientation == (UIInterfaceOrientation)self.currentOrientation) {
-        return;
-    }
-    // 保存当前indexPath
-    NSIndexPath *currentIndexPath = self.currentIndex;
-    self.indexPathBeforeRotate = currentIndexPath;
-    switch (orientation) {
-        case UIInterfaceOrientationLandscapeLeft:case UIInterfaceOrientationLandscapeRight:{
-            [self.collectionView mas_remakeConstraints:^(MASConstraintMaker *make) {
-                make.center.mas_equalTo(self.view);
-                make.width.mas_equalTo([UIScreen mainScreen].bounds.size.height);
-                make.height.mas_equalTo([UIScreen mainScreen].bounds.size.width);
-            }];
-        }
-            break;
-        case UIInterfaceOrientationPortrait:{
-            [self.collectionView mas_remakeConstraints:^(MASConstraintMaker *make) {
-                make.edges.mas_equalTo(UIEdgeInsetsZero);
-            }];
-        }
-            break;
-        default:
-            break;
-    }
-    CGAffineTransform transform = [self getTranformWithOrientation:orientation];
-    self.view.backgroundColor = UIColor.blackColor;
-    [UIView animateWithDuration:.3f animations:^{
-        weakSelf.collectionView.transform = transform;
+    self.indexPathBeforeRotate = self.currentIndex;
+}
+
+- (void)applicationDidChangeStatusBarOrientationNotification:(NSNotification *)sender
+{
+    [self.collectionView reloadSections:[NSIndexSet indexSetWithIndex:0]];
+    [self.collectionView performBatchUpdates:^{
+//        [self.collectionView reloadData];
     } completion:^(BOOL finished) {
-        weakSelf.view.backgroundColor = [UIColor clearColor];
+        [self.collectionView scrollToItemAtIndexPath:[NSIndexPath indexPathForItem:self.indexPathBeforeRotate.item inSection:0] atScrollPosition:UICollectionViewScrollPositionLeft animated:NO];
     }];
-    [self.collectionView reloadData];
-    self.needResetContentOffsetAfterRotate = YES;
-}
-
-- (void)resetContentOffsetAfterRotate
-{
-    if (!self.needResetContentOffsetAfterRotate) return;
-//    [self.collectionView setContentOffset:CGPointMake(self.collectionView.bounds.size.width * self.indexPathBeforeRotate.item, 0) animated:NO];
-    [self.collectionView scrollToItemAtIndexPath:self.indexPathBeforeRotate atScrollPosition:UICollectionViewScrollPositionLeft animated:NO];
-    self.needResetContentOffsetAfterRotate = NO;
-}
-
-- (CGAffineTransform)getTranformWithOrientation:(UIInterfaceOrientation)orientation
-{
-    //根据要进行旋转的方向来计算旋转的角度
-    if (orientation == UIInterfaceOrientationLandscapeLeft){
-        return CGAffineTransformMakeRotation(-M_PI_2);
-    }else if(orientation == UIInterfaceOrientationLandscapeRight){
-        return CGAffineTransformMakeRotation(M_PI_2);
-    }
-    return CGAffineTransformIdentity;
 }
 
 - (void)setStartDisplayCell

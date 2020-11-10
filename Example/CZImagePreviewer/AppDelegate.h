@@ -8,7 +8,7 @@
 
 @import UIKit;
 
-@interface CZImagePreviewerAppDelegate : UIResponder <UIApplicationDelegate>
+@interface AppDelegate : UIResponder <UIApplicationDelegate>
 
 @property (strong, nonatomic) UIWindow *window;
 
