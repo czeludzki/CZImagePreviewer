@@ -75,14 +75,16 @@
     return self;
 }
 
+- (void)layoutSubviews
+{
+    [super layoutSubviews];
+    [self keepCentered];
+}
+
 #pragma mark - ScrollViewDelegate
 - (void)scrollViewDidZoom:(UIScrollView *)scrollView
 {
-    CGSize scaledSize = (CGSize){floorf(self.zoomingImageView.image.size.width * scrollView.zoomScale), floorf(self.zoomingImageView.image.size.height * scrollView.zoomScale)};
-    //调整位置 使其居中
-    CGFloat top_bottom_Margin = MAX(0, floorf((CGRectGetHeight(self.zoomingScrollView.frame) - scaledSize.height) * 0.5f));
-    CGFloat left_right_Margin = MAX(0, floorf((CGRectGetWidth(self.zoomingScrollView.frame) - scaledSize.width) * 0.5f));
-    self.zoomingScrollView.contentInset = (UIEdgeInsets){top_bottom_Margin,left_right_Margin,top_bottom_Margin,left_right_Margin};
+    [self keepCentered];
 }
 
 - (UIView *)viewForZoomingInScrollView:(UIScrollView *)scrollView
@@ -125,12 +127,10 @@
     UIImageView *zoomingImageView = [[UIImageView alloc] init];
     zoomingImageView.backgroundColor = [UIColor clearColor];
     zoomingImageView.clipsToBounds = YES;   // 为了返回到容器的时候,动画更好看
-    zoomingImageView.contentMode = UIViewContentModeScaleAspectFit;
+    zoomingImageView.contentMode = UIViewContentModeScaleAspectFill;
     [self.zoomingScrollView addSubview:zoomingImageView];
     self.zoomingImageView = zoomingImageView;
-    [self.zoomingImageView mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.edges.mas_equalTo(UIEdgeInsetsZero);
-    }];
+    self.zoomingImageView.frame = self.contentView.bounds;
 }
 
 - (void)zoom2Max
@@ -154,10 +154,12 @@
         return;
     }
     UIActivityIndicatorView *ass = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleWhite];
-    [self addSubview:ass];
     [ass startAnimating];
+    [self.contentView addSubview:ass];
     self.assFlower = ass;
-    ass.center = self.center;
+    [self.assFlower mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.center.mas_equalTo(self.contentView);
+    }];
 }
 
 - (void)showWarningLabel
@@ -171,14 +173,17 @@
     warning.text = @"加载失败,请检查网络状态";
     [self addSubview:warning];
     self.noImageWaring = warning;
-    warning.center = self.center;
+    [self.noImageWaring mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.center.mas_equalTo(self.contentView);
+    }];
 }
 
 - (void)updateScrollViewConfig
 {
     CGSize imgSize = self.zoomingImageView.image.size;
-//    self.zoomingImageView.frame = CGRectMake(0, 0, self.contentView.bounds.size.width, self.contentView.bounds.size.height);
-//    self.zoomingScrollView.contentSize = imgSize;
+    self.zoomingImageView.frame = CGRectMake(0, 0, imgSize.width, imgSize.height);
+    self.zoomingScrollView.contentSize = imgSize;
+    [self.zoomingImageView sizeToFit];
 
     // 配置scrollview minZoomScale || maxZoomScale
     self.zoomingScrollView.minimumZoomScale = self.defatulScale;
@@ -186,17 +191,22 @@
     CGFloat maxZoomScale = (imgSize.height * imgSize.width) / ([UIScreen mainScreen].bounds.size.width * [UIScreen mainScreen].bounds.size.height);
     self.zoomingScrollView.maximumZoomScale = maxZoomScale > 1 ? maxZoomScale : 2;
     
-    //按照比例算出初次展示的尺寸
-    CGSize scaledSize = (CGSize){floorf(imgSize.width * self.zoomingScrollView.zoomScale), floorf(imgSize.height * self.zoomingScrollView.zoomScale)};
+    // 初始缩放系数
+    [self.zoomingScrollView setZoomScale:self.defatulScale animated:NO];
+    [self layoutIfNeeded];
+}
 
+// 通过设置 scrollView.contentInset 使 imageView 保持居中
+- (void)keepCentered
+{
+    CGSize imgSize = self.zoomingImageView.image.size;
+    //按照比例算出初次展示的尺寸
+    CGSize scaledSize = (CGSize){(imgSize.width * self.zoomingScrollView.zoomScale), (imgSize.height * self.zoomingScrollView.zoomScale)};
+    
     //调整位置 使其居中
     CGFloat top_bottom_Margin = MAX(0, floorf((CGRectGetHeight(self.zoomingScrollView.frame) - scaledSize.height) * 0.5f));
     CGFloat left_right_Margin = MAX(0, floorf((CGRectGetWidth(self.zoomingScrollView.frame) - scaledSize.width) * 0.5f));
     self.zoomingScrollView.contentInset = (UIEdgeInsets){top_bottom_Margin, left_right_Margin, top_bottom_Margin, left_right_Margin};
-    
-    // 初始缩放系数
-    [self.zoomingScrollView setZoomScale:self.defatulScale animated:NO];
-    [self layoutIfNeeded];
 }
 
 /**

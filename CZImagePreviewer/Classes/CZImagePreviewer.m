@@ -44,10 +44,6 @@ typedef NS_ENUM(NSInteger,ImagePreviewerDragDirection) {
  记录show前的屏幕方向
  */
 @property (assign, nonatomic) UIDeviceOrientation enterOrientation;
-/**
- 记录当前设备方向
- */
-@property (assign, nonatomic) UIDeviceOrientation currentOrientation;
 @end
 
 @implementation CZImagePreviewer
@@ -80,6 +76,7 @@ static NSString *CZImagePreviewCollectionCellID = @"CZImagePreviewCollectionCell
     collectionView.pagingEnabled = YES;
     collectionView.delegate = self;
     collectionView.dataSource = self;
+//    collectionView.prefetchingEnabled = NO;     // 把预加载关掉, 否则可能会遇到旋转后图片不能居中的问题
     [collectionView registerClass:[CZImagePreviewCollectionCell class] forCellWithReuseIdentifier:CZImagePreviewCollectionCellID];
     [self.view addSubview:collectionView];
     self.collectionView = collectionView;
@@ -182,9 +179,9 @@ static NSString *CZImagePreviewCollectionCellID = @"CZImagePreviewCollectionCell
 {
     __weak __typeof (self) weakSelf = self;
     CZImagePreviewCollectionCell *visibleImageView = (CZImagePreviewCollectionCell *)[self.collectionView cellForItemAtIndexPath:self.currentIndex];
-    CGPoint translationInView = [self adaptivePointWithOrientation:[sender translationInView:self.view]];
-    CGPoint velocityInView = [self adaptivePointWithOrientation:[sender velocityInView:self.view]];
-    float progress = (fabs(translationInView.y) / [UIScreen mainScreen].bounds.size.height);
+    CGPoint translationInView = [sender translationInView:self.view];
+    CGPoint velocityInView = [sender velocityInView:self.view];
+    float progress = (fabs(translationInView.y) / self.view.bounds.size.height);
     
     static CGFloat defaultZoomScale;
     static CGPoint normalCenter;
@@ -257,14 +254,14 @@ static NSString *CZImagePreviewCollectionCellID = @"CZImagePreviewCollectionCell
 - (void)showWithImageContainer:(UIView *)container currentIndex:(NSInteger)currentIndex presentedController:(UIViewController *)presentedController
 {
     __weak __typeof (self) weakSelf = self;
-    [UIApplication sharedApplication].keyWindow.windowLevel = UIWindowLevelStatusBar;
+//    [UIApplication sharedApplication].keyWindow.windowLevel = UIWindowLevelStatusBar + 1;
+    [UIApplication sharedApplication].statusBarHidden = YES;
     self.currentIndex = [NSIndexPath indexPathForItem:currentIndex inSection:0];
     // 进入时, 记录当前 statusBar 方向
     self.enterOrientation = UIDevice.currentDevice.orientation;
-    self.currentOrientation = UIDevice.currentDevice.orientation;
     UIViewController *rootViewController = [UIApplication sharedApplication].keyWindow.rootViewController;
     UIViewController *presentVC = presentedController ? presentedController : rootViewController;
-    // 如果 modalPresentationStyle = UIModalPresentationOverFullScreen 且presentVC.shouldAutorotate 返回NO 会导致此控制器不能旋转, 但是不这么设置会导致 self.view.background 设置为透明都不能看到上一级控制器
+    // 遇到了比较奇葩的问题, 如果 modalPresentationStyle = UIModalPresentationOverFullScreen 且presentVC.shouldAutorotate 返回NO 会导致此控制器不能旋转, 但是不这么设置会导致 self.view.background 设置为透明都不能看到上一级控制器
     self.modalPresentationStyle = UIModalPresentationFullScreen;
     self.modalTransitionStyle = UIModalTransitionStyleCrossDissolve;
     self.definesPresentationContext = YES;
@@ -302,9 +299,8 @@ static NSString *CZImagePreviewCollectionCellID = @"CZImagePreviewCollectionCell
 - (void)dismiss
 {
     __weak __typeof (self) weakSelf = self;
-    BOOL needRotateBack = NO;
-    
-    [UIApplication sharedApplication].keyWindow.windowLevel = UIWindowLevelNormal;
+//    [UIApplication sharedApplication].keyWindow.windowLevel = UIWindowLevelNormal;
+    [UIApplication sharedApplication].statusBarHidden = NO;
     // 获得当前显示的imageView
     __block CZImagePreviewCollectionCell *visibleImageView = (CZImagePreviewCollectionCell *)[self.collectionView cellForItemAtIndexPath:self.currentIndex];
     UIView *container = nil;
@@ -314,7 +310,8 @@ static NSString *CZImagePreviewCollectionCellID = @"CZImagePreviewCollectionCell
     CGRect containerRectOnKeyWindow = [container convertRect:container.bounds toView:[[UIApplication sharedApplication].delegate window]];
     CGRect intersectionRect = CGRectIntersection([UIScreen mainScreen].bounds, containerRectOnKeyWindow);  // 容器与window的交汇Rect
     
-    if (!needRotateBack && container && !container.hidden && container.superview && !(CGRectIsEmpty(intersectionRect) || CGRectIsNull(intersectionRect))) {   // 有容器且容器显示在屏幕上
+    UIDeviceOrientation orientation = UIDevice.currentDevice.orientation;
+    if (container && !container.hidden && container.superview && !(CGRectIsEmpty(intersectionRect) || CGRectIsNull(intersectionRect)) && orientation == self.enterOrientation) {   // 有容器且容器显示在屏幕上
         // 计算偏移量
         CGFloat final_X = 0;
         CGFloat final_Y = 0;
@@ -369,7 +366,6 @@ static NSString *CZImagePreviewCollectionCellID = @"CZImagePreviewCollectionCell
 
 - (void)applicationDidChangeStatusBarOrientationNotification:(NSNotification *)sender
 {
-//    [self.collectionView reloadSections:[NSIndexSet indexSetWithIndex:0]];
     [self.collectionView reloadData];
     [self.collectionView performBatchUpdates:^{
     } completion:^(BOOL finished) {
@@ -385,22 +381,10 @@ static NSString *CZImagePreviewCollectionCellID = @"CZImagePreviewCollectionCell
 }
 
 #pragma mark - Helper
-// 根据旋转的方向, 调整point
-- (CGPoint)adaptivePointWithOrientation:(CGPoint)point
-{
-    if ([UIApplication sharedApplication].statusBarOrientation == UIInterfaceOrientationLandscapeLeft) {
-        return CGPointMake(point.y, point.x);
-    }
-    if ([UIApplication sharedApplication].statusBarOrientation == UIInterfaceOrientationLandscapeRight) {
-        return CGPointMake(-1 * point.y, -1 * point.x);
-    }
-    return point;
-}
-
 // 获取手势的移动方向
 - (ImagePreviewerDragDirection)dragDirectionWithPanGesture:(UIPanGestureRecognizer *)panGes
 {
-    CGPoint velocityInView = [self adaptivePointWithOrientation:[panGes velocityInView:nil]];
+    CGPoint velocityInView = [panGes velocityInView:nil];
 //    NSLog(@"    velocityInView = %@\n    translationInView = %@", [NSValue valueWithCGPoint:velocityInView], [NSValue valueWithCGPoint:[panGes translationInView:nil]]);
     ImagePreviewerDragDirection direction_vertical = velocityInView.y > 0 ? ImagePreviewerDragDirection_down : ImagePreviewerDragDirection_up;
     ImagePreviewerDragDirection direction_horizontal = velocityInView.x > 0 ? ImagePreviewerDragDirection_left : ImagePreviewerDragDirection_right;
@@ -459,4 +443,3 @@ static NSString *CZImagePreviewCollectionCellID = @"CZImagePreviewCollectionCell
 }
 
 @end
-
