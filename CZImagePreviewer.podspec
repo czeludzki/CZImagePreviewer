@@ -18,7 +18,7 @@ Pod::Spec.new do |s|
   s.license          = { :type => 'MIT', :file => 'LICENSE' }
   s.author           = { 'czeludzki' => 'czeludzki@gmail.com' }
   s.platform     = :ios
-  s.ios.deployment_target = '8.0'
+  s.ios.deployment_target = '11.0'
 
   s.source       = { :git => "https://github.com/czeludzki/CZImagePreviewer.git", :tag => s.version.to_s }
   s.source_files = 'CZImagePreviewer/Classes/**/*'
