@@ -8,6 +8,7 @@
 
 #import "CZImagePreviewCollectionCell.h"
 #import "UIImageView+WebCache.h"
+#import <Masonry/Masonry.h>
 
 @interface CZImagePreviewCollectionCell ()<UIScrollViewDelegate>
 /**
@@ -22,13 +23,11 @@
 
 @implementation CZImagePreviewCollectionCell
 @synthesize zooming = _zooming;
-@synthesize defatulScale = _defatulScale;
 #pragma mark - Getter && Setter
 - (CGFloat)defatulScale
 {
     // 以 Screen.width 或者 Screen.height 最大的那个为基准
-    _defatulScale = MIN([UIScreen mainScreen].bounds.size.width / self.zoomingImageView.image.size.width, [UIScreen mainScreen].bounds.size.height / self.zoomingImageView.image.size.height);
-    return _defatulScale;
+    return MIN(self.bounds.size.width / self.zoomingImageView.image.size.width, self.bounds.size.height / self.zoomingImageView.image.size.height);
 }
 
 - (BOOL)isZooming
@@ -119,9 +118,11 @@
     [self.contentView addSubview:zoomingScrollView];
     self.zoomingScrollView = zoomingScrollView;
     zoomingScrollView.frame = self.contentView.bounds;
+    [zoomingScrollView mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.edges.mas_equalTo(self.contentView);
+    }];
     
     UIImageView *zoomingImageView = [[UIImageView alloc] init];
-    zoomingImageView.userInteractionEnabled = YES;
     zoomingImageView.backgroundColor = [UIColor clearColor];
     zoomingImageView.clipsToBounds = YES;   // 为了返回到容器的时候,动画更好看
     zoomingImageView.contentMode = UIViewContentModeScaleAspectFill;
@@ -175,12 +176,12 @@
 {
     CGSize imgSize = self.zoomingImageView.image.size;
     self.zoomingImageView.frame = CGRectMake(0, 0, imgSize.width, imgSize.height);
-    self.zoomingScrollView.contentSize = self.zoomingImageView.bounds.size;
-    
+    self.zoomingScrollView.contentSize = imgSize;
+
     // 配置scrollview minZoomScale || maxZoomScale
     self.zoomingScrollView.minimumZoomScale = self.defatulScale;
     
-    CGFloat maxZoomScale = (imgSize.height * imgSize.width) / ([UIScreen mainScreen].bounds.size.width * [UIScreen mainScreen].bounds.size.height * UIScreen.mainScreen.scale * UIScreen.mainScreen.scale);
+    CGFloat maxZoomScale = (imgSize.height * imgSize.width) / ([UIScreen mainScreen].bounds.size.width * [UIScreen mainScreen].bounds.size.height);
     self.zoomingScrollView.maximumZoomScale = maxZoomScale > 1 ? maxZoomScale : 2;
     
     //按照比例算出初次展示的尺寸

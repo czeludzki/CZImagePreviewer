@@ -1,6 +1,8 @@
 PODS:
-  - CZImagePreviewer (1.0.2):
+  - CZImagePreviewer (1.0.4):
+    - Masonry
     - SDWebImage
+  - Masonry (1.1.0)
   - SDWebImage (5.9.4):
     - SDWebImage/Core (= 5.9.4)
   - SDWebImage/Core (5.9.4)
@@ -11,6 +13,7 @@ DEPENDENCIES:
 
 SPEC REPOS:
   trunk:
+    - Masonry
     - SDWebImage
 
 EXTERNAL SOURCES:
@@ -18,9 +21,10 @@ EXTERNAL SOURCES:
     :path: "../"
 
 SPEC CHECKSUMS:
-  CZImagePreviewer: a84634bc7f96f1dcc906f5d72996ef9f798f3103
+  CZImagePreviewer: 6df9c4c2ecd6e1dd0bdc807dfc5753f67274327a
+  Masonry: 678fab65091a9290e40e2832a55e7ab731aad201
   SDWebImage: b69257f4ab14e9b6a2ef53e910fdf914d8f757c1
 
 PODFILE CHECKSUM: cd58e6724a687e282ff8f77b18c9b8340159e800
 
-COCOAPODS: 1.10.0
+COCOAPODS: 1.9.3

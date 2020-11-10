@@ -21,7 +21,6 @@
 {
     if (!_imagePaths) {
         NSArray *a = @[
-                        @"https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1494951072412&di=a4f0333c47f236cf2fc43eda23ac188b&imgtype=0&src=http%3A%2F%2Fwww.tupianzj.com%2Fuploads%2FBizhi%2Fqc126_19201.jpg",
                         @"https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1494951121134&di=c7316d9e304be9ab6723a4e412d506ee&imgtype=0&src=http%3A%2F%2Fn.sinaimg.cn%2Fsinacn%2F20161229%2Fb5d9-fxzencv2120554.jpeg",
                         @"https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1494951141310&di=16e1b5be6eb0e000c92aae6da144cfad&imgtype=0&src=http%3A%2F%2Fcar0.autoimg.cn%2Fupload%2F2014%2F6%2F13%2F201406132124130794322.jpg",
                         @"https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1494951155680&di=7ec1c26c5b5c9290f4106750a1b10e43&imgtype=0&src=http%3A%2F%2Fimg.pconline.com.cn%2Fimages%2Fupload%2Fupc%2Ftx%2Fwallpaper%2F1212%2F06%2Fc2%2F16397554_1354787416906_800x600.jpg",
