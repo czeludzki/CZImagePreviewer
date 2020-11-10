@@ -364,14 +364,14 @@ static NSString *CZImagePreviewCollectionCellID = @"CZImagePreviewCollectionCell
 
 - (void)applicationWillChangeStatusBarOrientationNotification:(NSNotification *)sender
 {
-    self.indexPathBeforeRotate = self.currentIndex;
+    self.indexPathBeforeRotate = [NSIndexPath indexPathForItem:self.currentIndex.item inSection:0];
 }
 
 - (void)applicationDidChangeStatusBarOrientationNotification:(NSNotification *)sender
 {
-    [self.collectionView reloadSections:[NSIndexSet indexSetWithIndex:0]];
+//    [self.collectionView reloadSections:[NSIndexSet indexSetWithIndex:0]];
+    [self.collectionView reloadData];
     [self.collectionView performBatchUpdates:^{
-//        [self.collectionView reloadData];
     } completion:^(BOOL finished) {
         [self.collectionView scrollToItemAtIndexPath:[NSIndexPath indexPathForItem:self.indexPathBeforeRotate.item inSection:0] atScrollPosition:UICollectionViewScrollPositionLeft animated:NO];
     }];

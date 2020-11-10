@@ -119,16 +119,18 @@
     self.zoomingScrollView = zoomingScrollView;
     zoomingScrollView.frame = self.contentView.bounds;
     [zoomingScrollView mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.edges.mas_equalTo(self.contentView);
+        make.edges.mas_equalTo(UIEdgeInsetsZero);
     }];
     
     UIImageView *zoomingImageView = [[UIImageView alloc] init];
     zoomingImageView.backgroundColor = [UIColor clearColor];
     zoomingImageView.clipsToBounds = YES;   // 为了返回到容器的时候,动画更好看
-    zoomingImageView.contentMode = UIViewContentModeScaleAspectFill;
-    [zoomingScrollView addSubview:zoomingImageView];
+    zoomingImageView.contentMode = UIViewContentModeScaleAspectFit;
+    [self.zoomingScrollView addSubview:zoomingImageView];
     self.zoomingImageView = zoomingImageView;
-    zoomingImageView.frame = self.contentView.bounds;
+    [self.zoomingImageView mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.edges.mas_equalTo(UIEdgeInsetsZero);
+    }];
 }
 
 - (void)zoom2Max
@@ -175,8 +177,8 @@
 - (void)updateScrollViewConfig
 {
     CGSize imgSize = self.zoomingImageView.image.size;
-    self.zoomingImageView.frame = CGRectMake(0, 0, imgSize.width, imgSize.height);
-    self.zoomingScrollView.contentSize = imgSize;
+//    self.zoomingImageView.frame = CGRectMake(0, 0, self.contentView.bounds.size.width, self.contentView.bounds.size.height);
+//    self.zoomingScrollView.contentSize = imgSize;
 
     // 配置scrollview minZoomScale || maxZoomScale
     self.zoomingScrollView.minimumZoomScale = self.defatulScale;
@@ -194,6 +196,7 @@
     
     // 初始缩放系数
     [self.zoomingScrollView setZoomScale:self.defatulScale animated:NO];
+    [self layoutIfNeeded];
 }
 
 /**
