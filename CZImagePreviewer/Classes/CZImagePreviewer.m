@@ -74,13 +74,12 @@ static NSString *CZImagePreviewCollectionCellID = @"CZImagePreviewCollectionCell
     }
     
     collectionView.pagingEnabled = YES;
+    collectionView.prefetchingEnabled = NO;     // 把预加载关掉, 否则可能会遇到旋转后图片不能居中的问题
     collectionView.delegate = self;
     collectionView.dataSource = self;
-//    collectionView.prefetchingEnabled = NO;     // 把预加载关掉, 否则可能会遇到旋转后图片不能居中的问题
     [collectionView registerClass:[CZImagePreviewCollectionCell class] forCellWithReuseIdentifier:CZImagePreviewCollectionCellID];
     [self.view addSubview:collectionView];
     self.collectionView = collectionView;
-    collectionView.frame = self.view.bounds;
     [collectionView mas_makeConstraints:^(MASConstraintMaker *make) {
         make.edges.mas_equalTo(UIEdgeInsetsZero);
     }];
@@ -145,6 +144,7 @@ static NSString *CZImagePreviewCollectionCellID = @"CZImagePreviewCollectionCell
     CZImagePreviewCollectionCell *imageView = [collectionView dequeueReusableCellWithReuseIdentifier:CZImagePreviewCollectionCellID forIndexPath:indexPath];
     imageView.item = [self itemAtIndex:indexPath.item];
     imageView.delegate = self;
+    imageView.idx = indexPath.item;
     return imageView;
 }
 
@@ -254,7 +254,6 @@ static NSString *CZImagePreviewCollectionCellID = @"CZImagePreviewCollectionCell
 - (void)showWithImageContainer:(UIView *)container currentIndex:(NSInteger)currentIndex presentedController:(UIViewController *)presentedController
 {
     __weak __typeof (self) weakSelf = self;
-//    [UIApplication sharedApplication].keyWindow.windowLevel = UIWindowLevelStatusBar + 1;
     [UIApplication sharedApplication].statusBarHidden = YES;
     self.currentIndex = [NSIndexPath indexPathForItem:currentIndex inSection:0];
     // 进入时, 记录当前 statusBar 方向
@@ -262,10 +261,9 @@ static NSString *CZImagePreviewCollectionCellID = @"CZImagePreviewCollectionCell
     UIViewController *rootViewController = [UIApplication sharedApplication].keyWindow.rootViewController;
     UIViewController *presentVC = presentedController ? presentedController : rootViewController;
     // 遇到了比较奇葩的问题, 如果 modalPresentationStyle = UIModalPresentationOverFullScreen 且presentVC.shouldAutorotate 返回NO 会导致此控制器不能旋转, 但是不这么设置会导致 self.view.background 设置为透明都不能看到上一级控制器
-    self.modalPresentationStyle = UIModalPresentationFullScreen;
+    // 如果是 UIModalPresentationCustom, 怎不会出现上述两种情况, 可以保持透明且能够旋转, 但是旋转会使上一级控制器跟着转, 这是系统bug
+    self.modalPresentationStyle = UIModalPresentationCustom;
     self.modalTransitionStyle = UIModalTransitionStyleCrossDissolve;
-    self.definesPresentationContext = YES;
-    presentVC.definesPresentationContext = YES;
     self.collectionView.backgroundColor = [UIColor clearColor];
     self.view.backgroundColor = [UIColor clearColor];
     self.view.alpha = 0;
@@ -299,7 +297,6 @@ static NSString *CZImagePreviewCollectionCellID = @"CZImagePreviewCollectionCell
 - (void)dismiss
 {
     __weak __typeof (self) weakSelf = self;
-//    [UIApplication sharedApplication].keyWindow.windowLevel = UIWindowLevelNormal;
     [UIApplication sharedApplication].statusBarHidden = NO;
     // 获得当前显示的imageView
     __block CZImagePreviewCollectionCell *visibleImageView = (CZImagePreviewCollectionCell *)[self.collectionView cellForItemAtIndexPath:self.currentIndex];
@@ -366,10 +363,11 @@ static NSString *CZImagePreviewCollectionCellID = @"CZImagePreviewCollectionCell
 
 - (void)applicationDidChangeStatusBarOrientationNotification:(NSNotification *)sender
 {
+    NSLog(@"applicationDidChangeStatusBarOrientationNotification");
     [self.collectionView reloadData];
     [self.collectionView performBatchUpdates:^{
     } completion:^(BOOL finished) {
-        [self.collectionView scrollToItemAtIndexPath:[NSIndexPath indexPathForItem:self.indexPathBeforeRotate.item inSection:0] atScrollPosition:UICollectionViewScrollPositionLeft animated:NO];
+        [self.collectionView scrollToItemAtIndexPath:[NSIndexPath indexPathForItem:self.indexPathBeforeRotate.item inSection:0] atScrollPosition:UICollectionViewScrollPositionCenteredHorizontally animated:NO];
     }];
 }
 
