@@ -262,7 +262,7 @@ static NSString *CZImagePreviewCollectionCellID = @"CZImagePreviewCollectionCell
     UIViewController *presentVC = presentedController ? presentedController : rootViewController;
     // 遇到了比较奇葩的问题, 如果 modalPresentationStyle = UIModalPresentationOverFullScreen 且presentVC.shouldAutorotate 返回NO 会导致此控制器不能旋转, 但是不这么设置会导致 self.view.background 设置为透明都不能看到上一级控制器
     // 如果是 UIModalPresentationCustom, 怎不会出现上述两种情况, 可以保持透明且能够旋转, 但是旋转会使上一级控制器跟着转, 这是系统bug
-    self.modalPresentationStyle = UIModalPresentationCustom;
+    self.modalPresentationStyle = UIModalPresentationFullScreen;
     self.modalTransitionStyle = UIModalTransitionStyleCrossDissolve;
     self.collectionView.backgroundColor = [UIColor clearColor];
     self.view.backgroundColor = [UIColor clearColor];
