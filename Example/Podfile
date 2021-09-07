@@ -1,11 +1,13 @@
 use_frameworks!
 
+platform :ios, '9.0'
+
 target 'CZImagePreviewer_Example' do
   pod 'CZImagePreviewer', :path => '../'
-  pod 'SDWebImage'
-  
+
   target 'CZImagePreviewer_Tests' do
     inherit! :search_paths
+
     
   end
 end
