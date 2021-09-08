@@ -65,10 +65,25 @@ extension ViewController: UICollectionViewDataSource, UICollectionViewDelegateFl
         return cell
     }
     
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        let previewer = CZImagePreviewer.init()
+        previewer.delegate = self
+        previewer.dataSource = self
+        self.present(previewer, animated: true, completion: nil)
+    }
+    
 }
 
-//class AAA: ImageSourceProtocol {
-//    func loadImage(progress: @escaping LoadImageProgress, completion: @escaping LoadImageCompletion) {
-//        "".loadImage(progress: progress, completion: completion)
-//    }
-//}
+extension ViewController: CZImagePreviewerDelegate {
+
+}
+
+extension ViewController: CZImagePreviewerDataSource {
+    func numberOfItems(in imagePreviewer: CZImagePreviewer) -> Int {
+        self.imagePaths.count
+    }
+    
+    func imagePreviewer<ImageResource: ImageResourceProtocol>(_ imagePreviewer: CZImagePreviewer, atIndex index: Int) -> ImageResource? {
+        self.imagePaths[index] as? ImageResource
+    }
+}

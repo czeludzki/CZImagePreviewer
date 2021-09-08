@@ -6,20 +6,24 @@
 //
 
 import UIKit
+import SnapKit
 
-public class CZImagePreviewer<T>: UIViewController {
+public class CZImagePreviewer: UIViewController {
     
-    var delegate: CZImagePreviewerDelegate?
-    typealias ImageResource = T
-    var dataSource: CZImagePreviewerDataSource?
+    public var delegate: CZImagePreviewerDelegate?
+    public var dataSource: CZImagePreviewerDataSource?
     
     public override func viewDidLoad() {
         super.viewDidLoad()
-
-        // Do any additional setup after loading the view.
+    }
+    
+    public func display(fromImageContainer container: UIView?, current index: Int = 0, presented controller: UIViewController?) {
+        
     }
     
     public func reloadData() {
         
     }
+    
+    
 }

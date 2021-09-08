@@ -26,7 +26,7 @@ import SDWebImage
  */
 
 // 定义协议, 规定 CZImagePreviewerDataSource 数据源代理方法返回的泛型支持此协议
-public protocol ImageResourceProtocol: ImgSourceNamespaceProtocol {
+public protocol ImageResourceProtocol {
     
     /// 加载进度
     typealias LoadImageProgress = (Int, Int, URL?) -> ()
@@ -51,13 +51,14 @@ extension ImgSourceNamespaceWrapper: ImageResourceProtocol {
 
 extension String: ImgSourceNamespaceWrappable {}
 /// 约束结构体 ImgSourceNamespaceWrapper 的 泛型WrappedValueType 为 String, 指定当 泛型WrappedValueType 为 String 时调用的方法
-extension ImgSourceNamespaceWrapper where T == String {
+extension ImgSourceNamespaceWrapper where WrappedValueType == String {
     
     public func toURL() -> URL? {
         return URL(string: self.wrappedValue)
     }
     
     public func loadImage(progress: LoadImageProgress?, completion: LoadImageCompletion?) {
+        print("String 调用 loadImage(progress: LoadImageProgress?, completion: LoadImageCompletion?)")
         let completion = completion ?? {(_: UIImage?, _: Data?, _: Error?, SDImageCacheType, Bool, _: URL?) -> () in }
         SDWebImageManager.shared.loadImage(with: self.toURL(), options: .retryFailed, progress: progress, completed: completion)
     }
@@ -66,6 +67,8 @@ extension ImgSourceNamespaceWrapper where T == String {
 extension URL: ImgSourceNamespaceWrappable {}
 extension ImgSourceNamespaceWrapper where WrappedValueType == URL {
     public func loadImage(progress: LoadImageProgress?, completion: LoadImageCompletion?) {
+        print("URL 调用 loadImage(progress: LoadImageProgress?, completion: LoadImageCompletion?)")
+
         let completion = completion ?? {(_: UIImage?, _: Data?, _: Error?, SDImageCacheType, Bool, _: URL?) -> () in }
         SDWebImageManager.shared.loadImage(with: self.wrappedValue, options: .retryFailed, progress: progress, completed: completion)
     }
@@ -74,6 +77,8 @@ extension ImgSourceNamespaceWrapper where WrappedValueType == URL {
 extension UIImage: ImgSourceNamespaceWrappable {}
 extension ImgSourceNamespaceWrapper where WrappedValueType == UIImage {
     public func loadImage(progress: LoadImageProgress?, completion: LoadImageCompletion?) {
+        print("UIImage 调用 loadImage(progress: LoadImageProgress?, completion: LoadImageCompletion?)")
+
         let imgSize: Int = Int(self.wrappedValue.size.height * self.wrappedValue.size.width)
         if let progress = progress {
             progress(imgSize, imgSize, nil)
