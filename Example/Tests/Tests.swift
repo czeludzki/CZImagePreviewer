@@ -1,5 +1,5 @@
 import XCTest
-import CZImagePreviewer
+import Pods_CZImagePreviewer_Example
 
 class Tests: XCTestCase {
     

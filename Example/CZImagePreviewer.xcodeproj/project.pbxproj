@@ -9,10 +9,7 @@
 /* Begin PBXBuildFile section */
 		041CFC05EF53DDDE8287F5D4 /* Pods_CZImagePreviewer_Example.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 63A0A4BC96B72D27732E67A9 /* Pods_CZImagePreviewer_Example.framework */; };
 		1962DA3B691B8BF08BE7242D /* Pods_CZImagePreviewer_Tests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 98B7A2824F2AE11C46EA6751 /* Pods_CZImagePreviewer_Tests.framework */; };
-		43FEEBB326E7C2D900E2350D /* CZImagePreviewerTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 43FEEBAC26E7C2D800E2350D /* CZImagePreviewerTableViewCell.m */; };
-		43FEEBB426E7C2D900E2350D /* ImageCollectionViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 43FEEBB026E7C2D800E2350D /* ImageCollectionViewCell.m */; };
-		43FEEBB526E7C2D900E2350D /* CZImagePreviewerTableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 43FEEBB126E7C2D900E2350D /* CZImagePreviewerTableViewController.m */; };
-		43FEEBB626E7C2D900E2350D /* ImagePreviewDemoController.m in Sources */ = {isa = PBXBuildFile; fileRef = 43FEEBB226E7C2D900E2350D /* ImagePreviewDemoController.m */; };
+		2A4BF85026E853D6001D7759 /* ImageCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A4BF84F26E853D6001D7759 /* ImageCollectionViewCell.swift */; };
 		43FEEBBB26E7C37900E2350D /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 43FEEBB926E7C37900E2350D /* Main.storyboard */; };
 		607FACD61AFB9204008FA782 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 607FACD51AFB9204008FA782 /* AppDelegate.swift */; };
 		607FACD81AFB9204008FA782 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 607FACD71AFB9204008FA782 /* ViewController.swift */; };
@@ -32,17 +29,10 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		2A4BF84F26E853D6001D7759 /* ImageCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageCollectionViewCell.swift; sourceTree = "<group>"; };
 		2B6B452F1563A486151A7FDF /* CZImagePreviewer.podspec */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; name = CZImagePreviewer.podspec; path = ../CZImagePreviewer.podspec; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.ruby; };
 		3BFEFA685F9F34B66A8A38C1 /* LICENSE */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; name = LICENSE; path = ../LICENSE; sourceTree = "<group>"; };
 		43FEEBAA26E7C2D700E2350D /* CZImagePreviewer_Example-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "CZImagePreviewer_Example-Bridging-Header.h"; sourceTree = "<group>"; };
-		43FEEBAB26E7C2D800E2350D /* ImagePreviewDemoController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ImagePreviewDemoController.h; sourceTree = "<group>"; };
-		43FEEBAC26E7C2D800E2350D /* CZImagePreviewerTableViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CZImagePreviewerTableViewCell.m; sourceTree = "<group>"; };
-		43FEEBAD26E7C2D800E2350D /* CZImagePreviewerTableViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CZImagePreviewerTableViewCell.h; sourceTree = "<group>"; };
-		43FEEBAE26E7C2D800E2350D /* ImageCollectionViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ImageCollectionViewCell.h; sourceTree = "<group>"; };
-		43FEEBAF26E7C2D800E2350D /* CZImagePreviewerTableViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CZImagePreviewerTableViewController.h; sourceTree = "<group>"; };
-		43FEEBB026E7C2D800E2350D /* ImageCollectionViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ImageCollectionViewCell.m; sourceTree = "<group>"; };
-		43FEEBB126E7C2D900E2350D /* CZImagePreviewerTableViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CZImagePreviewerTableViewController.m; sourceTree = "<group>"; };
-		43FEEBB226E7C2D900E2350D /* ImagePreviewDemoController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ImagePreviewDemoController.m; sourceTree = "<group>"; };
 		43FEEBBA26E7C37900E2350D /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		607FACD01AFB9204008FA782 /* CZImagePreviewer_Example.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = CZImagePreviewer_Example.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		607FACD41AFB9204008FA782 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -108,14 +98,7 @@
 			children = (
 				607FACD51AFB9204008FA782 /* AppDelegate.swift */,
 				607FACD71AFB9204008FA782 /* ViewController.swift */,
-				43FEEBAD26E7C2D800E2350D /* CZImagePreviewerTableViewCell.h */,
-				43FEEBAC26E7C2D800E2350D /* CZImagePreviewerTableViewCell.m */,
-				43FEEBAF26E7C2D800E2350D /* CZImagePreviewerTableViewController.h */,
-				43FEEBB126E7C2D900E2350D /* CZImagePreviewerTableViewController.m */,
-				43FEEBAE26E7C2D800E2350D /* ImageCollectionViewCell.h */,
-				43FEEBB026E7C2D800E2350D /* ImageCollectionViewCell.m */,
-				43FEEBAB26E7C2D800E2350D /* ImagePreviewDemoController.h */,
-				43FEEBB226E7C2D900E2350D /* ImagePreviewDemoController.m */,
+				2A4BF84F26E853D6001D7759 /* ImageCollectionViewCell.swift */,
 				43FEEBB926E7C37900E2350D /* Main.storyboard */,
 				607FACDC1AFB9204008FA782 /* Images.xcassets */,
 				607FACDE1AFB9204008FA782 /* LaunchScreen.xib */,
@@ -234,7 +217,7 @@
 				TargetAttributes = {
 					607FACCF1AFB9204008FA782 = {
 						CreatedOnToolsVersion = 6.3.1;
-						DevelopmentTeam = UDUPE3BL4W;
+						DevelopmentTeam = 5YG2N89PSR;
 						LastSwiftMigration = 1250;
 					};
 					607FACE41AFB9204008FA782 = {
@@ -357,11 +340,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				43FEEBB326E7C2D900E2350D /* CZImagePreviewerTableViewCell.m in Sources */,
 				607FACD81AFB9204008FA782 /* ViewController.swift in Sources */,
-				43FEEBB426E7C2D900E2350D /* ImageCollectionViewCell.m in Sources */,
-				43FEEBB626E7C2D900E2350D /* ImagePreviewDemoController.m in Sources */,
-				43FEEBB526E7C2D900E2350D /* CZImagePreviewerTableViewController.m in Sources */,
+				2A4BF85026E853D6001D7759 /* ImageCollectionViewCell.swift in Sources */,
 				607FACD61AFB9204008FA782 /* AppDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -509,7 +489,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
-				DEVELOPMENT_TEAM = UDUPE3BL4W;
+				DEVELOPMENT_TEAM = 5YG2N89PSR;
 				INFOPLIST_FILE = CZImagePreviewer/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				MODULE_NAME = ExampleApp;
@@ -528,7 +508,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
-				DEVELOPMENT_TEAM = UDUPE3BL4W;
+				DEVELOPMENT_TEAM = 5YG2N89PSR;
 				INFOPLIST_FILE = CZImagePreviewer/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				MODULE_NAME = ExampleApp;
