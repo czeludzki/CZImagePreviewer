@@ -56,6 +56,7 @@
 		2A4BF84926E84ED2001D7759 /* CZImagePreviewer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A4BF84826E84ED2001D7759 /* CZImagePreviewer.swift */; };
 		2A4BF85226E88EE6001D7759 /* CZImagePreviewNamespace.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A4BF85126E88EE6001D7759 /* CZImagePreviewNamespace.swift */; };
 		2A4BF85626E8B6CB001D7759 /* CZImageResourceProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A4BF85526E8B6CB001D7759 /* CZImageResourceProtocol.swift */; };
+		2A4BF85826E9AB96001D7759 /* CZImagePreviewerCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A4BF85726E9AB96001D7759 /* CZImagePreviewerCollectionViewCell.swift */; };
 		2AD5B30DA9D32E5BA24F88B6CD6756BC /* ConstraintMakerEditable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E3FEA217B25169EE510A476D78A0F8A /* ConstraintMakerEditable.swift */; };
 		2C7F68721EB9FA1213FA0103830113E3 /* SDDiskCache.h in Headers */ = {isa = PBXBuildFile; fileRef = EEB4E393DECCC967C0E65C2D480D95C8 /* SDDiskCache.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		2EC488FEB14B7F28CA11AB5ADE308A5E /* SDDisplayLink.h in Headers */ = {isa = PBXBuildFile; fileRef = D5C6EF74FE9A05AC8768F8435E6AF6EC /* SDDisplayLink.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -295,6 +296,7 @@
 		2A4BF84826E84ED2001D7759 /* CZImagePreviewer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = CZImagePreviewer.swift; path = CZImagePreviewer/Classes/CZImagePreviewer.swift; sourceTree = "<group>"; };
 		2A4BF85126E88EE6001D7759 /* CZImagePreviewNamespace.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = CZImagePreviewNamespace.swift; path = CZImagePreviewer/Classes/CZImagePreviewNamespace.swift; sourceTree = "<group>"; };
 		2A4BF85526E8B6CB001D7759 /* CZImageResourceProtocol.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = CZImageResourceProtocol.swift; path = CZImagePreviewer/Classes/CZImageResourceProtocol.swift; sourceTree = "<group>"; };
+		2A4BF85726E9AB96001D7759 /* CZImagePreviewerCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = CZImagePreviewerCollectionViewCell.swift; path = CZImagePreviewer/Classes/CZImagePreviewerCollectionViewCell.swift; sourceTree = "<group>"; };
 		2B14DED4633976CB9AE9893BF48DD2BD /* SDWebImageDownloader.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = SDWebImageDownloader.m; path = SDWebImage/Core/SDWebImageDownloader.m; sourceTree = "<group>"; };
 		2D81976779ED481CF9D9050CAB6E1E8F /* UIImage+ExtendedCacheData.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = "UIImage+ExtendedCacheData.m"; path = "SDWebImage/Core/UIImage+ExtendedCacheData.m"; sourceTree = "<group>"; };
 		300E30BE469523F944915CF85B63E142 /* Pods-CZImagePreviewer_Example-Info.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = "Pods-CZImagePreviewer_Example-Info.plist"; sourceTree = "<group>"; };
@@ -828,6 +830,7 @@
 				2A4BF85526E8B6CB001D7759 /* CZImageResourceProtocol.swift */,
 				2A4BF85126E88EE6001D7759 /* CZImagePreviewNamespace.swift */,
 				2A4BF84826E84ED2001D7759 /* CZImagePreviewer.swift */,
+				2A4BF85726E9AB96001D7759 /* CZImagePreviewerCollectionViewCell.swift */,
 				5EACD748FF7118306EDF27A1F72213FD /* Pod */,
 				AA77555925655F950458EFE5FD3F1C03 /* Support Files */,
 			);
@@ -1202,6 +1205,7 @@
 				041EF80A1E7C28FEE19DE9BAE6EB491D /* Pods-CZImagePreviewer_Example-dummy.m in Sources */,
 				2A4BF85626E8B6CB001D7759 /* CZImageResourceProtocol.swift in Sources */,
 				2A4BF85226E88EE6001D7759 /* CZImagePreviewNamespace.swift in Sources */,
+				2A4BF85826E9AB96001D7759 /* CZImagePreviewerCollectionViewCell.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

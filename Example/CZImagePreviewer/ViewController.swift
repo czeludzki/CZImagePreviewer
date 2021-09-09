@@ -69,7 +69,7 @@ extension ViewController: UICollectionViewDataSource, UICollectionViewDelegateFl
         let previewer = CZImagePreviewer.init()
         previewer.delegate = self
         previewer.dataSource = self
-        self.present(previewer, animated: true, completion: nil)
+        previewer.display(fromImageContainer: nil, current: indexPath.item, presented: self)
     }
     
 }
@@ -83,7 +83,7 @@ extension ViewController: CZImagePreviewerDataSource {
         self.imagePaths.count
     }
     
-    func imagePreviewer<ImageResource: ImageResourceProtocol>(_ imagePreviewer: CZImagePreviewer, atIndex index: Int) -> ImageResource? {
-        self.imagePaths[index] as? ImageResource
+    func imagePreviewer(_ imagePreviewer: CZImagePreviewer, atIndex index: Int) -> ImageResourceProtocol? {
+        self.imagePaths[index].asImgRes
     }
 }
