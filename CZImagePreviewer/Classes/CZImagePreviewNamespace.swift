@@ -13,8 +13,14 @@
 import Foundation
 import UIKit
 
+public protocol ImgSourceNamespaceProtocol {
+    associatedtype WrappedValueType
+    var wrappedValue: WrappedValueType { get }
+    init(wrappedValue: WrappedValueType)
+}
+
 /// 定义一个命名空间结构体, 该结构体有名为 wrappedValue 的属性, 该属性指向被包装对象
-public class ImgSourceNamespaceWrapper<WrappedValueType> {
+public struct ImgSourceNamespaceWrapper<WrappedValueType>: ImgSourceNamespaceProtocol {
     public let wrappedValue: WrappedValueType
     public init(wrappedValue: WrappedValueType) {
         self.wrappedValue = wrappedValue

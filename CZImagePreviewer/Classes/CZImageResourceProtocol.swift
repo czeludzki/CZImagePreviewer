@@ -21,6 +21,12 @@ public protocol ImageResourceProtocol {
     func loadImage(progress: LoadImageProgress?, completion: LoadImageCompletion?)
 }
 
+extension ImageResourceProtocol {
+    public func loadImage(progress: LoadImageProgress?, completion: LoadImageCompletion?) {
+        
+    }
+}
+
 /// 使 结构体ImgSourceNamespaceWrapper 遵循 ImageResourceProtocol 协议, 以便 下面的 String, URL, UIImage 的实例可以通过 .szt 命名空间(属性) 调用 ImageResourceProtocol 协议的方法
 extension ImgSourceNamespaceWrapper: ImageResourceProtocol {
     // 默认实现中不做操作

@@ -18,17 +18,14 @@ class CZImagePreviewerCollectionViewCell: UICollectionViewCell {
     var imageResource: ImageResourceProtocol? {
         didSet {
             if let res = imageResource as? ImgSourceNamespaceWrapper<String> {
-                print(res)
+                
             }
-            imageResource.flatMap { res in
-                print(res)
-                res.loadImage(progress: { receivedSize, expectedSize, targetURL in
-                    print(receivedSize, expectedSize, targetURL)
-                }, completion: { [weak self] image, data, error, cacheType, finish, targetURL in
-                    print(image)
-                    self?.imageView.image = image
-                })
-            }
+            imageResource?.loadImage(progress: { receivedSize, expectedSize, targetURL in
+                print(receivedSize, expectedSize, targetURL)
+            }, completion: { [weak self] image, data, error, cacheType, finish, targetURL in
+                print(image)
+                self?.imageView.image = image
+            })
         }
     }
     
