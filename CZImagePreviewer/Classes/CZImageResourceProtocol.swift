@@ -60,7 +60,7 @@ extension ImgSourceNamespaceWrapper where WrappedValueType == URL {
 }
 
 extension UIImage: ImgSourceNamespaceWrappable {}
-extension ImgSourceNamespaceWrapper where WrappedValueType == UIImage {
+extension ImgSourceNamespaceWrapper where WrappedValueType : UIImage {
     public func loadImage(progress: LoadImageProgress?, completion: LoadImageCompletion?) {
         print("UIImage 调用 loadImage(progress: LoadImageProgress?, completion: LoadImageCompletion?)")
 

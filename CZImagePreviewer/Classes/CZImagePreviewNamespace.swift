@@ -14,7 +14,7 @@ import Foundation
 import UIKit
 
 /// 定义一个命名空间结构体, 该结构体有名为 wrappedValue 的属性, 该属性指向被包装对象
-public struct ImgSourceNamespaceWrapper<WrappedValueType: ImgSourceNamespaceWrappable> {
+public class ImgSourceNamespaceWrapper<WrappedValueType> {
     public let wrappedValue: WrappedValueType
     public init(wrappedValue: WrappedValueType) {
         self.wrappedValue = wrappedValue
@@ -22,12 +22,12 @@ public struct ImgSourceNamespaceWrapper<WrappedValueType: ImgSourceNamespaceWrap
 }
 
 public protocol ImgSourceNamespaceWrappable {
-    associatedtype WrappedValueType: ImgSourceNamespaceWrappable
+    associatedtype WrappedValueType
     var asImgRes: ImgSourceNamespaceWrapper<WrappedValueType> { get }
 }
 
 extension ImgSourceNamespaceWrappable {
     public var asImgRes: ImgSourceNamespaceWrapper<Self> {
-        return ImgSourceNamespaceWrapper.init(wrappedValue: self)
+        return ImgSourceNamespaceWrapper<Self>.init(wrappedValue: self)
     }
 }
