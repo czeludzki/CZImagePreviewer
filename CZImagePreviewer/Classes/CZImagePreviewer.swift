@@ -11,7 +11,7 @@ import SnapKit
 public class CZImagePreviewer: UIViewController {
     
     public weak var delegate: CZImagePreviewerDelegate?
-    public weak var dataSource: CZImagePreviewerDataSource?
+    public var dataSource: CZImagePreviewerDataSource?
     
     public var currentIdx = 0
     

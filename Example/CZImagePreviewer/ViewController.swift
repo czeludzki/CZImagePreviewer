@@ -79,11 +79,13 @@ extension ViewController: CZImagePreviewerDelegate {
 }
 
 extension ViewController: CZImagePreviewerDataSource {
+    func imagePreviewer(_ imagePreviewer: CZImagePreviewer, atIndex index: Int) -> ImageResourceProtocol? {
+        let res = self.imagePaths[index].asImgRes
+        return res
+    }
+    
     func numberOfItems(in imagePreviewer: CZImagePreviewer) -> Int {
         self.imagePaths.count
     }
     
-    func imagePreviewer(_ imagePreviewer: CZImagePreviewer, atIndex index: Int) -> ImageResourceProtocol? {
-        self.imagePaths[index].asImgRes
-    }
 }

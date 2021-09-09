@@ -21,7 +21,6 @@ public protocol CZImagePreviewerDataSource: AnyObject {
     /// 向 dataSource 获取数据量
     func numberOfItems(in imagePreviewer: CZImagePreviewer) -> Int
     
-//    typealias ImageResource = Any & ImageResourceProtocol
     /// 数据源方法
     /// 返回值类型默认可以是 String, URL, UIImage, 或者是任何自定义遵循了 ImageResourceProtocol 协议的类型, 具体操作见 CZImageSourceProtocol.swift
     func imagePreviewer(_ imagePreviewer: CZImagePreviewer, atIndex index: Int) -> ImageResourceProtocol?
