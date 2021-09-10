@@ -105,7 +105,7 @@ extension PreviewerCellViewModel {
     }
     
     /// 计算图片以 UIViewContentModeScaleAspectFit 显示在 imageView 上的大小
-    static func imageFitingSizeOnScreen(imgSize: CGSize) -> CGSize {
+    func imageFitingSizeOnScreen(imgSize: CGSize) -> CGSize {
         let mainScreenSize = UIScreen.main.bounds.size
         let widthRaito = mainScreenSize.width / imgSize.width
         let heightRaito = mainScreenSize.height / imgSize.height
@@ -118,11 +118,11 @@ extension PreviewerCellViewModel {
     /// 更新 zoomingScroll 的配置
     func updateScrollViewConfiguration() {
         let screenSize = UIScreen.main.bounds.size
-        let imgSize = self.cell.imageView.image?.size ?? CGSize.zero
+        let imgSize = self.cell.imageView.image?.size ?? screenSize
         self.cell.zoomingScrollView.contentSize = imgSize
         
         // 不缩放的情况下, 图片在屏幕上的大小
-        let imageFitingSizeInScreen = Self.imageFitingSizeOnScreen(imgSize: imgSize)
+        let imageFitingSizeInScreen = self.imageFitingSizeOnScreen(imgSize: imgSize)
         
         self.cell.imageView.frame = CGRect.init(origin: CGPoint.zero, size: CGSize.init(width: imageFitingSizeInScreen.width, height: imageFitingSizeInScreen.height))
         self.cell.imageView.center = CGPoint.init(x: screenSize.width * 0.5, y: screenSize.height * 0.5)

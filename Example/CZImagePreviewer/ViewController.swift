@@ -12,7 +12,6 @@ import Pods_CZImagePreviewer_Example
 class ViewController: UIViewController {
     
     @IBOutlet weak var collectionView: UICollectionView!
-    
     lazy var imagePaths = [
         "https://gimg2.baidu.com/image_search/src=http%3A%2F%2Fdesk.fd.zol-img.com.cn%2Fg5%2FM00%2F03%2F00%2FChMkJ1bK-nSIS40cAAEuXdS6ma4AALLAAM-v7QAAS51610.jpg&refer=http%3A%2F%2Fdesk.fd.zol-img.com.cn&app=2002&size=f9999,10000&q=a80&n=0&g=0n&fmt=jpeg?sec=1633608077&t=f8163c3b266a263733642ca2bc73fdb0",
         "https://gimg2.baidu.com/image_search/src=http%3A%2F%2Fbbsfiles.vivo.com.cn%2Fvivobbs%2Fattachment%2Fforum%2F201804%2F01%2F185440g88mz4em7i47yzuj.jpg&refer=http%3A%2F%2Fbbsfiles.vivo.com.cn&app=2002&size=f9999,10000&q=a80&n=0&g=0n&fmt=jpeg?sec=1633608077&t=bf33f51101179b09a10c104a9132c80b",

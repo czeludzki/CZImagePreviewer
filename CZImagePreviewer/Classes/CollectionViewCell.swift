@@ -40,7 +40,6 @@ class CollectionViewCell: UICollectionViewCell {
         super.init(frame: frame)
         self.clipsToBounds = true
         self.contentView.addSubview(self.zoomingScrollView)
-        self.contentView.backgroundColor = .red
         self.zoomingScrollView.snp.makeConstraints { $0.edges.equalToSuperview() }
         self.zoomingScrollView.addSubview(self.imageView)
     }
