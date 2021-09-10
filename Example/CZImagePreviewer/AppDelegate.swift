@@ -19,6 +19,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         "https://baidu.com".asImgRes.loadImage(progress: nil, completion: nil)
         let url = URL.init(string: "https://www.baidu.com")
         url?.asImgRes.loadImage(progress: nil, completion: nil)
+        
         return true
     }
 

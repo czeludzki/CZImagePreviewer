@@ -14,9 +14,9 @@ class ViewController: UIViewController {
     @IBOutlet weak var collectionView: UICollectionView!
     
     lazy var imagePaths = [
+        "https://gimg2.baidu.com/image_search/src=http%3A%2F%2Fdesk.fd.zol-img.com.cn%2Fg5%2FM00%2F03%2F00%2FChMkJ1bK-nSIS40cAAEuXdS6ma4AALLAAM-v7QAAS51610.jpg&refer=http%3A%2F%2Fdesk.fd.zol-img.com.cn&app=2002&size=f9999,10000&q=a80&n=0&g=0n&fmt=jpeg?sec=1633608077&t=f8163c3b266a263733642ca2bc73fdb0",
         "https://gimg2.baidu.com/image_search/src=http%3A%2F%2Fbbsfiles.vivo.com.cn%2Fvivobbs%2Fattachment%2Fforum%2F201804%2F01%2F185440g88mz4em7i47yzuj.jpg&refer=http%3A%2F%2Fbbsfiles.vivo.com.cn&app=2002&size=f9999,10000&q=a80&n=0&g=0n&fmt=jpeg?sec=1633608077&t=bf33f51101179b09a10c104a9132c80b",
                            "https://gimg2.baidu.com/image_search/src=http%3A%2F%2Fattach.bbs.miui.com%2Fforum%2F201501%2F22%2F171814y11r8r254hw77148.jpg&refer=http%3A%2F%2Fattach.bbs.miui.com&app=2002&size=f9999,10000&q=a80&n=0&g=0n&fmt=jpeg?sec=1633608077&t=72ce6e5aa851536e25281dae205e63ec",
-                           "https://gimg2.baidu.com/image_search/src=http%3A%2F%2Fdesk.fd.zol-img.com.cn%2Fg5%2FM00%2F03%2F00%2FChMkJ1bK-nSIS40cAAEuXdS6ma4AALLAAM-v7QAAS51610.jpg&refer=http%3A%2F%2Fdesk.fd.zol-img.com.cn&app=2002&size=f9999,10000&q=a80&n=0&g=0n&fmt=jpeg?sec=1633608077&t=f8163c3b266a263733642ca2bc73fdb0",
                            "https://gimg2.baidu.com/image_search/src=http%3A%2F%2Fimg.taopic.com%2Fuploads%2Fallimg%2F110202%2F292-11020203332568.jpg&refer=http%3A%2F%2Fimg.taopic.com&app=2002&size=f9999,10000&q=a80&n=0&g=0n&fmt=jpeg?sec=1633608077&t=0929baf0277cbd650a1fb4a819e601d8",
                            "https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1494951183795&di=52c6e463b923dd14bb2e17d233fc2a85&imgtype=0&src=http%3A%2F%2Fattach.bbs.letv.com%2Fforum%2F201606%2F25%2F162403ipzartlyzqht3q2t.jpg",
                            "https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1494951199349&di=c908322c95435feb41d9338c04c9acea&imgtype=0&src=http%3A%2F%2Fpic.t139.com%2Fpicture%2F201510%2Fb_561ccc4ca81d8.jpg",
@@ -74,18 +74,23 @@ extension ViewController: UICollectionViewDataSource, UICollectionViewDelegateFl
     
 }
 
-extension ViewController: CZImagePreviewerDelegate {
+extension ViewController: PreviewerDelegate {
 
 }
 
-extension ViewController: CZImagePreviewerDataSource {
-    func imagePreviewer(_ imagePreviewer: CZImagePreviewer, atIndex index: Int) -> ImageResourceProtocol? {
-        let res = self.imagePaths[index].asImgRes
-        return res
-    }
+extension ViewController: PreviewerDataSource {
     
     func numberOfItems(in imagePreviewer: CZImagePreviewer) -> Int {
         self.imagePaths.count
     }
     
+    func imagePreviewer(_ imagePreviewer: CZImagePreviewer, imageResourceForItemAtIndex index: Int) -> ResourceProtocol? {
+        let res = self.imagePaths[index].asImgRes
+        return res
+    }
+    
+    func imagePreviewer(_ imagePreviewer: CZImagePreviewer, consoleForItemAtIndex index: Int, resourceLoadingState: CZImagePreviewer.ImageLoadingState) -> UIView? {
+        print("loading state = \(resourceLoadingState)")
+        return nil
+    }
 }

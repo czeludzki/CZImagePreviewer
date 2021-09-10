@@ -9,8 +9,7 @@ import UIKit
 import SDWebImage
 
 // 定义协议, 规定 CZImagePreviewerDataSource 数据源代理方法返回的泛型支持此协议
-public protocol ImageResourceProtocol {
-    
+public protocol ResourceProtocol {
     /// 加载进度
     typealias LoadImageProgress = (Int, Int, URL?) -> ()
     /// 完成
@@ -21,8 +20,8 @@ public protocol ImageResourceProtocol {
     func loadImage(progress: LoadImageProgress?, completion: LoadImageCompletion?)
 }
 
-/// 使 结构体ImgSourceNamespaceWrapper 遵循 ImageResourceProtocol 协议, 以便 下面的 String, URL, UIImage 的实例可以通过 .szt 命名空间(属性) 调用 ImageResourceProtocol 协议的方法
-extension ImgSourceNamespaceWrapper: ImageResourceProtocol {
+/// 使 结构体ImgSourceNamespaceWrapper 遵循 ResourceProtocol 协议, 以便 下面的 String, URL, UIImage 的实例可以通过 .szt 命名空间(属性) 调用 ResourceProtocol 协议的方法
+extension ImgSourceNamespaceWrapper: ResourceProtocol {
     // 默认实现中不做操作
     public func loadImage(progress: LoadImageProgress?, completion: LoadImageCompletion?) {
         print("public func loadImage(progress: LoadImageProgress?, completion: LoadImageCompletion?)")
