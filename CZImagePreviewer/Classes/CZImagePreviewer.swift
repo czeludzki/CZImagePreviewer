@@ -61,8 +61,7 @@ public class CZImagePreviewer: UIViewController {
     
     convenience init() {
         self.init(nibName: nil, bundle: nil)
-        self.modalPresentationStyle = .fullScreen
-        self.modalTransitionStyle = .crossDissolve
+        self.modalPresentationStyle = .custom
         self.transitioningDelegate = self
     }
     
@@ -137,8 +136,7 @@ extension CZImagePreviewer {
         
         let windowScene = UIApplication.shared.connectedScenes.first as! UIWindowScene
         let presentingController = controller ?? windowScene.windows.first!.rootViewController
-        presentingController?.transitioningDelegate = self
-        presentingController?.present(self, animated: false, completion: nil)
+        presentingController?.present(self, animated: true, completion: nil)
         
     }
     
@@ -147,7 +145,7 @@ extension CZImagePreviewer {
     }
     
     public func reloadData() {
-        
+        self.collectionView.reloadData()
     }
     
 }
@@ -223,7 +221,7 @@ extension CZImagePreviewer {
     }
 }
 
-/// MARK: UIViewControllerTransitioningDelegate
+// MARK: UIViewControllerTransitioningDelegate
 extension CZImagePreviewer: UIViewControllerTransitioningDelegate {
     public func animationController(forPresented presented: UIViewController, presenting: UIViewController, source: UIViewController) -> UIViewControllerAnimatedTransitioning? {
         let presentTrans = AnimatedTransitioning(transitionFor: .present)
@@ -236,3 +234,11 @@ extension CZImagePreviewer: UIViewControllerTransitioningDelegate {
     }
 }
 
+// MARK: UIViewControllerAnimatedTransitioning
+extension CZImagePreviewer: AnimatedTransitioningContentProvider {
+    // 提供一个视图, 作为转场动画发生时的动画元素
+    var viewForAnimatedTransitioning: UIView {
+        let cell = self.collectionView(self.collectionView, cellForItemAt: IndexPath(item: self.currentIdx, section: 0)) as! CollectionViewCell
+        return cell.imageView
+    }
+}

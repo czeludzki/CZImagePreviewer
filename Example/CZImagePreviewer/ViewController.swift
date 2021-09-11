@@ -68,7 +68,7 @@ extension ViewController: UICollectionViewDataSource, UICollectionViewDelegateFl
         let previewer = CZImagePreviewer.init()
         previewer.delegate = self
         previewer.dataSource = self
-        previewer.display(fromImageContainer: nil, current: indexPath.item, presented: self)
+        previewer.display(fromImageContainer: nil, current: indexPath.item, presented: nil)
     }
     
 }
