@@ -63,6 +63,7 @@ public class CZImagePreviewer: UIViewController {
         self.init(nibName: nil, bundle: nil)
         self.modalPresentationStyle = .fullScreen
         self.modalTransitionStyle = .crossDissolve
+        self.transitioningDelegate = self
     }
     
     required init?(coder: NSCoder) {
@@ -96,6 +97,7 @@ public class CZImagePreviewer: UIViewController {
     
     public override var prefersStatusBarHidden: Bool { true }
     
+    // 屏幕旋转事件发生时触发
     public override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
         let mark_idx = self.currentIdx
         self.collectionView.performBatchUpdates {
@@ -201,9 +203,7 @@ extension CZImagePreviewer: PreviewerCellViewModelDelegate {
 extension CZImagePreviewer {
     func scroll2Item(at index: Int, animated: Bool) {
         let x = CGFloat(index) * self.view.bounds.size.width + CGFloat(index) * self.spacingBetweenItem
-        print(x, self.view.bounds.size.width)
         self.collectionView.setContentOffset(CGPoint(x: x, y: 0), animated: animated)
-//        self.collectionView.scrollToItem(at: IndexPath.init(item: index, section: 0), at: .left, animated: false)
     }
     
     // 在对比了微信的图片浏览后, 发现微信的图片浏览器在屏幕旋转事件发生时, 微信为了旋转动画的流畅, 会在顶层覆盖一个独立的 Image 视图展示旋转, 旋转完成后再将其移除
@@ -213,17 +213,25 @@ extension CZImagePreviewer {
             self.rotateAnimationImageView.isHidden = false
             self.rotateAnimationImageView.image = image
             self.collectionView.isHidden = true
-            // 动画完成后, 恢复原来的显示
-            DispatchQueue.main.asyncAfter(deadline: .now() + coordinator.transitionDuration) {
-                self.collectionView.isHidden = false
-                self.rotateAnimationImageView.isHidden = true
-            }
+        }
+        // 旋转动画完成后, 恢复原来的显示
+        coordinator.animate(alongsideTransition: nil) { transitionCoordinatorContext in
+            self.collectionView.isHidden = false
+            self.rotateAnimationImageView.isHidden = true
         }
     }
 }
 
 /// MARK: UIViewControllerTransitioningDelegate
 extension CZImagePreviewer: UIViewControllerTransitioningDelegate {
+    public func animationController(forPresented presented: UIViewController, presenting: UIViewController, source: UIViewController) -> UIViewControllerAnimatedTransitioning? {
+        let presentTrans = AnimatedTransitioning(transitionFor: .present)
+        return presentTrans
+    }
     
+    public func animationController(forDismissed dismissed: UIViewController) -> UIViewControllerAnimatedTransitioning? {
+        let dismissTrans = AnimatedTransitioning(transitionFor: .dismiss)
+        return dismissTrans
+    }
 }
 
