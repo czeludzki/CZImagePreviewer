@@ -110,9 +110,9 @@ extension CZImagePreviewer {
         self.currentIdx = index
         
         let windowScene = UIApplication.shared.connectedScenes.first as! UIWindowScene
-        let controller = controller ?? windowScene.windows.first!.rootViewController
-        controller?.present(self, animated: false, completion: nil)
-        
+        let presentingController = controller ?? windowScene.windows.first!.rootViewController
+        presentingController?.transitioningDelegate = self
+        presentingController?.present(self, animated: false, completion: nil)
         
     }
     
