@@ -68,13 +68,16 @@ extension ViewController: UICollectionViewDataSource, UICollectionViewDelegateFl
         let previewer = CZImagePreviewer.init()
         previewer.delegate = self
         previewer.dataSource = self
-        previewer.display(fromImageContainer: nil, current: indexPath.item, presented: nil)
+        let cell = self.collectionView.cellForItem(at: indexPath)
+        previewer.display(fromImageContainer: cell, current: indexPath.item)
     }
     
 }
 
 extension ViewController: PreviewerDelegate {
-
+    func imagePreviewer(_ imagePreviewer: CZImagePreviewer, willDismissWithIndex index: Int) -> UIView? {
+        self.collectionView.cellForItem(at: IndexPath(item: index, section: 0))
+    }
 }
 
 extension ViewController: PreviewerDataSource {
@@ -88,8 +91,17 @@ extension ViewController: PreviewerDataSource {
         return res
     }
     
-    func imagePreviewer(_ imagePreviewer: CZImagePreviewer, consoleForItemAtIndex index: Int, resourceLoadingState: CZImagePreviewer.ImageLoadingState) -> UIView? {
-        print("loading state = \(resourceLoadingState)")
-        return nil
+    func imagePreviewer(_ imagePreviewer: CZImagePreviewer, accessoryViewForCellAtIndex index: Int, resourceLoadingState: CZImagePreviewer.ImageLoadingState) -> UIView? {
+        let view = UIView(frame: .zero)
+        let centerView = UILabel(frame: .zero)
+        centerView.text = String(index)
+        centerView.backgroundColor = .red
+        view.addSubview(centerView)
+        centerView.snp.makeConstraints { make in
+            make.center.equalToSuperview()
+            make.size.equalTo(CGSize(width: 44, height: 44))
+        }
+        return view
     }
+
 }

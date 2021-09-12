@@ -24,7 +24,27 @@ public protocol ResourceProtocol {
 extension ImgSourceNamespaceWrapper: ResourceProtocol {
     // 默认实现中不做操作
     public func loadImage(progress: LoadImageProgress?, completion: LoadImageCompletion?) {
-        print("public func loadImage(progress: LoadImageProgress?, completion: LoadImageCompletion?)")
+        print("ImgSourceNamespaceWrapper: loadImage(progress: LoadImageProgress?, completion: LoadImageCompletion?)")
+        
+        /// 不知道为什么在类型不明确的情况下(仅知道当前是 ResourceProtocols 类型, 不是 ImgSourceNamespaceWrapper<String> 类型), 不能直接调用 imageResource?.loadImage() 方法
+        /// 直接调用的结果是, 总会走到这个默认实现,
+        /// 而不是 extension ImgSourceNamespaceWrapper where WrappedValueType == String 指定 String 的实现
+        /// 除非像下面做的, 对 ResourceProtocol 进行转型, 编译器才会调用到正确的函数, 也就是走 extension ImgSourceNamespaceWrapper where WrappedValueType == String 指定的实现
+        
+        if let res = self as? ImgSourceNamespaceWrapper<String> {
+            res.loadImage(progress: progress, completion: completion)
+            return
+        }
+        
+        if let res = self as? ImgSourceNamespaceWrapper<URL> {
+            res.loadImage(progress: progress, completion: completion)
+            return
+        }
+        
+        if let res = self as? ImgSourceNamespaceWrapper<UIImage> {
+            res.loadImage(progress: progress, completion: completion)
+            return
+        }
     }
 }
 
@@ -60,6 +80,7 @@ extension ImgSourceNamespaceWrapper where WrappedValueType == URL {
 
 extension UIImage: ImgSourceNamespaceWrappable {}
 extension ImgSourceNamespaceWrapper where WrappedValueType : UIImage {
+    
     public func loadImage(progress: LoadImageProgress?, completion: LoadImageCompletion?) {
         print("UIImage 调用 loadImage(progress: LoadImageProgress?, completion: LoadImageCompletion?)")
 
@@ -71,21 +92,25 @@ extension ImgSourceNamespaceWrapper where WrappedValueType : UIImage {
             completion(self.wrappedValue, self.wrappedValue.sd_imageData(), nil, .none, true, nil)
         }
     }
+    
+    /// 计算图片以 UIViewContentModeScaleAspectFit mode 显示在某个 size 上的实际大小
+    func scaleAspectFiting(toSize: CGSize) -> CGSize {
+        let imgSize = self.wrappedValue.size
+        let widthRaito = toSize.width / imgSize.width
+        let heightRaito = toSize.height / imgSize.height
+        let scale = min(widthRaito, heightRaito)
+        let fitingWidth = scale * imgSize.width
+        let fitingHeight = scale * imgSize.height
+        return CGSize.init(width: fitingWidth, height: fitingHeight)
+    }
 }
 
 /*
- 除了 String, URL, UIImage 三种类型可作为数据源返回之外, 你也可以定义自己的数据源类型, 具体为下面两种做法
- 1.直接将自定义的类型遵循 ImageResourceProtocol 协议
+ 除了 String, URL, UIImage 三种类型可作为数据源返回之外, 你也可以定义自己的数据源类型:
+ 
+ // 直接将自定义的类型遵循 ImageResourceProtocol 协议
  struct Your_Resource: ImageResourceProtocol {
     // 在此实现 ImageResourceProtocol协议 所需的方法
- }
- 
- 2.通过命名空间 .szt 访问 ImageResourceProtocol 协议方法
- struct Your_Resource {}
- extension Your_Resource: ImgSourceNamespaceWrappable {}
- extension ImgSourceNamespaceWrapper where WrappedValueType == Your_Resource {
-    // 在此实现 ImageResourceProtocol协议 所需的方法
-    self.wrappedValue 就是 Your_Resource实例, 具体可参考下面 String, URL, UIImage 的做法
  }
  
  */

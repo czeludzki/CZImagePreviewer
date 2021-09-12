@@ -16,9 +16,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
         // Override point for customization after application launch.
         
-        "https://baidu.com".asImgRes.loadImage(progress: nil, completion: nil)
-        let url = URL.init(string: "https://www.baidu.com")
-        url?.asImgRes.loadImage(progress: nil, completion: nil)
+//        "https://baidu.com".asImgRes.loadImage(progress: nil, completion: nil)
+//        let url = URL.init(string: "https://www.baidu.com")
+//        url?.asImgRes.loadImage(progress: nil, completion: nil)
         
         return true
     }

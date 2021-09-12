@@ -29,6 +29,20 @@ class PreviewerCellViewModel: NSObject {     // 继承自 NSObject 是因为此�
     // delegate
     weak var delegate: PreviewerCellViewModelDelegate?
     
+    // 从 dataSource 取得的辅助视图, 在 didset 后, 加入到 cell.contentView 
+    weak var accessoryView: UIView? {
+        willSet {
+            accessoryView?.removeFromSuperview()
+            guard let accessoryView = newValue else {
+                return
+            }
+            cell.contentView.addSubview(accessoryView)
+            accessoryView.snp.makeConstraints { make in
+                make.edges.equalToSuperview()
+            }
+        }
+    }
+    
     init(cell: CollectionViewCell) {
         self.cell = cell
         super.init()
@@ -43,27 +57,6 @@ class PreviewerCellViewModel: NSObject {     // 继承自 NSObject 是因为此�
     
     var resource: ResourceProtocol? {
         didSet {
-            
-            /// 不知道为什么不能直接调用 imageResource?.loadImage() 方法
-            /// 直接调用的结果是, 总会走到 extension ImgSourceNamespaceWrapper: ImageResourceProtocol 的默认实现中去,
-            /// 而不是 extension ImgSourceNamespaceWrapper where WrappedValueType == String 指定 String 的实现
-            /// 除非像下面做的, 对 imageResource 进行转型, 编译器才会调用到正确的函数, 也就是走 extension ImgSourceNamespaceWrapper where WrappedValueType == String 指定的实现
-            
-            if let res = resource as? ImgSourceNamespaceWrapper<String> {
-                res.loadImage(progress: self.progress(receivedSize:expectedSize:targetURL:), completion: completion(image:data:error:cacheType:finish:targetURL:))
-                return
-            }
-            
-            if let res = resource as? ImgSourceNamespaceWrapper<URL> {
-                res.loadImage(progress: self.progress(receivedSize:expectedSize:targetURL:), completion: completion(image:data:error:cacheType:finish:targetURL:))
-                return
-            }
-            
-            if let res = resource as? ImgSourceNamespaceWrapper<UIImage> {
-                res.loadImage(progress: self.progress(receivedSize:expectedSize:targetURL:), completion: completion(image:data:error:cacheType:finish:targetURL:))
-                return
-            }
-            
             resource?.loadImage(progress: self.progress(receivedSize:expectedSize:targetURL:), completion: completion(image:data:error:cacheType:finish:targetURL:))
         }
     }
@@ -86,33 +79,26 @@ extension PreviewerCellViewModel {
     
     // 图片加载进度闭包
     func progress(receivedSize: Int, expectedSize: Int, targetURL: URL?) {
-        self.delegate?.collectionCellViewModel(self, idx: self.idx, resourceLoadingStateDidChanged: .loading(receivedSize: receivedSize, expectedSize: expectedSize))
+        DispatchQueue.main.async {
+            self.delegate?.collectionCellViewModel(self, idx: self.idx, resourceLoadingStateDidChanged: .loading(receivedSize: receivedSize, expectedSize: expectedSize))
+        }
     }
     
     // 图片加载结果
     func completion(image: UIImage?, data: Data?, error: Error?, cacheType: SDImageCacheType, finish: Bool, targetURL: URL?) {
-        self.cell.imageView.image = image
-        self.updateScrollViewConfiguration()
-        if let _ = error {
-            self.delegate?.collectionCellViewModel(self, idx: self.idx, resourceLoadingStateDidChanged: .loadingFaiure)
-            return
+        DispatchQueue.main.async {
+            self.cell.imageView.image = image
+            self.updateScrollViewConfiguration()
+            if let _ = error {
+                self.delegate?.collectionCellViewModel(self, idx: self.idx, resourceLoadingStateDidChanged: .loadingFaiure)
+                return
+            }
+            if !finish {
+                self.delegate?.collectionCellViewModel(self, idx: self.idx, resourceLoadingStateDidChanged: .processing)
+                return
+            }
+            self.delegate?.collectionCellViewModel(self, idx: self.idx, resourceLoadingStateDidChanged: .default)
         }
-        if !finish {
-            self.delegate?.collectionCellViewModel(self, idx: self.idx, resourceLoadingStateDidChanged: .processing)
-            return
-        }
-        self.delegate?.collectionCellViewModel(self, idx: self.idx, resourceLoadingStateDidChanged: .default)
-    }
-    
-    /// 计算图片以 UIViewContentModeScaleAspectFit 显示在 imageView 上的大小
-    func imageFitingSizeOnScreen(imgSize: CGSize) -> CGSize {
-        let mainScreenSize = UIScreen.main.bounds.size
-        let widthRaito = mainScreenSize.width / imgSize.width
-        let heightRaito = mainScreenSize.height / imgSize.height
-        let scale = min(widthRaito, heightRaito)
-        let fitingWidth = scale * imgSize.width
-        let fitingHeight = scale * imgSize.height
-        return CGSize.init(width: fitingWidth, height: fitingHeight)
     }
     
     /// 更新 zoomingScroll 的配置
@@ -122,7 +108,7 @@ extension PreviewerCellViewModel {
         self.cell.zoomingScrollView.contentSize = imgSize
         
         // 不缩放的情况下, 图片在屏幕上的大小
-        let imageFitingSizeInScreen = self.imageFitingSizeOnScreen(imgSize: imgSize)
+        let imageFitingSizeInScreen: CGSize = self.cell.imageView.image?.asImgRes.scaleAspectFiting(toSize: screenSize) ?? screenSize
         
         self.cell.imageView.frame = CGRect.init(origin: CGPoint.zero, size: CGSize.init(width: imageFitingSizeInScreen.width, height: imageFitingSizeInScreen.height))
         self.cell.imageView.center = CGPoint.init(x: screenSize.width * 0.5, y: screenSize.height * 0.5)
