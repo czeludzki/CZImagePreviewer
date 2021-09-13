@@ -34,6 +34,8 @@ open class CZImagePreviewer: UIViewController {
     lazy private var animatedTransitioning_display: AnimatedTransitioning = AnimatedTransitioning(transitionFor: .present)
     /// dismiss 转场动画处理
     lazy private var animatedTransitioning_dismiss: AnimatedTransitioning = AnimatedTransitioning(transitionFor: .dismiss)
+    /// dismiss 转场手势百分比控制
+    private var dismissInteractiveTranstion: UIPercentDrivenInteractiveTransition?
     /// 记录图片弹出的容器, 用于展示时的动画
     private weak var imageTriggerContainer: UIView?
     
@@ -65,6 +67,11 @@ open class CZImagePreviewer: UIViewController {
         return tap
     }()
     
+    private lazy var pan: UIPanGestureRecognizer = {
+        let pan = UIPanGestureRecognizer.init(target: self, action: #selector(panOnView(sender:)))
+        return pan
+    }()
+    
     private override init(nibName nibNameOrNil: String?, bundle nibBundleOrNil: Bundle?) {
         super.init(nibName: nibNameOrNil, bundle: nibBundleOrNil)
     }
@@ -94,6 +101,7 @@ open class CZImagePreviewer: UIViewController {
         }
         
         self.view.addGestureRecognizer(self.tap)
+        self.view.addGestureRecognizer(self.pan)
     }
     
     var didSetInitialIdx = false
@@ -124,6 +132,28 @@ open class CZImagePreviewer: UIViewController {
 extension CZImagePreviewer {
     @objc func tapOnView(sender: UITapGestureRecognizer) {
         self.dismiss()
+    }
+    
+    @objc func panOnView(sender: UIPanGestureRecognizer) {
+        // 百分比
+        var process = sender.translation(in: self.view).y / self.view.bounds.size.height
+        process = min(1.0, max(0, process))
+        
+        switch sender.state {
+        case .began:
+            self.dismissInteractiveTranstion = UIPercentDrivenInteractiveTransition()
+            self.dismiss()
+        case .changed:
+            self.dismissInteractiveTranstion?.update(process)
+        case .ended, .cancelled:
+            if process > 0.5 {
+                self.dismissInteractiveTranstion?.finish()
+            }else{
+                self.dismissInteractiveTranstion?.cancel()
+            }
+        default:
+            break
+        }
     }
 }
 
@@ -167,15 +197,12 @@ extension CZImagePreviewer {
     
 }
 
-// MARK: ScrollViewDelegate
-extension CZImagePreviewer: UIScrollViewDelegate {
+// MARK: ScrollViewDelegate, CollectionViewDelegate, CollectionViewDataSource, UICollectionViewDataSourcePrefetching
+extension CZImagePreviewer: UICollectionViewDelegateFlowLayout, UICollectionViewDataSource, UICollectionViewDataSourcePrefetching {
+    
     public func scrollViewDidScroll(_ scrollView: UIScrollView) {
         self.currentIdx = Int((scrollView.contentOffset.x + scrollView.bounds.size.width * 0.5) / scrollView.bounds.size.width)
     }
-}
-
-// MARK: CollectionViewDelegate, CollectionViewDataSource, UICollectionViewDataSourcePrefetching
-extension CZImagePreviewer: UICollectionViewDelegateFlowLayout, UICollectionViewDataSource, UICollectionViewDataSourcePrefetching {
     
     public func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         return self.dataSource?.numberOfItems(in: self) ?? 0
@@ -317,24 +344,29 @@ extension CZImagePreviewer: UIViewControllerTransitioningDelegate {
     public func animationController(forDismissed dismissed: UIViewController) -> UIViewControllerAnimatedTransitioning? {
         self.animatedTransitioning_dismiss
     }
+    
+    public func interactionControllerForDismissal(using animator: UIViewControllerAnimatedTransitioning) -> UIViewControllerInteractiveTransitioning? {
+        self.dismissInteractiveTranstion
+    }
 }
 
 // MARK: UIViewControllerAnimatedTransitioning
 extension CZImagePreviewer: AnimatedTransitioningContentProvider {
     
     // 提供一个视图, 作为展示时的转场动画发生时的动画元素
-    func transitioningElementForDisplay(animatedTransitioning: AnimatedTransitioning) -> ElementForTransition {
+    func transitioningElementForDisplay(animatedTransitioning: AnimatedTransitioning) -> ElementForDisplayTransition {
         let imgRes = self.dataSource?.imagePreviewer(self, imageResourceForItemAtIndex: self.currentIdx)
-        return ElementForTransition(self.imageTriggerContainer, imgRes)
+        return ElementForDisplayTransition(self.imageTriggerContainer, imgRes)
     }
     
-    func transitioningElementForDismiss(animatedTransitioning: AnimatedTransitioning) -> UIView? {
+    func transitioningElementForDismiss(animatedTransitioning: AnimatedTransitioning) -> ElementForDismissTransition {
         guard let cell = self.collectionView.cellForItem(at: IndexPath(item: self.currentIdx, section: 0)) as? CollectionViewCell else {
-            return nil
+            return (nil, nil)
         }
-        let view = self.delegate?.imagePreviewer(self, willDismissWithCellViewModel: cell.cellModel)
-        return view
+        guard let container = self.delegate?.imagePreviewer(self, willDismissWithCellViewModel: cell.cellModel) else {
+            return (nil, nil)
+        }
+        return ElementForDismissTransition(container, cell.imageView)
     }
-    
 
 }

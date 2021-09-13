@@ -12,10 +12,12 @@ import SDWebImage
 protocol AnimatedTransitioningContentProvider: UIViewController {
 
     /// 要求取得展示时的转场关键元素
-    typealias ElementForTransition = (container: UIView?, resource: ResourceProtocol?)
+    typealias ElementForDisplayTransition = (container: UIView?, resource: ResourceProtocol?)
+    func transitioningElementForDisplay(animatedTransitioning: AnimatedTransitioning) -> ElementForDisplayTransition
     
-    func transitioningElementForDisplay(animatedTransitioning: AnimatedTransitioning) -> ElementForTransition
-    func transitioningElementForDismiss(animatedTransitioning: AnimatedTransitioning) -> UIView?
+    /// 要求取得消失时的转场关键元素
+    typealias ElementForDismissTransition = (container: UIView?, animationActor: UIView?)
+    func transitioningElementForDismiss(animatedTransitioning: AnimatedTransitioning) -> ElementForDismissTransition
 }
 
 class AnimatedTransitioning: NSObject, UIViewControllerAnimatedTransitioning {
@@ -103,8 +105,8 @@ class AnimatedTransitioning: NSObject, UIViewControllerAnimatedTransitioning {
               let toVC = transitionContext.viewController(forKey: .to),
               let fromView = transitionContext.view(forKey: .from),
               let fromVC = transitionContext.viewController(forKey: .from) as? AnimatedTransitioningContentProvider,
-              let back2Container = fromVC.transitioningElementForDismiss(animatedTransitioning: self),
-              let animationElement = fromView.snapshotView(afterScreenUpdates: true)
+              let back2Container = fromVC.transitioningElementForDismiss(animatedTransitioning: self).container,  // 动画要返回到哪个容器, 主要是为了得到其在 keywindow 上的相对定位
+              let animationActor = fromVC.transitioningElementForDismiss(animatedTransitioning: self).animationActor  // 动画要素
         else {
             transitionContext.completeTransition(!transitionContext.transitionWasCancelled)
             return
@@ -113,13 +115,14 @@ class AnimatedTransitioning: NSObject, UIViewControllerAnimatedTransitioning {
         fromView.isHidden = true
         // 计算 back2Container 在屏幕中的位置
         let targetFrame = back2Container.convert(back2Container.bounds, to: keyWindow)
-        transitionContext.containerView.addSubview(animationElement)
-        animationElement.frame = transitionContext.containerView.bounds
+        transitionContext.containerView.addSubview(animationActor)
+        animationActor.center = transitionContext.containerView.center
         
         UIView.animate(withDuration: self.transitionDuration(using: transitionContext)) {
-            animationElement.frame = targetFrame
+            animationActor.frame = targetFrame
+            transitionContext.containerView.backgroundColor = .clear
         } completion: { finish in
-            animationElement.removeFromSuperview()
+            animationActor.removeFromSuperview()
             transitionContext.completeTransition(!transitionContext.transitionWasCancelled)
         }
         
