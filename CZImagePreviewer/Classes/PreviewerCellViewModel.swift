@@ -20,10 +20,10 @@ struct PreviewerCellItem {
 }
 
 /// 此类会被 CZImagePreviewerCollectionViewCell 懒加载生成, 专门处理 视图 与 PreviewerCellItem 之间的通讯
-class PreviewerCellViewModel: NSObject {     // 继承自 NSObject 是因为此类需要遵循 ScrollViewDelegate 协议
+public class PreviewerCellViewModel: NSObject {     // 继承自 NSObject 是因为此类需要遵循 ScrollViewDelegate 协议
     
     // 记录当前索引
-    private var idx = 0
+    public var idx = 0
     // 弱引用 CZImagePreviewerCollectionViewCell 实例
     unowned var cell: CollectionViewCell
     // delegate
@@ -65,11 +65,11 @@ class PreviewerCellViewModel: NSObject {     // 继承自 NSObject 是因为此�
 
 // MARK: ScrollViewDelegate
 extension PreviewerCellViewModel: UIScrollViewDelegate {
-    func viewForZooming(in scrollView: UIScrollView) -> UIView? {
+    public func viewForZooming(in scrollView: UIScrollView) -> UIView? {
         return self.cell.imageView
     }
     
-    func scrollViewDidZoom(_ scrollView: UIScrollView) {
+    public func scrollViewDidZoom(_ scrollView: UIScrollView) {
         self.keepCentral()
     }
 }

@@ -7,7 +7,6 @@
 
 import UIKit
 import SnapKit
-import SDWebImage
 
 open class CZImagePreviewer: UIViewController {
     
@@ -208,9 +207,10 @@ extension CZImagePreviewer: UICollectionViewDelegateFlowLayout, UICollectionView
 extension CZImagePreviewer: PreviewerCellViewModelDelegate {
     // CellModel 负责下载图片, 下载图片进度反馈
     func collectionCellViewModel(_ viewModel: PreviewerCellViewModel, idx: Int, resourceLoadingStateDidChanged state: ImageLoadingState) {
-        guard let accessoryView = self.dataSource?.imagePreviewer(self, accessoryViewForCellAtIndex: idx, resourceLoadingState: state) else {
+        guard let accessoryView = self.dataSource?.imagePreviewer(self, accessoryViewForCellWith: viewModel, resourceLoadingState: state) else {
             return
         }
+        accessoryView.tag = 0
         // 加入辅助视图到 Cell View Model
         viewModel.accessoryView = accessoryView
     }
@@ -298,7 +298,12 @@ extension CZImagePreviewer {
         // 先移除
         self.cus_console?.removeFromSuperview()
         // 再添加
+        console.tag = 1
         self.view.addSubview(console)
+        self.cus_console = console
+        console.snp.makeConstraints { make in
+            make.edges.equalToSuperview()
+        }
     }
     
 }
@@ -316,14 +321,19 @@ extension CZImagePreviewer: UIViewControllerTransitioningDelegate {
 
 // MARK: UIViewControllerAnimatedTransitioning
 extension CZImagePreviewer: AnimatedTransitioningContentProvider {
+    
     // 提供一个视图, 作为展示时的转场动画发生时的动画元素
-    func transitioningElementForDisplay(animatedTransitioning: AnimatedTransitioning) -> ElementForDisplayTransition {
+    func transitioningElementForDisplay(animatedTransitioning: AnimatedTransitioning) -> ElementForTransition {
         let imgRes = self.dataSource?.imagePreviewer(self, imageResourceForItemAtIndex: self.currentIdx)
-        return ElementForDisplayTransition(self.imageTriggerContainer, imgRes)
+        return ElementForTransition(self.imageTriggerContainer, imgRes)
     }
     
     func transitioningElementForDismiss(animatedTransitioning: AnimatedTransitioning) -> UIView? {
-        self.delegate?.imagePreviewer(self, willDismissWithIndex: self.currentIdx)
+        guard let cell = self.collectionView.cellForItem(at: IndexPath(item: self.currentIdx, section: 0)) as? CollectionViewCell else {
+            return nil
+        }
+        let view = self.delegate?.imagePreviewer(self, willDismissWithCellViewModel: cell.cellModel)
+        return view
     }
     
 

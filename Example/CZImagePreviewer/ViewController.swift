@@ -75,8 +75,8 @@ extension ViewController: UICollectionViewDataSource, UICollectionViewDelegateFl
 }
 
 extension ViewController: PreviewerDelegate {
-    func imagePreviewer(_ imagePreviewer: CZImagePreviewer, willDismissWithIndex index: Int) -> UIView? {
-        self.collectionView.cellForItem(at: IndexPath(item: index, section: 0))
+    func imagePreviewer(_ imagePreviewer: CZImagePreviewer, willDismissWithCellViewModel viewModel: PreviewerCellViewModel) -> UIView? {
+        self.collectionView.cellForItem(at: IndexPath(item: viewModel.idx, section: 0))
     }
 }
 
@@ -91,17 +91,37 @@ extension ViewController: PreviewerDataSource {
         return res
     }
     
-    func imagePreviewer(_ imagePreviewer: CZImagePreviewer, accessoryViewForCellAtIndex index: Int, resourceLoadingState: CZImagePreviewer.ImageLoadingState) -> UIView? {
-        let view = UIView(frame: .zero)
-        let centerView = UILabel(frame: .zero)
-        centerView.text = String(index)
+    func imagePreviewer(_ imagePreviewer: CZImagePreviewer, accessoryViewForCellWith viewModel: PreviewerCellViewModel, resourceLoadingState: CZImagePreviewer.ImageLoadingState) -> AccessoryView? {
+        let view = AccessoryView(frame: .zero)
+        let centerView = UIButton(type: .system)
+        centerView.setTitle(String(viewModel.idx), for: .normal)
         centerView.backgroundColor = .red
+        centerView.addTarget(self, action: #selector(self.buttonOnClick(sender:)), for: .touchUpInside)
         view.addSubview(centerView)
         centerView.snp.makeConstraints { make in
             make.center.equalToSuperview()
-            make.size.equalTo(CGSize(width: 44, height: 44))
+            make.size.equalTo(CGSize(width: 100, height: 100))
+        }
+        return view
+    }
+    
+    func imagePreviewer(_ imagePreviewer: CZImagePreviewer, consoleForItemAtIndex index: Int) -> AccessoryView? {
+        let view = AccessoryView(frame: .zero)
+        let centerView = UIButton(type: .system)
+        centerView.setTitle(String(index), for: .normal)
+        centerView.backgroundColor = .red
+        centerView.addTarget(self, action: #selector(self.buttonOnClick(sender:)), for: .touchUpInside)
+        view.addSubview(centerView)
+        centerView.snp.makeConstraints { make in
+            make.left.equalTo(12)
+            make.bottom.equalTo(12)
+            make.size.equalTo(CGSize(width: 100, height: 100))
         }
         return view
     }
 
+    @objc func buttonOnClick(sender: UIButton) {
+        print("buttonOnClick")
+    }
+    
 }

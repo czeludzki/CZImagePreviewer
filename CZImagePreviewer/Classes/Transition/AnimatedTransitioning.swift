@@ -12,9 +12,9 @@ import SDWebImage
 protocol AnimatedTransitioningContentProvider: UIViewController {
 
     /// 要求取得展示时的转场关键元素
-    typealias ElementForDisplayTransition = (container: UIView?, resource: ResourceProtocol?)
-    func transitioningElementForDisplay(animatedTransitioning: AnimatedTransitioning) -> ElementForDisplayTransition
+    typealias ElementForTransition = (container: UIView?, resource: ResourceProtocol?)
     
+    func transitioningElementForDisplay(animatedTransitioning: AnimatedTransitioning) -> ElementForTransition
     func transitioningElementForDismiss(animatedTransitioning: AnimatedTransitioning) -> UIView?
 }
 
@@ -103,22 +103,23 @@ class AnimatedTransitioning: NSObject, UIViewControllerAnimatedTransitioning {
               let toVC = transitionContext.viewController(forKey: .to),
               let fromView = transitionContext.view(forKey: .from),
               let fromVC = transitionContext.viewController(forKey: .from) as? AnimatedTransitioningContentProvider,
-              let back2Container = fromVC.transitioningElementForDismiss(animatedTransitioning: self) else {
+              let back2Container = fromVC.transitioningElementForDismiss(animatedTransitioning: self),
+              let animationElement = fromView.snapshotView(afterScreenUpdates: true)
+        else {
             transitionContext.completeTransition(!transitionContext.transitionWasCancelled)
             return
         }
         
+        fromView.isHidden = true
         // 计算 back2Container 在屏幕中的位置
         let targetFrame = back2Container.convert(back2Container.bounds, to: keyWindow)
-        transitionContext.containerView.addSubview(toVC.view)
-        toVC.view.frame = transitionContext.containerView.bounds
-        transitionContext.containerView.addSubview(fromView)
-        fromView.frame = transitionContext.containerView.bounds
+        transitionContext.containerView.addSubview(animationElement)
+        animationElement.frame = transitionContext.containerView.bounds
         
         UIView.animate(withDuration: self.transitionDuration(using: transitionContext)) {
-            fromView.frame = targetFrame
+            animationElement.frame = targetFrame
         } completion: { finish in
-            fromView.removeFromSuperview()
+            animationElement.removeFromSuperview()
             transitionContext.completeTransition(!transitionContext.transitionWasCancelled)
         }
         
