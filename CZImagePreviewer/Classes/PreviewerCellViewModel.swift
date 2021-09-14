@@ -33,9 +33,7 @@ public class PreviewerCellViewModel: NSObject {     // 继承自 NSObject 是因
     public weak var accessoryView: UIView? {
         willSet {
             accessoryView?.removeFromSuperview()
-            guard let newView = newValue else {
-                return
-            }
+            guard let newView = newValue else { return }
             cell.contentView.addSubview(newView)
             newView.snp.makeConstraints { make in
                 make.edges.equalToSuperview()
@@ -43,17 +41,17 @@ public class PreviewerCellViewModel: NSObject {     // 继承自 NSObject 是因
         }
     }
     
+    /// 从 dataSource 取得的视频layer, 在 willset 后, 加入到 cell.videoContainer.layer
     public weak var videoLayer: CALayer? {
         willSet {
             videoLayer?.removeFromSuperlayer()
-            guard let newLayer = newValue else {
-                return
-            }
+            guard let newLayer = newValue else { return }
             self.cell.videoContainer.layer.addSublayer(newLayer)
+            newLayer.frame = self.cell.videoContainer.bounds
         }
     }
     
-    /// dismiss动画发生时, 需要判断该由 imageView 或 videoView 作为动画主角
+    /// dismiss动画发生时, 需要判断该由 imageView 或是 videoView 作为动画主角
     var dismissAnimationActor: UIView {
         if self.videoLayer != nil {
             return self.cell.videoContainer
