@@ -93,6 +93,8 @@ extension ExampleViewController: PreviewerDataSource {
         centerView.setTitle(String(index), for: .normal)
         centerView.tintColor = .black
         centerView.layer.cornerRadius = 8
+        centerView.layer.borderWidth = 1
+        centerView.layer.borderColor = UIColor.white.cgColor
         centerView.backgroundColor = UIColor(red: 1, green: 1, blue: 1, alpha: 0.5)
         view.addSubview(centerView)
         centerView.snp.makeConstraints { make in
@@ -107,6 +109,12 @@ extension ExampleViewController: PreviewerDataSource {
     func imagePreviewer(_ imagePreviewer: CZImagePreviewer, accessoryViewForCellWith viewModel: PreviewerCellViewModel, resourceLoadingState: CZImagePreviewer.ImageLoadingState) -> CZImagePreviewer.AccessoryView? {
         
         self.res[viewModel.idx].vm?.consoleView
+        
+    }
+    
+    func imagePreviewer(_ imagePreviewer: CZImagePreviewer, videoLayerForCellWith viewModel: PreviewerCellViewModel) -> CALayer? {
+        
+        self.res[viewModel.idx].vm?.playerLayer
         
     }
 }

@@ -39,17 +39,20 @@ class VideoPlayerViewModel: NSObject {
     var playerLayer: AVPlayerLayer?
     
     // 控制视图
-    lazy var consoleView: CZImagePreviewer.AccessoryView? = {
+    lazy var consoleView: CZImagePreviewer.AccessoryView = {
         let view = CZImagePreviewer.AccessoryView()
+        
         view.addSubview(self.playbackControlBtn)
         self.playbackControlBtn.snp.makeConstraints({
             $0.center.equalToSuperview()
         })
+        
         view.addSubview(self.loadingIndicator)
         self.loadingIndicator.snp.makeConstraints {
             $0.top.equalTo(self.playbackControlBtn.snp_bottomMargin)
-            $0.centerY.equalToSuperview()
+            $0.centerX.equalToSuperview()
         }
+        
         return view
     }()
     
@@ -64,10 +67,11 @@ class VideoPlayerViewModel: NSObject {
         let btn = UIButton(type: .system)
         btn.tintColor = .white
         btn.layer.cornerRadius = 8
-        btn.layer.borderWidth = 2
+        btn.layer.borderWidth = 1
         btn.layer.borderColor = UIColor.white.cgColor
-        btn.backgroundColor = UIColor(red: 0, green: 0, blue: 0, alpha: 0.3)
+        btn.backgroundColor = UIColor(red: 0, green: 0, blue: 0, alpha: 0.5)
         btn.setTitle("播放", for: .normal)
+        btn.contentEdgeInsets = UIEdgeInsets.init(top: 8, left: 12, bottom: 8, right: 12)
         btn.addTarget(self, action: #selector(playbackControlBtnOnClick(sender:)), for: .touchUpInside)
         return btn
     }()
