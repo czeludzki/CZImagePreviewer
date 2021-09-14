@@ -74,6 +74,22 @@ extension PreviewerCellViewModel: UIScrollViewDelegate {
     }
 }
 
+// MARK: Public function
+extension PreviewerCellViewModel {
+    func clearZooming(animate: Bool = true) {
+        self.cell.zoomingScrollView.setZoomScale(1, animated: animate)
+    }
+    
+    func zoom(rect: CGRect, animate: Bool = true) {
+        var translationRect: CGRect = .zero
+        translationRect.origin.x = rect.origin.x / self.cell.zoomingScrollView.zoomScale - self.cell.zoomingScrollView.contentInset.left / self.cell.zoomingScrollView.zoomScale
+        translationRect.origin.y = rect.origin.y / self.cell.zoomingScrollView.zoomScale - self.cell.zoomingScrollView.contentInset.top / self.cell.zoomingScrollView.zoomScale
+        translationRect.size.height = 1
+        translationRect.size.width = 1
+        self.cell.zoomingScrollView.zoom(to: translationRect, animated: true)
+    }
+}
+
 // MARK: Helper
 extension PreviewerCellViewModel {
     

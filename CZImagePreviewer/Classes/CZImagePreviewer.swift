@@ -34,8 +34,6 @@ open class CZImagePreviewer: UIViewController {
     lazy private var animatedTransitioning_display: AnimatedTransitioning = AnimatedTransitioning(transitionFor: .present)
     /// dismiss 转场动画处理
     lazy private var animatedTransitioning_dismiss: AnimatedTransitioning = AnimatedTransitioning(transitionFor: .dismiss)
-    /// dismiss 转场手势百分比控制
-    private var dismissInteractiveTranstion: UIPercentDrivenInteractiveTransition?
     /// 记录图片弹出的容器, 用于展示时的动画
     private weak var imageTriggerContainer: UIView?
     
@@ -69,7 +67,14 @@ open class CZImagePreviewer: UIViewController {
     
     private lazy var pan: UIPanGestureRecognizer = {
         let pan = UIPanGestureRecognizer.init(target: self, action: #selector(panOnView(sender:)))
+        pan.delegate = self
         return pan
+    }()
+    
+    private lazy var doubleTap: UITapGestureRecognizer = {
+        let doubleTap = UITapGestureRecognizer.init(target: self, action: #selector(doubleTapOnView(sender:)))
+        doubleTap.numberOfTapsRequired = 2
+        return doubleTap
     }()
     
     private override init(nibName nibNameOrNil: String?, bundle nibBundleOrNil: Bundle?) {
@@ -102,6 +107,8 @@ open class CZImagePreviewer: UIViewController {
         
         self.view.addGestureRecognizer(self.tap)
         self.view.addGestureRecognizer(self.pan)
+        self.view.addGestureRecognizer(self.doubleTap)
+        self.tap.require(toFail: self.doubleTap)
     }
     
     var didSetInitialIdx = false
@@ -134,26 +141,53 @@ extension CZImagePreviewer {
         self.dismiss()
     }
     
+    @objc func doubleTapOnView(sender: UITapGestureRecognizer) {
+        let cell = self.collectionView.cellForItem(at: IndexPath(item: self.currentIdx, section: 0)) as? CollectionViewCell
+        if cell?.zoomingScrollView.zoomScale != 1 {
+            cell?.cellModel.clearZooming()
+        }else{
+            let touchOn = sender.location(in: self.view)
+            cell?.cellModel.zoom(rect: CGRect(x: touchOn.x, y: touchOn.y, width: 1, height: 1))
+        }
+    }
+    
+    private static var defaultCenter: CGPoint = .zero
     @objc func panOnView(sender: UIPanGestureRecognizer) {
         // 百分比
-        var process = sender.translation(in: self.view).y / self.view.bounds.size.height
+        let translationInView = sender.translation(in: self.view)
+        var process = translationInView.y / self.view.bounds.size.height
         process = min(1.0, max(0, process))
+        
+        let cell = self.collectionView.cellForItem(at: IndexPath(item: self.currentIdx, section: 0)) as? CollectionViewCell
+        let imageView = cell?.imageView
+        let zoomingScrollView = cell?.zoomingScrollView
         
         switch sender.state {
         case .began:
-            self.dismissInteractiveTranstion = UIPercentDrivenInteractiveTransition()
-            self.dismiss()
+            Self.defaultCenter = imageView?.center ?? .zero
         case .changed:
-            self.dismissInteractiveTranstion?.update(process)
-        case .ended, .cancelled:
-            if process > 0.5 {
-                self.dismissInteractiveTranstion?.finish()
+            let scaleTransform = CGAffineTransform(scaleX: (1 - process), y: (1 - process))
+            zoomingScrollView?.transform = scaleTransform
+            zoomingScrollView?.center = CGPoint(x: Self.defaultCenter.x + translationInView.x, y: Self.defaultCenter.y + translationInView.y)
+        case .ended, .cancelled, .failed:
+            if abs(process) > 0.3 {
+                self.dismiss()
             }else{
-                self.dismissInteractiveTranstion?.cancel()
+                UIView.animate(withDuration: 0.3) {
+//                    zoomingScrollView?.zoomScale = Self.defaultZoomScale
+                    zoomingScrollView?.transform = .identity
+                    zoomingScrollView?.center = Self.defaultCenter
+                }
             }
         default:
             break
         }
+    }
+}
+
+extension CZImagePreviewer: UIGestureRecognizerDelegate {
+    public func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldRecognizeSimultaneouslyWith otherGestureRecognizer: UIGestureRecognizer) -> Bool {
+        false
     }
 }
 
@@ -345,9 +379,6 @@ extension CZImagePreviewer: UIViewControllerTransitioningDelegate {
         self.animatedTransitioning_dismiss
     }
     
-    public func interactionControllerForDismissal(using animator: UIViewControllerAnimatedTransitioning) -> UIViewControllerInteractiveTransitioning? {
-        self.dismissInteractiveTranstion
-    }
 }
 
 // MARK: UIViewControllerAnimatedTransitioning
