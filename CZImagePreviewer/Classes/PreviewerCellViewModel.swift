@@ -29,9 +29,10 @@ public class PreviewerCellViewModel: NSObject {     // 继承自 NSObject 是因
     // delegate
     weak var delegate: PreviewerCellViewModelDelegate?
     
-    // 从 dataSource 取得的辅助视图, 在 didset 后, 加入到 cell.contentView 
+    // 从 dataSource 取得的辅助视图, 在 willSet 时, 加入到 cell.contentView
     public weak var accessoryView: UIView? {
         willSet {
+            if newValue === accessoryView { return }
             accessoryView?.removeFromSuperview()
             guard let newView = newValue else { return }
             cell.contentView.addSubview(newView)
@@ -41,7 +42,7 @@ public class PreviewerCellViewModel: NSObject {     // 继承自 NSObject 是因
         }
     }
     
-    /// 从 dataSource 取得的视频layer, 在 willset 后, 加入到 cell.videoContainer.layer
+    /// 从 dataSource 取得的视频layer, 在 willSet 时, 加入到 cell.videoContainer.layer
     public weak var videoLayer: CALayer? {
         willSet {
             videoLayer?.removeFromSuperlayer()
