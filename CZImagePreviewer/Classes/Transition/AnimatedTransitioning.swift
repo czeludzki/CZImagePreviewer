@@ -112,20 +112,21 @@ class AnimatedTransitioning: NSObject, UIViewControllerAnimatedTransitioning {
         }
         
         // 计算 back2Container 在屏幕中的位置
-        let targetFrame = back2Container.convert(back2Container.bounds, to: keyWindow)
+        var targetFrame = back2Container.convert(back2Container.bounds, to: keyWindow)
         if !keyWindow.bounds.contains(targetFrame) {
             transitionContext.completeTransition(!transitionContext.transitionWasCancelled)
             return
         }
         
-        transitionContext.containerView.addSubview(animationActor)
-        fromView.isHidden = true
+        // 对 targetFrame 进行微调, 防止当 animationActor.superview 是 scrollView 时, targetFrame.origin 不准确
+        targetFrame.origin.x += animationActor.superview?.bounds.origin.x ?? 0
+        targetFrame.origin.y += animationActor.superview?.bounds.origin.y ?? 0
         
         UIView.animate(withDuration: self.transitionDuration(using: transitionContext)) {
             animationActor.frame = targetFrame
             transitionContext.containerView.backgroundColor = .clear
+            fromVC.view.backgroundColor = .clear
         } completion: { finish in
-            animationActor.removeFromSuperview()
             transitionContext.completeTransition(!transitionContext.transitionWasCancelled)
         }
         

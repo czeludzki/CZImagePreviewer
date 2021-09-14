@@ -58,7 +58,6 @@
 		2A4BF85826E9AB96001D7759 /* CollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A4BF85726E9AB96001D7759 /* CollectionViewCell.swift */; };
 		2A4BF85E26ECA5DC001D7759 /* ResourceProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A4BF85D26ECA5DC001D7759 /* ResourceProtocol.swift */; };
 		2A4BF86126ECA5EF001D7759 /* AnimatedTransitioning.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A4BF86026ECA5EF001D7759 /* AnimatedTransitioning.swift */; };
-		2A6EF70E26F0A293006A8DA6 /* CZImagePreviewer+OtherDefinition.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A6EF70D26F0A293006A8DA6 /* CZImagePreviewer+OtherDefinition.swift */; };
 		2AD5B30DA9D32E5BA24F88B6CD6756BC /* ConstraintMakerEditable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E3FEA217B25169EE510A476D78A0F8A /* ConstraintMakerEditable.swift */; };
 		2C7F68721EB9FA1213FA0103830113E3 /* SDDiskCache.h in Headers */ = {isa = PBXBuildFile; fileRef = EEB4E393DECCC967C0E65C2D480D95C8 /* SDDiskCache.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		2EC488FEB14B7F28CA11AB5ADE308A5E /* SDDisplayLink.h in Headers */ = {isa = PBXBuildFile; fileRef = D5C6EF74FE9A05AC8768F8435E6AF6EC /* SDDisplayLink.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -72,6 +71,7 @@
 		41FE4710A36BBC2A9B447A285C080B04 /* SDWebImageError.m in Sources */ = {isa = PBXBuildFile; fileRef = 3B6C308C475E0AA3C0190C864EB49E35 /* SDWebImageError.m */; };
 		42B912DFA7F4C193F6CAB20A10517F97 /* SDDiskCache.m in Sources */ = {isa = PBXBuildFile; fileRef = 658E7065BE1CC2C07A41D5D71331F02B /* SDDiskCache.m */; };
 		43BF7F1326EF935D002B3560 /* PreviewerCellViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 43BF7F1226EF935D002B3560 /* PreviewerCellViewModel.swift */; };
+		43C605E926F0CCE400B41F5C /* CZImagePreviewer+OtherDefinition.swift in Sources */ = {isa = PBXBuildFile; fileRef = 43C605E826F0CCE400B41F5C /* CZImagePreviewer+OtherDefinition.swift */; };
 		45BD59C9223F6D651C0FC62DE1FDBF31 /* SDFileAttributeHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = DC7405C2CB1434700BCD0199C06AEC4F /* SDFileAttributeHelper.m */; };
 		494662E6A9F4ACD51A20C40061D53882 /* SDWebImageDefine.m in Sources */ = {isa = PBXBuildFile; fileRef = 27CF7C66F0A08BBE658CBFB2FFE7F57B /* SDWebImageDefine.m */; };
 		498018EDB4086E2E8AF9B4B08216B612 /* SDImageCache.h in Headers */ = {isa = PBXBuildFile; fileRef = 95DE69CBEE534911D31107E5ACBC7148 /* SDImageCache.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -301,7 +301,6 @@
 		2A4BF85726E9AB96001D7759 /* CollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = CollectionViewCell.swift; path = CZImagePreviewer/Classes/CollectionViewCell.swift; sourceTree = "<group>"; };
 		2A4BF85D26ECA5DC001D7759 /* ResourceProtocol.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = ResourceProtocol.swift; path = CZImagePreviewer/Classes/ResourceProtocol.swift; sourceTree = "<group>"; };
 		2A4BF86026ECA5EF001D7759 /* AnimatedTransitioning.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AnimatedTransitioning.swift; sourceTree = "<group>"; };
-		2A6EF70D26F0A293006A8DA6 /* CZImagePreviewer+OtherDefinition.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CZImagePreviewer+OtherDefinition.swift"; sourceTree = "<group>"; };
 		2B14DED4633976CB9AE9893BF48DD2BD /* SDWebImageDownloader.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = SDWebImageDownloader.m; path = SDWebImage/Core/SDWebImageDownloader.m; sourceTree = "<group>"; };
 		2D81976779ED481CF9D9050CAB6E1E8F /* UIImage+ExtendedCacheData.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = "UIImage+ExtendedCacheData.m"; path = "SDWebImage/Core/UIImage+ExtendedCacheData.m"; sourceTree = "<group>"; };
 		300E30BE469523F944915CF85B63E142 /* Pods-CZImagePreviewer_Example-Info.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = "Pods-CZImagePreviewer_Example-Info.plist"; sourceTree = "<group>"; };
@@ -334,6 +333,7 @@
 		416A156201EE974E311CAEF6137B7F6F /* ConstraintRelation.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = ConstraintRelation.swift; path = Source/ConstraintRelation.swift; sourceTree = "<group>"; };
 		43BF7F1226EF935D002B3560 /* PreviewerCellViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = PreviewerCellViewModel.swift; path = CZImagePreviewer/Classes/PreviewerCellViewModel.swift; sourceTree = "<group>"; };
 		43C5021EA5DAD7B24B07811F5152E960 /* Debugging.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = Debugging.swift; path = Source/Debugging.swift; sourceTree = "<group>"; };
+		43C605E826F0CCE400B41F5C /* CZImagePreviewer+OtherDefinition.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "CZImagePreviewer+OtherDefinition.swift"; path = "CZImagePreviewer/Classes/CZImagePreviewer+OtherDefinition.swift"; sourceTree = "<group>"; };
 		47DC7C23DF8C2BA713B00C0248B4BF8F /* SDMemoryCache.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = SDMemoryCache.m; path = SDWebImage/Core/SDMemoryCache.m; sourceTree = "<group>"; };
 		495E3E0E32506959973773A13E1657EA /* SDWeakProxy.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = SDWeakProxy.m; path = SDWebImage/Private/SDWeakProxy.m; sourceTree = "<group>"; };
 		4BEC41F3F707D53811A8CBB7133F5A78 /* SDImageFrame.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = SDImageFrame.h; path = SDWebImage/Core/SDImageFrame.h; sourceTree = "<group>"; };
@@ -843,7 +843,7 @@
 			children = (
 				2A4BF84626E84CD6001D7759 /* PreviewerProtocol.swift */,
 				2A4BF84826E84ED2001D7759 /* CZImagePreviewer.swift */,
-				2A6EF70D26F0A293006A8DA6 /* CZImagePreviewer+OtherDefinition.swift */,
+				43C605E826F0CCE400B41F5C /* CZImagePreviewer+OtherDefinition.swift */,
 				2A4BF85D26ECA5DC001D7759 /* ResourceProtocol.swift */,
 				2A4BF85726E9AB96001D7759 /* CollectionViewCell.swift */,
 				43BF7F1226EF935D002B3560 /* PreviewerCellViewModel.swift */,
@@ -1218,10 +1218,10 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				2A6EF70E26F0A293006A8DA6 /* CZImagePreviewer+OtherDefinition.swift in Sources */,
 				2A4BF84926E84ED2001D7759 /* CZImagePreviewer.swift in Sources */,
 				2A4BF84726E84CD6001D7759 /* PreviewerProtocol.swift in Sources */,
 				2A4BF86126ECA5EF001D7759 /* AnimatedTransitioning.swift in Sources */,
+				43C605E926F0CCE400B41F5C /* CZImagePreviewer+OtherDefinition.swift in Sources */,
 				041EF80A1E7C28FEE19DE9BAE6EB491D /* Pods-CZImagePreviewer_Example-dummy.m in Sources */,
 				43BF7F1326EF935D002B3560 /* PreviewerCellViewModel.swift in Sources */,
 				2A4BF85E26ECA5DC001D7759 /* ResourceProtocol.swift in Sources */,

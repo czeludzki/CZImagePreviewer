@@ -144,6 +144,9 @@ open class CZImagePreviewer: UIViewController {
 // MARK: Action
 extension CZImagePreviewer {
     @objc func tapOnView(sender: UITapGestureRecognizer) {
+        let cell = self.collectionView.cellForItem(at: IndexPath(item: self.currentIdx, section: 0)) as? CollectionViewCell
+        cell?.cellModel.accessoryView?.isHidden = true
+        self.cus_console?.isHidden = true
         self.dismiss()
     }
     
@@ -163,8 +166,8 @@ extension CZImagePreviewer {
         }
     }
     
-    private static var defaultSize: CGSize = .zero
-    private static var defaultCenter: CGPoint = .zero
+    private static var animationActorDefaultSize: CGSize = .zero
+    private static var animationActorDefaultCenter: CGPoint = .zero
     @objc func panOnView(sender: UIPanGestureRecognizer) {
         
         guard let cell = self.collectionView.cellForItem(at: IndexPath(item: self.currentIdx, section: 0)) as? CollectionViewCell else { return }
@@ -177,13 +180,13 @@ extension CZImagePreviewer {
         
         switch sender.state {
         case .began:
-            Self.defaultCenter = imageView.center
-            Self.defaultSize = imageView.frame.size
+            Self.animationActorDefaultCenter = imageView.center
+            Self.animationActorDefaultSize = imageView.frame.size
             self.cus_console?.isHidden = true
             cell.cellModel.accessoryView?.isHidden = true
         case .changed:
-            imageView.frame.size = CGSize(width: Self.defaultSize.width * (1 - process), height: Self.defaultSize.height * (1 - process))
-            imageView.center = CGPoint(x: Self.defaultCenter.x + translationInView.x, y: Self.defaultCenter.y + translationInView.y)
+            imageView.frame.size = CGSize(width: Self.animationActorDefaultSize.width * (1 - process), height: Self.animationActorDefaultSize.height * (1 - process))
+            imageView.center = CGPoint(x: Self.animationActorDefaultCenter.x + translationInView.x, y: Self.animationActorDefaultCenter.y + translationInView.y)
             self.view.backgroundColor = UIColor.init(red: 0, green: 0, blue: 0, alpha: 1 - process)
         case .ended, .cancelled:
             let velocity = sender.velocity(in: self.view)
@@ -199,12 +202,12 @@ extension CZImagePreviewer {
         // 放弃 dismiss 操作
         func discardDismissOperation() {
             UIView.animate(withDuration: 0.3) {
-                imageView.frame.size = Self.defaultSize
-                imageView.center = Self.defaultCenter
+                imageView.frame.size = Self.animationActorDefaultSize
+                imageView.center = Self.animationActorDefaultCenter
                 self.view.backgroundColor = .black
             } completion: { finish in
                 self.cus_console?.isHidden = false
-                cell.cellModel.accessoryView?.isHidden = true
+                cell.cellModel.accessoryView?.isHidden = false
             }
         }
     }
@@ -272,6 +275,7 @@ extension CZImagePreviewer: UICollectionViewDelegateFlowLayout, UICollectionView
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: CollectionViewCell.CollectionViewCellReuseID, for: indexPath) as! CollectionViewCell
         cell.cellModel.delegate = self
         cell.cellModel.item = PreviewerCellItem(resource: imgRes, idx: indexPath.item)
+        cell.cellModel.videoLayer = self.dataSource?.imagePreviewer(self, videoLayerForCellWith: cell.cellModel)
         return cell
     }
     
