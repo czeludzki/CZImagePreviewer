@@ -8,21 +8,6 @@
 import Foundation
 import UIKit
 
-/// DateSource 方法要求返回的辅助视图类
-open class AccessoryView: UIView {
-    /// 对 hitTest 方法进行处理, 防止 AccessoryView 参与事件处理
-    open override func hitTest(_ point: CGPoint, with event: UIEvent?) -> UIView? {
-        guard let ret = super.hitTest(point, with: event) else {
-            return nil
-        }
-        // 当找到的响应者是自己, 就返回 nil, 不参与事件响应
-        if ret == self {
-            return nil
-        }
-        return ret
-    }
-}
-
 public protocol PreviewerDataSource: AnyObject {
     /// 向 dataSource 获取数据量
     func numberOfItems(in imagePreviewer: CZImagePreviewer) -> Int
@@ -33,16 +18,17 @@ public protocol PreviewerDataSource: AnyObject {
     
     /// 为图片浏览器提供自定义操作视图, 该视图会平铺在图片浏览器子视图集顶部, 不参与缩放, 不受滑动交互影响
     /// 调用时机:
-    ///     1.图片浏览器展示时发起;
-    ///     2.Previewer.currentIdx 发生改变时发起
-    /// 添加视图到Previewer的时机:
+    ///     Previewer.currentIdx 发生改变时发起
+    /// 添加视图到 Previewer 的时机:
     ///     在View实例被添加到图片浏览器后, 只要View实例是和已在展示的View实例是同一个, 则不重复做 addSubView 操作
     /// 此视图一般放置一些共有控件例如下载按钮等
-    func imagePreviewer(_ imagePreviewer: CZImagePreviewer, consoleForItemAtIndex index: Int) -> AccessoryView?
+    func imagePreviewer(_ imagePreviewer: CZImagePreviewer, consoleForItemAtIndex index: Int) -> CZImagePreviewer.AccessoryView?
     
-    /// 为每一个图片Cell提供自定义操作视图, 这个视图会覆盖在每个图片Cell的顶部
-    /// 
-    func imagePreviewer(_ imagePreviewer: CZImagePreviewer, accessoryViewForCellWith viewModel: PreviewerCellViewModel, resourceLoadingState: CZImagePreviewer.ImageLoadingState) -> AccessoryView?
+    /// 为每一个 Cell 提供自定义操作视图, 这个视图会覆盖在每个Cell的顶部
+    func imagePreviewer(_ imagePreviewer: CZImagePreviewer, accessoryViewForCellWith viewModel: PreviewerCellViewModel, resourceLoadingState: CZImagePreviewer.ImageLoadingState) -> CZImagePreviewer.AccessoryView?
+    
+    /// 为每一个 Cell 提供视频播放容器, 你可以将你的视频播放器 Layer, 添加到 参数: videoView.layer 中
+    func imagePreviewer(_ imagePreviewer: CZImagePreviewer, videoLayerForCellWith viewModel: PreviewerCellViewModel) -> CALayer?
 }
 
 public protocol PreviewerDelegate: AnyObject {
@@ -62,7 +48,9 @@ public extension PreviewerDelegate {
 }
 
 public extension PreviewerDataSource {
-    func imagePreviewer(_ imagePreviewer: CZImagePreviewer, consoleForItemAtIndex index: Int) -> AccessoryView? { nil }
+    func imagePreviewer(_ imagePreviewer: CZImagePreviewer, consoleForItemAtIndex index: Int) -> CZImagePreviewer.AccessoryView? { nil }
     
-    func imagePreviewer(_ imagePreviewer: CZImagePreviewer, accessoryViewForCellWith viewModel: PreviewerCellViewModel, resourceLoadingState: CZImagePreviewer.ImageLoadingState) -> AccessoryView? { nil }
+    func imagePreviewer(_ imagePreviewer: CZImagePreviewer, accessoryViewForCellWith viewModel: PreviewerCellViewModel, resourceLoadingState: CZImagePreviewer.ImageLoadingState) -> CZImagePreviewer.AccessoryView? { nil }
+    
+    func imagePreviewer(_ imagePreviewer: CZImagePreviewer, videoLayerForCellWith viewModel: PreviewerCellViewModel) -> CALayer? { nil }
 }

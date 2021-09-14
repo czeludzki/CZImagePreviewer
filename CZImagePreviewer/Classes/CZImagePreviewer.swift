@@ -13,6 +13,12 @@ open class CZImagePreviewer: UIViewController {
     public weak var delegate: PreviewerDelegate?
     public var dataSource: PreviewerDataSource?
     
+    /// Cell 之间的间距
+    public var spacingBetweenItem: CGFloat = 20.0
+    
+    /// 通过DataSource协议返回的自定义控制层
+    private var cus_console: UIView?
+    
     /// 当前索引
     public private(set) var currentIdx = -1 {
         didSet {
@@ -23,12 +29,6 @@ open class CZImagePreviewer: UIViewController {
             }
         }
     }
-    
-    /// Cell 之间的间距
-    public var spacingBetweenItem: CGFloat = 20.0
-    
-    /// 通过DataSource协议返回的自定义控制层
-    private var cus_console: UIView?
     
     /// display 转场动画处理
     lazy private var animatedTransitioning_display: AnimatedTransitioning = AnimatedTransitioning(transitionFor: .present)
@@ -49,6 +49,7 @@ open class CZImagePreviewer: UIViewController {
         collectionView.delegate = self
         collectionView.dataSource = self
         collectionView.prefetchDataSource = self
+        collectionView.backgroundColor = .clear
         collectionView.register(CollectionViewCell.self, forCellWithReuseIdentifier: CollectionViewCell.CollectionViewCellReuseID)
         return collectionView
     }()
@@ -77,18 +78,21 @@ open class CZImagePreviewer: UIViewController {
         return doubleTap
     }()
     
-    private override init(nibName nibNameOrNil: String?, bundle nibBundleOrNil: Bundle?) {
-        super.init(nibName: nibNameOrNil, bundle: nibBundleOrNil)
-    }
+    private lazy var longPress: UILongPressGestureRecognizer = {
+        let longPress = UILongPressGestureRecognizer.init(target: self, action: #selector(longPressOnView(sender:)))
+        return longPress
+    }()
     
-    convenience init() {
-        self.init(nibName: nil, bundle: nil)
+    override init(nibName nibNameOrNil: String?, bundle nibBundleOrNil: Bundle?) {
+        super.init(nibName: nibNameOrNil, bundle: nibBundleOrNil)
         self.modalPresentationStyle = .custom
         self.transitioningDelegate = self
     }
     
     public required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
+        super.init(coder: coder)
+        self.modalPresentationStyle = .custom
+        self.transitioningDelegate = self
     }
     
     public override func viewDidLoad() {
@@ -109,14 +113,16 @@ open class CZImagePreviewer: UIViewController {
         self.view.addGestureRecognizer(self.pan)
         self.view.addGestureRecognizer(self.doubleTap)
         self.tap.require(toFail: self.doubleTap)
+        self.view.addGestureRecognizer(self.longPress)
     }
     
-    var didSetInitialIdx = false
+    /// collectionView在展示后需要将 contentOffset.x 设置为跟 self.currentIdx 同步, 此值用于记录 collectionView 当前展示的页是否已跟 self.currentIdx 已同步
+    var didSynchronizedCurrentIdx = false
     public override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
-        if self.didSetInitialIdx { return }
+        if self.didSynchronizedCurrentIdx { return }
         self.scroll2Item(at: self.currentIdx, animated: false)
-        self.didSetInitialIdx = true
+        self.didSynchronizedCurrentIdx = true
     }
     
     public override var prefersStatusBarHidden: Bool { true }
@@ -127,12 +133,12 @@ open class CZImagePreviewer: UIViewController {
         self.collectionView.performBatchUpdates {
             self.collectionView.reloadData()
         } completion: { finish in
-            print("self.scroll2Item(at: mark_idx, animated: false)", mark_idx)
             self.scroll2Item(at: mark_idx, animated: false)
         }
         // 旋转时执行, 将 rotateAnimationImageView.isHidden 设为 false, 且为其设置图片
         self.executeWhenRotate(idx: mark_idx, coordinator: coordinator)
     }
+    
 }
 
 // MARK: Action
@@ -141,63 +147,80 @@ extension CZImagePreviewer {
         self.dismiss()
     }
     
+    @objc func longPressOnView(sender: UILongPressGestureRecognizer) {
+        if sender.state == .began {
+            self.delegate?.imagePreviewer(self, didLongPressAtIndex: self.currentIdx)
+        }
+    }
+    
     @objc func doubleTapOnView(sender: UITapGestureRecognizer) {
         let cell = self.collectionView.cellForItem(at: IndexPath(item: self.currentIdx, section: 0)) as? CollectionViewCell
         if cell?.zoomingScrollView.zoomScale != 1 {
             cell?.cellModel.clearZooming()
         }else{
-            let touchOn = sender.location(in: self.view)
+            let touchOn = sender.location(in: cell?.imageView)
             cell?.cellModel.zoom(rect: CGRect(x: touchOn.x, y: touchOn.y, width: 1, height: 1))
         }
     }
     
+    private static var defaultSize: CGSize = .zero
     private static var defaultCenter: CGPoint = .zero
     @objc func panOnView(sender: UIPanGestureRecognizer) {
+        
+        guard let cell = self.collectionView.cellForItem(at: IndexPath(item: self.currentIdx, section: 0)) as? CollectionViewCell else { return }
+        let imageView = cell.imageView
+        
         // 百分比
         let translationInView = sender.translation(in: self.view)
         var process = translationInView.y / self.view.bounds.size.height
-        process = min(1.0, max(0, process))
-        
-        let cell = self.collectionView.cellForItem(at: IndexPath(item: self.currentIdx, section: 0)) as? CollectionViewCell
-        let imageView = cell?.imageView
-        let zoomingScrollView = cell?.zoomingScrollView
+        process = min(1.0, max(0.0, process))
         
         switch sender.state {
         case .began:
-            Self.defaultCenter = imageView?.center ?? .zero
+            Self.defaultCenter = imageView.center
+            Self.defaultSize = imageView.frame.size
+            self.cus_console?.isHidden = true
+            cell.cellModel.accessoryView?.isHidden = true
         case .changed:
-            let scaleTransform = CGAffineTransform(scaleX: (1 - process), y: (1 - process))
-            zoomingScrollView?.transform = scaleTransform
-            zoomingScrollView?.center = CGPoint(x: Self.defaultCenter.x + translationInView.x, y: Self.defaultCenter.y + translationInView.y)
-        case .ended, .cancelled, .failed:
-            if abs(process) > 0.3 {
+            imageView.frame.size = CGSize(width: Self.defaultSize.width * (1 - process), height: Self.defaultSize.height * (1 - process))
+            imageView.center = CGPoint(x: Self.defaultCenter.x + translationInView.x, y: Self.defaultCenter.y + translationInView.y)
+            self.view.backgroundColor = UIColor.init(red: 0, green: 0, blue: 0, alpha: 1 - process)
+        case .ended, .cancelled:
+            let velocity = sender.velocity(in: self.view)
+            if velocity.y > 0 {
                 self.dismiss()
             }else{
-                UIView.animate(withDuration: 0.3) {
-//                    zoomingScrollView?.zoomScale = Self.defaultZoomScale
-                    zoomingScrollView?.transform = .identity
-                    zoomingScrollView?.center = Self.defaultCenter
-                }
+                discardDismissOperation()
             }
         default:
-            break
+            discardDismissOperation()
+        }
+        
+        // 放弃 dismiss 操作
+        func discardDismissOperation() {
+            UIView.animate(withDuration: 0.3) {
+                imageView.frame.size = Self.defaultSize
+                imageView.center = Self.defaultCenter
+                self.view.backgroundColor = .black
+            } completion: { finish in
+                self.cus_console?.isHidden = false
+                cell.cellModel.accessoryView?.isHidden = true
+            }
         }
     }
 }
 
 extension CZImagePreviewer: UIGestureRecognizerDelegate {
-    public func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldRecognizeSimultaneouslyWith otherGestureRecognizer: UIGestureRecognizer) -> Bool {
-        false
-    }
-}
-
-// MARK: 相关定义
-extension CZImagePreviewer {
-    public enum ImageLoadingState {
-        case `default`  // 正常可预览状态
-        case loading(receivedSize: Int, expectedSize: Int)  // 加载中
-        case loadingFaiure  // 加载失败
-        case processing     // 图片解码中
+    // 禁止 pan 手势和其他手势同时识别
+    public func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldRecognizeSimultaneouslyWith otherGestureRecognizer: UIGestureRecognizer) -> Bool { false }
+    
+    public func gestureRecognizerShouldBegin(_ gestureRecognizer: UIGestureRecognizer) -> Bool {
+        let velocity = pan.velocity(in: self.view)
+        // 不响应上滑手势
+        if velocity.y < 0 {
+            return false
+        }
+        return true
     }
 }
 
@@ -235,6 +258,7 @@ extension CZImagePreviewer {
 extension CZImagePreviewer: UICollectionViewDelegateFlowLayout, UICollectionViewDataSource, UICollectionViewDataSourcePrefetching {
     
     public func scrollViewDidScroll(_ scrollView: UIScrollView) {
+        if !self.didSynchronizedCurrentIdx { return }    // 在非竖屏的情况下, collectionView 被添加到 superView 以后, 会马上调用 scrollViewDidScroll 方法, 导致 self.currentIdx 出错, 所以做此判断
         self.currentIdx = Int((scrollView.contentOffset.x + scrollView.bounds.size.width * 0.5) / scrollView.bounds.size.width)
     }
     
@@ -271,7 +295,7 @@ extension CZImagePreviewer: PreviewerCellViewModelDelegate {
         guard let accessoryView = self.dataSource?.imagePreviewer(self, accessoryViewForCellWith: viewModel, resourceLoadingState: state) else {
             return
         }
-        accessoryView.tag = 0
+        accessoryView._viewType = .accessoryView
         // 加入辅助视图到 Cell View Model
         viewModel.accessoryView = accessoryView
     }
@@ -355,11 +379,11 @@ extension CZImagePreviewer {
     // 更新 self.cus_console
     func updateConsole() {
         guard let console = self.dataSource?.imagePreviewer(self, consoleForItemAtIndex: self.currentIdx) else { return }
-        if self.cus_console == console { return }
+        if self.cus_console === console { return }
         // 先移除
         self.cus_console?.removeFromSuperview()
         // 再添加
-        console.tag = 1
+        console._viewType = .console
         self.view.addSubview(console)
         self.cus_console = console
         console.snp.makeConstraints { make in
@@ -371,14 +395,9 @@ extension CZImagePreviewer {
 
 // MARK: UIViewControllerTransitioningDelegate
 extension CZImagePreviewer: UIViewControllerTransitioningDelegate {
-    public func animationController(forPresented presented: UIViewController, presenting: UIViewController, source: UIViewController) -> UIViewControllerAnimatedTransitioning? {
-        self.animatedTransitioning_display
-    }
+    public func animationController(forPresented presented: UIViewController, presenting: UIViewController, source: UIViewController) -> UIViewControllerAnimatedTransitioning? { self.animatedTransitioning_display }
     
-    public func animationController(forDismissed dismissed: UIViewController) -> UIViewControllerAnimatedTransitioning? {
-        self.animatedTransitioning_dismiss
-    }
-    
+    public func animationController(forDismissed dismissed: UIViewController) -> UIViewControllerAnimatedTransitioning? { self.animatedTransitioning_dismiss }
 }
 
 // MARK: UIViewControllerAnimatedTransitioning

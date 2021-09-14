@@ -58,6 +58,7 @@
 		2A4BF85826E9AB96001D7759 /* CollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A4BF85726E9AB96001D7759 /* CollectionViewCell.swift */; };
 		2A4BF85E26ECA5DC001D7759 /* ResourceProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A4BF85D26ECA5DC001D7759 /* ResourceProtocol.swift */; };
 		2A4BF86126ECA5EF001D7759 /* AnimatedTransitioning.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A4BF86026ECA5EF001D7759 /* AnimatedTransitioning.swift */; };
+		2A6EF70E26F0A293006A8DA6 /* CZImagePreviewer+OtherDefinition.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A6EF70D26F0A293006A8DA6 /* CZImagePreviewer+OtherDefinition.swift */; };
 		2AD5B30DA9D32E5BA24F88B6CD6756BC /* ConstraintMakerEditable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E3FEA217B25169EE510A476D78A0F8A /* ConstraintMakerEditable.swift */; };
 		2C7F68721EB9FA1213FA0103830113E3 /* SDDiskCache.h in Headers */ = {isa = PBXBuildFile; fileRef = EEB4E393DECCC967C0E65C2D480D95C8 /* SDDiskCache.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		2EC488FEB14B7F28CA11AB5ADE308A5E /* SDDisplayLink.h in Headers */ = {isa = PBXBuildFile; fileRef = D5C6EF74FE9A05AC8768F8435E6AF6EC /* SDDisplayLink.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -300,6 +301,7 @@
 		2A4BF85726E9AB96001D7759 /* CollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = CollectionViewCell.swift; path = CZImagePreviewer/Classes/CollectionViewCell.swift; sourceTree = "<group>"; };
 		2A4BF85D26ECA5DC001D7759 /* ResourceProtocol.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = ResourceProtocol.swift; path = CZImagePreviewer/Classes/ResourceProtocol.swift; sourceTree = "<group>"; };
 		2A4BF86026ECA5EF001D7759 /* AnimatedTransitioning.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AnimatedTransitioning.swift; sourceTree = "<group>"; };
+		2A6EF70D26F0A293006A8DA6 /* CZImagePreviewer+OtherDefinition.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CZImagePreviewer+OtherDefinition.swift"; sourceTree = "<group>"; };
 		2B14DED4633976CB9AE9893BF48DD2BD /* SDWebImageDownloader.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = SDWebImageDownloader.m; path = SDWebImage/Core/SDWebImageDownloader.m; sourceTree = "<group>"; };
 		2D81976779ED481CF9D9050CAB6E1E8F /* UIImage+ExtendedCacheData.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = "UIImage+ExtendedCacheData.m"; path = "SDWebImage/Core/UIImage+ExtendedCacheData.m"; sourceTree = "<group>"; };
 		300E30BE469523F944915CF85B63E142 /* Pods-CZImagePreviewer_Example-Info.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = "Pods-CZImagePreviewer_Example-Info.plist"; sourceTree = "<group>"; };
@@ -841,6 +843,7 @@
 			children = (
 				2A4BF84626E84CD6001D7759 /* PreviewerProtocol.swift */,
 				2A4BF84826E84ED2001D7759 /* CZImagePreviewer.swift */,
+				2A6EF70D26F0A293006A8DA6 /* CZImagePreviewer+OtherDefinition.swift */,
 				2A4BF85D26ECA5DC001D7759 /* ResourceProtocol.swift */,
 				2A4BF85726E9AB96001D7759 /* CollectionViewCell.swift */,
 				43BF7F1226EF935D002B3560 /* PreviewerCellViewModel.swift */,
@@ -1215,6 +1218,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				2A6EF70E26F0A293006A8DA6 /* CZImagePreviewer+OtherDefinition.swift in Sources */,
 				2A4BF84926E84ED2001D7759 /* CZImagePreviewer.swift in Sources */,
 				2A4BF84726E84CD6001D7759 /* PreviewerProtocol.swift in Sources */,
 				2A4BF86126ECA5EF001D7759 /* AnimatedTransitioning.swift in Sources */,

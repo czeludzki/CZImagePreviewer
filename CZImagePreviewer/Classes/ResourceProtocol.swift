@@ -24,7 +24,6 @@ public protocol ResourceProtocol {
 extension ImgSourceNamespaceWrapper: ResourceProtocol {
     // 默认实现中不做操作
     public func loadImage(progress: LoadImageProgress?, completion: LoadImageCompletion?) {
-        print("ImgSourceNamespaceWrapper: loadImage(progress: LoadImageProgress?, completion: LoadImageCompletion?)")
         
         /// 不知道为什么在类型不明确的情况下(仅知道当前是 ResourceProtocols 类型, 不是 ImgSourceNamespaceWrapper<String> 类型), 不能直接调用 imageResource?.loadImage() 方法
         /// 直接调用的结果是, 总会走到这个默认实现,
@@ -62,7 +61,6 @@ extension ImgSourceNamespaceWrapper where WrappedValueType == String {
     }
     
     public func loadImage(progress: LoadImageProgress?, completion: LoadImageCompletion?) {
-        print("String 调用 loadImage(progress: LoadImageProgress?, completion: LoadImageCompletion?)")
         let completion = completion ?? {(_: UIImage?, _: Data?, _: Error?, SDImageCacheType, Bool, _: URL?) -> () in }
         SDWebImageManager.shared.loadImage(with: self.toURL(), options: .retryFailed, progress: progress, completed: completion)
     }
@@ -71,8 +69,6 @@ extension ImgSourceNamespaceWrapper where WrappedValueType == String {
 extension URL: ImgSourceNamespaceWrappable {}
 extension ImgSourceNamespaceWrapper where WrappedValueType == URL {
     public func loadImage(progress: LoadImageProgress?, completion: LoadImageCompletion?) {
-        print("URL 调用 loadImage(progress: LoadImageProgress?, completion: LoadImageCompletion?)")
-
         let completion = completion ?? {(_: UIImage?, _: Data?, _: Error?, SDImageCacheType, Bool, _: URL?) -> () in }
         SDWebImageManager.shared.loadImage(with: self.wrappedValue, options: .retryFailed, progress: progress, completed: completion)
     }
@@ -82,8 +78,6 @@ extension UIImage: ImgSourceNamespaceWrappable {}
 extension ImgSourceNamespaceWrapper where WrappedValueType : UIImage {
     
     public func loadImage(progress: LoadImageProgress?, completion: LoadImageCompletion?) {
-        print("UIImage 调用 loadImage(progress: LoadImageProgress?, completion: LoadImageCompletion?)")
-
         let imgSize: Int = Int(self.wrappedValue.size.height * self.wrappedValue.size.width)
         if let progress = progress {
             progress(imgSize, imgSize, nil)

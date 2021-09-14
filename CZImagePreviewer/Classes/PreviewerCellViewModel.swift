@@ -23,24 +23,42 @@ struct PreviewerCellItem {
 public class PreviewerCellViewModel: NSObject {     // 继承自 NSObject 是因为此类需要遵循 ScrollViewDelegate 协议
     
     // 记录当前索引
-    public var idx = 0
+    public private(set) var idx = 0
     // 弱引用 CZImagePreviewerCollectionViewCell 实例
     unowned var cell: CollectionViewCell
     // delegate
     weak var delegate: PreviewerCellViewModelDelegate?
     
     // 从 dataSource 取得的辅助视图, 在 didset 后, 加入到 cell.contentView 
-    weak var accessoryView: UIView? {
+    public weak var accessoryView: UIView? {
         willSet {
             accessoryView?.removeFromSuperview()
-            guard let accessoryView = newValue else {
+            guard let newView = newValue else {
                 return
             }
-            cell.contentView.addSubview(accessoryView)
-            accessoryView.snp.makeConstraints { make in
+            cell.contentView.addSubview(newView)
+            newView.snp.makeConstraints { make in
                 make.edges.equalToSuperview()
             }
         }
+    }
+    
+    public weak var videoLayer: CALayer? {
+        willSet {
+            videoLayer?.removeFromSuperlayer()
+            guard let newLayer = newValue else {
+                return
+            }
+            self.cell.videoContainer.layer.addSublayer(newLayer)
+        }
+    }
+    
+    /// dismiss动画发生时, 需要判断该由 imageView 或 videoView 作为动画主角
+    var dismissAnimationActor: UIView {
+        if self.videoLayer != nil {
+            return self.cell.videoContainer
+        }
+        return self.cell.imageView
     }
     
     init(cell: CollectionViewCell) {
@@ -84,8 +102,8 @@ extension PreviewerCellViewModel {
         var translationRect: CGRect = .zero
         translationRect.origin.x = rect.origin.x / self.cell.zoomingScrollView.zoomScale - self.cell.zoomingScrollView.contentInset.left / self.cell.zoomingScrollView.zoomScale
         translationRect.origin.y = rect.origin.y / self.cell.zoomingScrollView.zoomScale - self.cell.zoomingScrollView.contentInset.top / self.cell.zoomingScrollView.zoomScale
-        translationRect.size.height = 1
-        translationRect.size.width = 1
+        translationRect.size.height = 10
+        translationRect.size.width = 10
         self.cell.zoomingScrollView.zoom(to: translationRect, animated: true)
     }
 }

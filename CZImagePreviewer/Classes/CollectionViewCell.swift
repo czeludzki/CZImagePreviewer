@@ -24,16 +24,22 @@ class CollectionViewCell: UICollectionViewCell {
     }()
     
     lazy var zoomingScrollView: UIScrollView = {
-        let ret = UIScrollView.init(frame: CGRect.zero)
-        ret.delegate = self.cellModel
-        ret.showsVerticalScrollIndicator = false
-        ret.showsHorizontalScrollIndicator = false
-        ret.bounces = true
-        ret.clipsToBounds = false
-        ret.backgroundColor = UIColor.clear
-        ret.alwaysBounceVertical = false
-        ret.alwaysBounceHorizontal = false
-        return ret
+        let zoomingScrollView = UIScrollView.init(frame: CGRect.zero)
+        zoomingScrollView.delegate = self.cellModel
+        zoomingScrollView.showsVerticalScrollIndicator = false
+        zoomingScrollView.showsHorizontalScrollIndicator = false
+        zoomingScrollView.bounces = true
+        zoomingScrollView.clipsToBounds = false
+        zoomingScrollView.backgroundColor = UIColor.clear
+        zoomingScrollView.alwaysBounceVertical = false
+        zoomingScrollView.alwaysBounceHorizontal = false
+        return zoomingScrollView
+    }()
+    
+    lazy var videoContainer: CZImagePreviewer.AccessoryView = {
+        let videoContainer = CZImagePreviewer.AccessoryView.init()
+        videoContainer._viewType = .videoView
+        return videoContainer
     }()
     
     override init(frame: CGRect) {
@@ -42,6 +48,7 @@ class CollectionViewCell: UICollectionViewCell {
         self.contentView.addSubview(self.zoomingScrollView)
         self.zoomingScrollView.snp.makeConstraints { $0.edges.equalToSuperview() }
         self.zoomingScrollView.addSubview(self.imageView)
+        self.contentView.addSubview(self.videoContainer)
     }
     
     required init?(coder: NSCoder) { fatalError("init(coder:) has not been implemented") }

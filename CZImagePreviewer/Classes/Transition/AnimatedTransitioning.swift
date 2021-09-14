@@ -36,7 +36,6 @@ class AnimatedTransitioning: NSObject, UIViewControllerAnimatedTransitioning {
     func transitionDuration(using transitionContext: UIViewControllerContextTransitioning?) -> TimeInterval { 0.3 }
     
     func animateTransition(using transitionContext: UIViewControllerContextTransitioning) {
-        
         if self.transitionFor == .dismiss {
             self.dismiss(transitionContext)
         }
@@ -94,15 +93,15 @@ class AnimatedTransitioning: NSObject, UIViewControllerAnimatedTransitioning {
         } completion: { finish in
             toView.isHidden = false
             imageView.removeFromSuperview()
+            transitionContext.containerView.backgroundColor = .clear
             transitionContext.completeTransition(!transitionContext.transitionWasCancelled)
         }
         
     }
     
     func dismiss(_ transitionContext: UIViewControllerContextTransitioning) {
-                
+        
         guard let keyWindow = CZImagePreviewer.keyWindow,
-              let toVC = transitionContext.viewController(forKey: .to),
               let fromView = transitionContext.view(forKey: .from),
               let fromVC = transitionContext.viewController(forKey: .from) as? AnimatedTransitioningContentProvider,
               let back2Container = fromVC.transitioningElementForDismiss(animatedTransitioning: self).container,  // 动画要返回到哪个容器, 主要是为了得到其在 keywindow 上的相对定位
@@ -112,11 +111,15 @@ class AnimatedTransitioning: NSObject, UIViewControllerAnimatedTransitioning {
             return
         }
         
-        fromView.isHidden = true
         // 计算 back2Container 在屏幕中的位置
         let targetFrame = back2Container.convert(back2Container.bounds, to: keyWindow)
+        if !keyWindow.bounds.contains(targetFrame) {
+            transitionContext.completeTransition(!transitionContext.transitionWasCancelled)
+            return
+        }
+        
         transitionContext.containerView.addSubview(animationActor)
-        animationActor.center = transitionContext.containerView.center
+        fromView.isHidden = true
         
         UIView.animate(withDuration: self.transitionDuration(using: transitionContext)) {
             animationActor.frame = targetFrame
