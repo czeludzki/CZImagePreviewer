@@ -23,7 +23,7 @@ open class CZImagePreviewer: UIViewController {
     public private(set) var currentIdx = -1 {
         didSet {
             if oldValue != currentIdx {
-                print("current index = \(currentIdx)")
+//                print("current index = \(currentIdx)")
                 // 当 currentIndex 发生改变, 尝试更新 self.cus_console 视图
                 self.updateConsole()
             }
@@ -139,6 +139,9 @@ open class CZImagePreviewer: UIViewController {
         self.executeWhenRotate(idx: mark_idx, coordinator: coordinator)
     }
     
+    deinit {
+        print("Previewer 销毁了")
+    }
 }
 
 // MARK: Action
@@ -247,8 +250,15 @@ extension CZImagePreviewer {
         self.imageTriggerContainer = container
     }
     
-    public func dismiss() {
-        self.dismiss(animated: true, completion: nil)
+    public func dismiss(completion: (() -> Void)? = nil) {
+        self.dismiss(animated: true) {
+            let cell = self.collectionView.cellForItem(at: IndexPath(item: self.currentIdx, section: 0)) as? CollectionViewCell
+            cell?.cellModel.accessoryView?.isHidden = false
+            self.cus_console?.isHidden = false
+            if let completion = completion {
+                completion()
+            }
+        }
     }
     
     public func reloadData() {

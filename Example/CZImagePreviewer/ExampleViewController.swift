@@ -108,7 +108,9 @@ extension ExampleViewController: PreviewerDataSource {
     
     func imagePreviewer(_ imagePreviewer: CZImagePreviewer, accessoryViewForCellWith viewModel: PreviewerCellViewModel, resourceLoadingState: CZImagePreviewer.ImageLoadingState) -> CZImagePreviewer.AccessoryView? {
         
-        self.res[viewModel.idx].vm?.consoleView
+        let view = self.res[viewModel.idx].vm?.consoleView
+        print(view)
+        return view
         
     }
     
