@@ -247,8 +247,13 @@ extension CZImagePreviewer {
         self.imageTriggerContainer = container
     }
     
-    public func dismiss() {
-        self.dismiss(animated: true, completion: nil)
+    public func dismiss(completion: (() -> Void)? = nil) {
+        self.dismiss(animated: true) {
+            let cell = self.collectionView.cellForItem(at: IndexPath(item: self.currentIdx, section: 0)) as? CollectionViewCell
+            cell?.cellModel.accessoryView?.isHidden = false
+            self.cus_console?.isHidden = false
+            completion?()
+        }
     }
     
     public func reloadData() {
@@ -276,6 +281,8 @@ extension CZImagePreviewer: UICollectionViewDelegateFlowLayout, UICollectionView
         cell.cellModel.delegate = self
         cell.cellModel.item = PreviewerCellItem(resource: imgRes, idx: indexPath.item)
         cell.cellModel.videoLayer = self.dataSource?.imagePreviewer(self, videoLayerForCellWith: cell.cellModel)
+        cell.cellModel.accessoryView = self.dataSource?.imagePreviewer(self, accessoryViewForCellWith: cell.cellModel)
+        self.dataSource?.imagePreviewer(self, videoSizeForCellWith: cell.cellModel, videoSizeSettingHandler: cell.cellModel.videoSizeSettingHandler!)
         return cell
     }
     
@@ -296,12 +303,7 @@ extension CZImagePreviewer: UICollectionViewDelegateFlowLayout, UICollectionView
 extension CZImagePreviewer: PreviewerCellViewModelDelegate {
     // CellModel 负责下载图片, 下载图片进度反馈
     func collectionCellViewModel(_ viewModel: PreviewerCellViewModel, idx: Int, resourceLoadingStateDidChanged state: ImageLoadingState) {
-        guard let accessoryView = self.dataSource?.imagePreviewer(self, accessoryViewForCellWith: viewModel, resourceLoadingState: state) else {
-            return
-        }
-        accessoryView._viewType = .accessoryView
-        // 加入辅助视图到 Cell View Model
-        viewModel.accessoryView = accessoryView
+        self.dataSource?.imagePreviewer(self, imageLoadingStateDidChanged: state, with: viewModel)
     }
 }
 

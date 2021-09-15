@@ -45,11 +45,23 @@ public class PreviewerCellViewModel: NSObject {     // 继承自 NSObject 是因
     /// 从 dataSource 取得的视频layer, 在 willSet 时, 加入到 cell.videoContainer.layer
     public weak var videoLayer: CALayer? {
         willSet {
+            if newValue === videoLayer { return }
             videoLayer?.removeFromSuperlayer()
             guard let newLayer = newValue else { return }
-            self.cell.videoContainer.layer.addSublayer(newLayer)
             newLayer.frame = self.cell.videoContainer.bounds
+            self.cell.videoContainer.layer.addSublayer(newLayer)
         }
+    }
+    
+    /// 记录视频尺寸
+    public private(set) var videoSize: CGSize? {
+        didSet {
+            self.updateVideoContainerConfiguration()
+        }
+    }
+    /// 视频尺寸配置闭包
+    public private(set) lazy var videoSizeSettingHandler: ((CGSize?) -> Void)? = { [weak self] size in
+        self?.videoSize = size
     }
     
     /// dismiss动画发生时, 需要判断该由 imageView 或是 videoView 作为动画主角
@@ -58,11 +70,6 @@ public class PreviewerCellViewModel: NSObject {     // 继承自 NSObject 是因
             return self.cell.videoContainer
         }
         return self.cell.imageView
-    }
-    
-    init(cell: CollectionViewCell) {
-        self.cell = cell
-        super.init()
     }
     
     var item: PreviewerCellItem? {
@@ -78,6 +85,16 @@ public class PreviewerCellViewModel: NSObject {     // 继承自 NSObject 是因
         }
     }
     
+    init(cell: CollectionViewCell) {
+        self.cell = cell
+        super.init()
+    }
+    
+    func cellDidLayoutSubviews() {
+        self.updateScrollViewConfiguration()
+        self.updateVideoContainerConfiguration()
+        self.keepCentral()
+    }
 }
 
 // MARK: ScrollViewDelegate
@@ -154,6 +171,11 @@ extension PreviewerCellViewModel {
         // 初始缩放系数
         self.cell.zoomingScrollView.setZoomScale(1, animated: false)
         self.cell.layoutIfNeeded()
+    }
+    
+    /// 更新 video 视图配置
+    func updateVideoContainerConfiguration() {
+        
     }
     
     func keepCentral() {

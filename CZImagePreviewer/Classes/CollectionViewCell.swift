@@ -56,7 +56,6 @@ class CollectionViewCell: UICollectionViewCell {
     
     override func layoutSubviews() {
         super.layoutSubviews()
-        self.cellModel.updateScrollViewConfiguration()
-        self.cellModel.keepCentral()
+        self.cellModel.cellDidLayoutSubviews()
     }
 }
