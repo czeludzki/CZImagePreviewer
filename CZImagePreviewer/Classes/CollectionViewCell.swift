@@ -49,14 +49,12 @@ class CollectionViewCell: UICollectionViewCell {
         self.zoomingScrollView.snp.makeConstraints { $0.edges.equalToSuperview() }
         self.zoomingScrollView.addSubview(self.imageView)
         self.contentView.addSubview(self.videoContainer)
-        self.videoContainer.snp.makeConstraints { $0.edges.equalToSuperview() }
     }
     
     required init?(coder: NSCoder) { fatalError("init(coder:) has not been implemented") }
     
     override func layoutSubviews() {
         super.layoutSubviews()
-        self.cellModel.updateScrollViewConfiguration()
-        self.cellModel.keepCentral()
+        self.cellModel.cellDidLayoutSubviews()
     }
 }

@@ -174,7 +174,7 @@ extension CZImagePreviewer {
     @objc func panOnView(sender: UIPanGestureRecognizer) {
         
         guard let cell = self.collectionView.cellForItem(at: IndexPath(item: self.currentIdx, section: 0)) as? CollectionViewCell else { return }
-        let imageView = cell.imageView
+        let animationActor = cell.cellModel.dismissAnimationActor
         
         // 百分比
         let translationInView = sender.translation(in: self.view)
@@ -183,13 +183,13 @@ extension CZImagePreviewer {
         
         switch sender.state {
         case .began:
-            Self.animationActorDefaultCenter = imageView.center
-            Self.animationActorDefaultSize = imageView.frame.size
+            Self.animationActorDefaultCenter = animationActor.center
+            Self.animationActorDefaultSize = animationActor.frame.size
             self.cus_console?.isHidden = true
             cell.cellModel.accessoryView?.isHidden = true
         case .changed:
-            imageView.frame.size = CGSize(width: Self.animationActorDefaultSize.width * (1 - process), height: Self.animationActorDefaultSize.height * (1 - process))
-            imageView.center = CGPoint(x: Self.animationActorDefaultCenter.x + translationInView.x, y: Self.animationActorDefaultCenter.y + translationInView.y)
+            animationActor.frame.size = CGSize(width: Self.animationActorDefaultSize.width * (1 - process), height: Self.animationActorDefaultSize.height * (1 - process))
+            animationActor.center = CGPoint(x: Self.animationActorDefaultCenter.x + translationInView.x, y: Self.animationActorDefaultCenter.y + translationInView.y)
             self.view.backgroundColor = UIColor.init(red: 0, green: 0, blue: 0, alpha: 1 - process)
         case .ended, .cancelled:
             let velocity = sender.velocity(in: self.view)
@@ -205,8 +205,8 @@ extension CZImagePreviewer {
         // 放弃 dismiss 操作
         func discardDismissOperation() {
             UIView.animate(withDuration: 0.3) {
-                imageView.frame.size = Self.animationActorDefaultSize
-                imageView.center = Self.animationActorDefaultCenter
+                animationActor.frame.size = Self.animationActorDefaultSize
+                animationActor.center = Self.animationActorDefaultCenter
                 self.view.backgroundColor = .black
             } completion: { finish in
                 self.cus_console?.isHidden = false
@@ -255,9 +255,7 @@ extension CZImagePreviewer {
             let cell = self.collectionView.cellForItem(at: IndexPath(item: self.currentIdx, section: 0)) as? CollectionViewCell
             cell?.cellModel.accessoryView?.isHidden = false
             self.cus_console?.isHidden = false
-            if let completion = completion {
-                completion()
-            }
+            completion?()
         }
     }
     
@@ -286,6 +284,8 @@ extension CZImagePreviewer: UICollectionViewDelegateFlowLayout, UICollectionView
         cell.cellModel.delegate = self
         cell.cellModel.item = PreviewerCellItem(resource: imgRes, idx: indexPath.item)
         cell.cellModel.videoLayer = self.dataSource?.imagePreviewer(self, videoLayerForCellWith: cell.cellModel)
+        cell.cellModel.accessoryView = self.dataSource?.imagePreviewer(self, accessoryViewForCellWith: cell.cellModel)
+        self.dataSource?.imagePreviewer(self, videoSizeForCellWith: cell.cellModel, videoSizeSettingHandler: cell.cellModel.videoSizeSettingHandler!)
         return cell
     }
     
@@ -306,12 +306,7 @@ extension CZImagePreviewer: UICollectionViewDelegateFlowLayout, UICollectionView
 extension CZImagePreviewer: PreviewerCellViewModelDelegate {
     // CellModel 负责下载图片, 下载图片进度反馈
     func collectionCellViewModel(_ viewModel: PreviewerCellViewModel, idx: Int, resourceLoadingStateDidChanged state: ImageLoadingState) {
-        guard let accessoryView = self.dataSource?.imagePreviewer(self, accessoryViewForCellWith: viewModel, resourceLoadingState: state) else {
-            return
-        }
-        accessoryView._viewType = .accessoryView
-        // 加入辅助视图到 Cell View Model
-        viewModel.accessoryView = accessoryView
+        self.dataSource?.imagePreviewer(self, imageLoadingStateDidChanged: state, with: viewModel)
     }
 }
 
@@ -379,14 +374,15 @@ extension CZImagePreviewer {
     func executeWhenRotate(idx: Int, coordinator: UIViewControllerTransitionCoordinator) {
         let cell = self.collectionView.cellForItem(at: IndexPath(item: idx, section: 0)) as? CollectionViewCell
         if let image = cell?.imageView.image {
-            self.rotateAnimationImageView.isHidden = false
-            self.rotateAnimationImageView.image = image
-            self.collectionView.isHidden = true
+            //FIXME: 暂时隐藏
+//            self.rotateAnimationImageView.isHidden = false
+//            self.collectionView.isHidden = false
+//            self.rotateAnimationImageView.image = image
         }
         // 旋转动画完成后, 恢复原来的显示
         coordinator.animate(alongsideTransition: nil) { transitionCoordinatorContext in
-            self.collectionView.isHidden = false
-            self.rotateAnimationImageView.isHidden = true
+//            self.collectionView.isHidden = false
+//            self.rotateAnimationImageView.isHidden = true
         }
     }
     
@@ -430,7 +426,7 @@ extension CZImagePreviewer: AnimatedTransitioningContentProvider {
         guard let container = self.delegate?.imagePreviewer(self, willDismissWithCellViewModel: cell.cellModel) else {
             return (nil, nil)
         }
-        return ElementForDismissTransition(container, cell.imageView)
+        return ElementForDismissTransition(container, cell.cellModel.dismissAnimationActor)
     }
 
 }

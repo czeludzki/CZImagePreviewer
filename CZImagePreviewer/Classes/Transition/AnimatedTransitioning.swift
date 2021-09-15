@@ -79,7 +79,7 @@ class AnimatedTransitioning: NSObject, UIViewControllerAnimatedTransitioning {
         })
         
         // 计算图片以 scaleAspectFiting 的模式显示在屏幕上的实际大小
-        let scaleAspectFitingSize = imageView.image?.asImgRes.scaleAspectFiting(toSize: transitionContext.containerView.bounds.size)
+        let scaleAspectFitingSize = imageView.image?.size.asImgRes.scaleAspectFiting(toSize: transitionContext.containerView.bounds.size)
         transitionContext.containerView.addSubview(imageView)
         // 将触发视图frame赋值到imageView
         imageView.frame = targetFrame

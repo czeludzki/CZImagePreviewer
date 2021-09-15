@@ -94,6 +94,7 @@ class VideoPlayerViewModel: NSObject {
         self.playerLayer = AVPlayerLayer.init(player: self.player)
         
         self.player?.addObserver(self, forKeyPath: "rate", options: .new, context: nil)
+        self.player?.addObserver(self, forKeyPath: "status", options: .new, context: nil)
     }
     
     @objc func playbackControlBtnOnClick(sender: UIButton) {
@@ -109,10 +110,19 @@ class VideoPlayerViewModel: NSObject {
         if keyPath == "rate" {
             self.isPlaying = self.player?.rate != 0
         }
+        if keyPath == "status" {
+            if self.player?.status == .readyToPlay {
+                self.loadingIndicator.stopAnimating()
+            }
+            if self.player?.status == .failed {
+                self.loadingIndicator.stopAnimating()
+            }
+        }
     }
     
     deinit {
         self.player?.removeObserver(self, forKeyPath: "rate")
+        self.player?.removeObserver(self, forKeyPath: "status")
     }
 }
 
