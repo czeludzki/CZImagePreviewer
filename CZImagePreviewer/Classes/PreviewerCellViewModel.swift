@@ -45,6 +45,8 @@ public class PreviewerCellViewModel: NSObject {     // 继承自 NSObject 是因
     /// 从 dataSource 取得的视频layer, 在 willSet 时, 加入到 cell.videoContainer.layer
     public weak var videoLayer: CALayer? {
         willSet {
+            self.cell.zoomingScrollView.isHidden = newValue != nil
+            self.cell.videoContainer.isHidden = newValue == nil
             if newValue === videoLayer { return }
             videoLayer?.removeFromSuperlayer()
             guard let newLayer = newValue else { return }
@@ -53,14 +55,18 @@ public class PreviewerCellViewModel: NSObject {     // 继承自 NSObject 是因
         }
     }
     
-    /// 记录视频尺寸
-    public private(set) var videoSize: CGSize? {
+    /// 记录视频尺寸, 在闭包 var videoSizeSettingHandler 被调用时赋值
+    public private(set) var videoSize: CGSize = .zero {
         didSet {
             self.updateVideoContainerConfiguration()
         }
     }
+    
     /// 视频尺寸配置闭包
     public private(set) lazy var videoSizeSettingHandler: ((CGSize?) -> Void)? = { [weak self] size in
+        guard let size = size else {
+            return
+        }
         self?.videoSize = size
     }
     
@@ -158,7 +164,7 @@ extension PreviewerCellViewModel {
         self.cell.zoomingScrollView.contentSize = imgSize
         
         // 不缩放的情况下, 图片在屏幕上的大小
-        let imageFitingSizeInScreen: CGSize = self.cell.imageView.image?.asImgRes.scaleAspectFiting(toSize: screenSize) ?? screenSize
+        let imageFitingSizeInScreen: CGSize = self.cell.imageView.image?.size.asImgRes.scaleAspectFiting(toSize: screenSize) ?? screenSize
         
         self.cell.imageView.frame = CGRect.init(origin: CGPoint.zero, size: CGSize.init(width: imageFitingSizeInScreen.width, height: imageFitingSizeInScreen.height))
         self.cell.imageView.center = CGPoint.init(x: screenSize.width * 0.5, y: screenSize.height * 0.5)
@@ -173,9 +179,17 @@ extension PreviewerCellViewModel {
         self.cell.layoutIfNeeded()
     }
     
-    /// 更新 video 视图配置
+    /// 更新 video 视图配置, 配置 videoLayer 以及 videoContainer 的 frame
     func updateVideoContainerConfiguration() {
-        
+        if self.videoSize == .zero {
+            self.cell.videoContainer.frame = self.cell.contentView.bounds
+            return
+        }
+        // 计算 self.videoSize 展示在屏幕上的大小
+        let convertSize = self.videoSize.asImgRes.scaleAspectFiting(toSize: self.cell.contentView.bounds.size)
+        self.cell.videoContainer.bounds.size = convertSize
+        self.cell.videoContainer.center = CGPoint(x: self.cell.contentView.bounds.maxX * 0.5, y: self.cell.contentView.bounds.maxY * 0.5)
+        self.videoLayer?.frame = CGRect(origin: .zero, size: convertSize)
     }
     
     func keepCentral() {
@@ -189,6 +203,6 @@ extension PreviewerCellViewModel {
         let centerX = contentSize.width * 0.5 + offsetX
         let centerY = contentSize.height * 0.5 + offsetY
         
-        self.cell.imageView.center = CGPoint.init(x: centerX, y: centerY)
+        self.cell.imageView.center = CGPoint(x: centerX, y: centerY)
     }
 }

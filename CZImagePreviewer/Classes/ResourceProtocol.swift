@@ -44,6 +44,8 @@ extension ImgSourceNamespaceWrapper: ResourceProtocol {
             res.loadImage(progress: progress, completion: completion)
             return
         }
+        
+        fatalError("错误的类型调用了 loadImage(progress: LoadImageProgress?, completion: LoadImageCompletion?) 函数, 请检查")
     }
 }
 
@@ -87,14 +89,18 @@ extension ImgSourceNamespaceWrapper where WrappedValueType : UIImage {
         }
     }
     
+}
+
+extension CGSize: ImgSourceNamespaceWrappable {}
+extension ImgSourceNamespaceWrapper where WrappedValueType == CGSize {
     /// 计算图片以 UIViewContentModeScaleAspectFit mode 显示在某个 size 上的实际大小
     func scaleAspectFiting(toSize: CGSize) -> CGSize {
-        let imgSize = self.wrappedValue.size
-        let widthRaito = toSize.width / imgSize.width
-        let heightRaito = toSize.height / imgSize.height
+        let originalSize = self.wrappedValue
+        let widthRaito = toSize.width / originalSize.width
+        let heightRaito = toSize.height / originalSize.height
         let scale = min(widthRaito, heightRaito)
-        let fitingWidth = scale * imgSize.width
-        let fitingHeight = scale * imgSize.height
+        let fitingWidth = scale * originalSize.width
+        let fitingHeight = scale * originalSize.height
         return CGSize.init(width: fitingWidth, height: fitingHeight)
     }
 }
