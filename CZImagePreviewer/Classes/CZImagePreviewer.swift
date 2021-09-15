@@ -23,9 +23,10 @@ open class CZImagePreviewer: UIViewController {
     public private(set) var currentIdx = -1 {
         didSet {
             if oldValue != currentIdx {
-//                print("current index = \(currentIdx)")
                 // 当 currentIndex 发生改变, 尝试更新 self.cus_console 视图
                 self.updateConsole()
+                // 通知代理
+                self.delegate?.imagePreviewer(self, currentIndexDidChange: currentIdx)
             }
         }
     }
@@ -127,21 +128,25 @@ open class CZImagePreviewer: UIViewController {
     
     public override var prefersStatusBarHidden: Bool { true }
     
+    var isPaning: Bool = false
+    open override var shouldAutorotate: Bool {
+        return !self.isPaning
+    }
+    
     // 屏幕旋转事件发生时触发
     public override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
         let mark_idx = self.currentIdx
+        self.collectionView.layer.anchorPoint = CGPoint(x: self.collectionView.contentOffset.x / self.collectionView.contentSize.width, y: 0.5)
         self.collectionView.performBatchUpdates {
             self.collectionView.reloadData()
         } completion: { finish in
             self.scroll2Item(at: mark_idx, animated: false)
+//            self.collectionView.layer.anchorPoint = CGPoint(x: 0.5, y: 0.5)
         }
         // 旋转时执行, 将 rotateAnimationImageView.isHidden 设为 false, 且为其设置图片
-        self.executeWhenRotate(idx: mark_idx, coordinator: coordinator)
+//        self.executeWhenRotate(idx: mark_idx, coordinator: coordinator)
     }
     
-    deinit {
-        print("Previewer 销毁了")
-    }
 }
 
 // MARK: Action
@@ -187,6 +192,7 @@ extension CZImagePreviewer {
             Self.animationActorDefaultSize = animationActor.frame.size
             self.cus_console?.isHidden = true
             cell.cellModel.accessoryView?.isHidden = true
+            self.isPaning = true
         case .changed:
             animationActor.frame.size = CGSize(width: Self.animationActorDefaultSize.width * (1 - process), height: Self.animationActorDefaultSize.height * (1 - process))
             animationActor.center = CGPoint(x: Self.animationActorDefaultCenter.x + translationInView.x, y: Self.animationActorDefaultCenter.y + translationInView.y)
@@ -211,6 +217,7 @@ extension CZImagePreviewer {
             } completion: { finish in
                 self.cus_console?.isHidden = false
                 cell.cellModel.accessoryView?.isHidden = false
+                self.isPaning = false
             }
         }
     }
@@ -372,17 +379,18 @@ extension CZImagePreviewer {
     
     // 在对比了微信的图片浏览后, 发现微信的图片浏览器在屏幕旋转事件发生时, 微信为了旋转动画的流畅和质量, 会在顶层覆盖一个独立的 Image 视图展示旋转, 旋转完成后再将其移除
     func executeWhenRotate(idx: Int, coordinator: UIViewControllerTransitionCoordinator) {
-        let cell = self.collectionView.cellForItem(at: IndexPath(item: idx, section: 0)) as? CollectionViewCell
-        if let image = cell?.imageView.image {
-            //FIXME: 暂时隐藏
-//            self.rotateAnimationImageView.isHidden = false
-//            self.collectionView.isHidden = false
-//            self.rotateAnimationImageView.image = image
+        guard let cell = self.collectionView.cellForItem(at: IndexPath(item: idx, section: 0)) as? CollectionViewCell else { return }
+        // 把 Cell 从 collectionView 中取出来, 放到 self.view
+        let originalFrame = cell.frame
+        let originalSuperView = cell.superview
+        self.view.addSubview(cell)
+        cell.snp.makeConstraints { make in
+            make.edges.equalToSuperview()
         }
         // 旋转动画完成后, 恢复原来的显示
         coordinator.animate(alongsideTransition: nil) { transitionCoordinatorContext in
-//            self.collectionView.isHidden = false
-//            self.rotateAnimationImageView.isHidden = true
+            originalSuperView?.addSubview(cell)
+            originalSuperView?.frame = originalFrame
         }
     }
     

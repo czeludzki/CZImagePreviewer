@@ -106,17 +106,18 @@ extension ExampleViewController: PreviewerDataSource {
     }
     
     
-    func imagePreviewer(_ imagePreviewer: CZImagePreviewer, accessoryViewForCellWith viewModel: PreviewerCellViewModel, resourceLoadingState: CZImagePreviewer.ImageLoadingState) -> CZImagePreviewer.AccessoryView? {
-        
+    func imagePreviewer(_ imagePreviewer: CZImagePreviewer, accessoryViewForCellWith viewModel: PreviewerCellViewModel) -> CZImagePreviewer.AccessoryView? {
         let view = self.res[viewModel.idx].vm?.consoleView
-        print(view)
         return view
-        
     }
     
     func imagePreviewer(_ imagePreviewer: CZImagePreviewer, videoLayerForCellWith viewModel: PreviewerCellViewModel) -> CALayer? {
-        
-        self.res[viewModel.idx].vm?.playerLayer
-        
+        return self.res[viewModel.idx].vm?.playerLayer
     }
+    
+    func imagePreviewer(_ imagePreviewer: CZImagePreviewer, videoSizeForCellWith viewModel: PreviewerCellViewModel, videoSizeSettingHandler: VideoSizeSettingHandler) {
+        videoSizeSettingHandler(self.res[viewModel.idx].vm?.player?.currentItem?.presentationSize ?? .zero)
+    }
+    
+    
 }

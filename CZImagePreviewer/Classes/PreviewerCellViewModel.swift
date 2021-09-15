@@ -50,8 +50,8 @@ public class PreviewerCellViewModel: NSObject {     // 继承自 NSObject 是因
             if newValue === videoLayer { return }
             videoLayer?.removeFromSuperlayer()
             guard let newLayer = newValue else { return }
-            newLayer.frame = self.cell.videoContainer.bounds
             self.cell.videoContainer.layer.addSublayer(newLayer)
+            self.cell.videoContainer.videoLayer = newLayer
         }
     }
     
@@ -189,7 +189,6 @@ extension PreviewerCellViewModel {
         let convertSize = self.videoSize.asImgRes.scaleAspectFiting(toSize: self.cell.contentView.bounds.size)
         self.cell.videoContainer.bounds.size = convertSize
         self.cell.videoContainer.center = CGPoint(x: self.cell.contentView.bounds.maxX * 0.5, y: self.cell.contentView.bounds.maxY * 0.5)
-        self.videoLayer?.frame = CGRect(origin: .zero, size: convertSize)
     }
     
     func keepCentral() {

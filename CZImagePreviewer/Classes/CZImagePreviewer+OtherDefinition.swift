@@ -43,6 +43,14 @@ extension CZImagePreviewer {
             }
             return ret
         }
+        
+        var videoLayer: CALayer?
+        open override func layoutSubviews() {
+            superview?.layoutSubviews()
+            if self.viewType == .videoView {
+                self.videoLayer?.frame = CGRect(origin: .zero, size: self.bounds.size)
+            }
+        }
     }
     
 }

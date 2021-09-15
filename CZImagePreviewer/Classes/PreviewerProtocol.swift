@@ -39,6 +39,9 @@ public protocol PreviewerDataSource: AnyObject {
 }
 
 public protocol PreviewerDelegate: AnyObject {
+    /// currentIdx 发生改变
+    func imagePreviewer(_ imagePreviewer: CZImagePreviewer, currentIndexDidChange index: Int)
+    
     /// 当 imagePreviewer 即将要退出显示时调用
     /// - Returns: 根据返回值决定返回动画: 退回到某个UIView视图的动画
     func imagePreviewer(_ imagePreviewer: CZImagePreviewer, willDismissWithCellViewModel viewModel: PreviewerCellViewModel) -> UIView?
@@ -48,6 +51,8 @@ public protocol PreviewerDelegate: AnyObject {
 }
 
 public extension PreviewerDelegate {
+    
+    func imagePreviewer(_ imagePreviewer: CZImagePreviewer, currentIndexDidChange index: Int) {}
     
     func imagePreviewer(_ imagePreviewer: CZImagePreviewer, willDismissWithCellViewModel viewModel: PreviewerCellViewModel) -> UIView? { nil }
     
