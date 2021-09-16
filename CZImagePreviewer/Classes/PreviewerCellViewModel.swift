@@ -6,7 +6,7 @@
 //
 
 import UIKit
-import SDWebImage
+import Kingfisher
 
 protocol PreviewerCellViewModelDelegate: AnyObject {
     /// 通知代理图片加载进度
@@ -87,7 +87,7 @@ public class PreviewerCellViewModel: NSObject {     // 继承自 NSObject 是因
     
     var resource: ResourceProtocol? {
         didSet {
-            resource?.loadImage(progress: self.progress(receivedSize:expectedSize:targetURL:), completion: completion(image:data:error:cacheType:finish:targetURL:))
+            resource?.loadImage(progress: self.progress(receivedSize:expectedSize:), completion: self.completion(image:result:))
         }
     }
     
@@ -134,27 +134,19 @@ extension PreviewerCellViewModel {
 extension PreviewerCellViewModel {
     
     // 图片加载进度闭包
-    func progress(receivedSize: Int, expectedSize: Int, targetURL: URL?) {
-        DispatchQueue.main.async {
-            self.delegate?.collectionCellViewModel(self, idx: self.idx, resourceLoadingStateDidChanged: .loading(receivedSize: receivedSize, expectedSize: expectedSize))
-        }
+    func progress(receivedSize: Int64, expectedSize: Int64) {
+        self.delegate?.collectionCellViewModel(self, idx: self.idx, resourceLoadingStateDidChanged: .loading(receivedSize: receivedSize, expectedSize: expectedSize))
     }
     
     // 图片加载结果
-    func completion(image: UIImage?, data: Data?, error: Error?, cacheType: SDImageCacheType, finish: Bool, targetURL: URL?) {
-        DispatchQueue.main.async {
-            self.cell.imageView.image = image
-            self.updateScrollViewConfiguration()
-            if let _ = error {
-                self.delegate?.collectionCellViewModel(self, idx: self.idx, resourceLoadingStateDidChanged: .loadingFaiure)
-                return
-            }
-            if !finish {
-                self.delegate?.collectionCellViewModel(self, idx: self.idx, resourceLoadingStateDidChanged: .processing)
-                return
-            }
-            self.delegate?.collectionCellViewModel(self, idx: self.idx, resourceLoadingStateDidChanged: .default)
+    func completion(image: UIImage?, result: Result<RetrieveImageResult, KingfisherError>?) {
+        self.cell.imageView.image = image
+        self.updateScrollViewConfiguration()
+        if case .failure(_) = result {
+            self.delegate?.collectionCellViewModel(self, idx: self.idx, resourceLoadingStateDidChanged: .loadingFaiure)
+            return
         }
+        self.delegate?.collectionCellViewModel(self, idx: self.idx, resourceLoadingStateDidChanged: .default)
     }
     
     /// 更新 zoomingScroll 的配置

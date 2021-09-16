@@ -115,16 +115,18 @@ open class CZImagePreviewer: UIViewController {
         self.view.addGestureRecognizer(self.doubleTap)
         self.tap.require(toFail: self.doubleTap)
         self.view.addGestureRecognizer(self.longPress)
+        
+        self.collectionView.performBatchUpdates {
+            self.collectionView.reloadData()
+        } completion: { finish in
+            self.scroll2Item(at: self.currentIdx, animated: false)
+            self.didSynchronizedCurrentIdx = true
+        }
+
     }
     
     /// collectionView在展示后需要将 contentOffset.x 设置为跟 self.currentIdx 同步, 此值用于记录 collectionView 当前展示的页是否已跟 self.currentIdx 已同步
     var didSynchronizedCurrentIdx = false
-    public override func viewDidLayoutSubviews() {
-        super.viewDidLayoutSubviews()
-        if self.didSynchronizedCurrentIdx { return }
-        self.scroll2Item(at: self.currentIdx, animated: false)
-        self.didSynchronizedCurrentIdx = true
-    }
     
     public override var prefersStatusBarHidden: Bool { true }
     
@@ -135,13 +137,13 @@ open class CZImagePreviewer: UIViewController {
     
     // 屏幕旋转事件发生时触发
     public override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
+        super.viewWillTransition(to: size, with: coordinator)
         let mark_idx = self.currentIdx
-        self.collectionView.layer.anchorPoint = CGPoint(x: self.collectionView.contentOffset.x / self.collectionView.contentSize.width, y: 0.5)
         self.collectionView.performBatchUpdates {
             self.collectionView.reloadData()
+//            self.collectionView.reloadSections(IndexSet.init(integer: 0))
         } completion: { finish in
             self.scroll2Item(at: mark_idx, animated: false)
-//            self.collectionView.layer.anchorPoint = CGPoint(x: 0.5, y: 0.5)
         }
         // 旋转时执行, 将 rotateAnimationImageView.isHidden 设为 false, 且为其设置图片
 //        self.executeWhenRotate(idx: mark_idx, coordinator: coordinator)
@@ -270,6 +272,11 @@ extension CZImagePreviewer {
         self.collectionView.reloadData()
     }
     
+    public func scroll2Item(at index: Int, animated: Bool) {
+        let x = CGFloat(index) * self.view.bounds.size.width + CGFloat(index) * self.spacingBetweenItem
+        self.collectionView.setContentOffset(CGPoint(x: x, y: 0), animated: animated)
+    }
+    
 }
 
 // MARK: ScrollViewDelegate, CollectionViewDelegate, CollectionViewDataSource, UICollectionViewDataSourcePrefetching
@@ -297,10 +304,11 @@ extension CZImagePreviewer: UICollectionViewDelegateFlowLayout, UICollectionView
     }
     
     public func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        UIScreen.main.bounds.size
+        print("sizeForItemAtInexPath")
+        return UIScreen.main.bounds.size
     }
     
-    /// iOS 10 预加载
+    /// 数据预加载
     public func collectionView(_ collectionView: UICollectionView, prefetchItemsAt indexPaths: [IndexPath]) {
         indexPaths.forEach { idxPath in
             let imgRes: ResourceProtocol? = self.dataSource?.imagePreviewer(self, imageResourceForItemAtIndex: idxPath.item)
@@ -323,9 +331,13 @@ extension CZImagePreviewer {
     /// UIApplication.shared.keyWindow 方法已过期, 定义这个方法快速找到 keyWindow
     static var keyWindow: UIWindow? {
         var keyWindow: UIWindow? = nil
-        guard let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene else { return nil }
-        for window in windowScene.windows where window.isKeyWindow {
-            keyWindow = window
+        if #available(iOS 13.0, *) {
+            guard let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene else { return nil }
+            for window in windowScene.windows where window.isKeyWindow {
+                keyWindow = window
+            }
+        } else {
+            keyWindow = UIApplication.shared.keyWindow
         }
         return keyWindow
     }
@@ -370,11 +382,6 @@ extension CZImagePreviewer {
         let ret: UIViewController? = lambda(viewController: rootViewController)
         
         return ret
-    }
-    
-    func scroll2Item(at index: Int, animated: Bool) {
-        let x = CGFloat(index) * self.view.bounds.size.width + CGFloat(index) * self.spacingBetweenItem
-        self.collectionView.setContentOffset(CGPoint(x: x, y: 0), animated: animated)
     }
     
     // 在对比了微信的图片浏览后, 发现微信的图片浏览器在屏幕旋转事件发生时, 微信为了旋转动画的流畅和质量, 会在顶层覆盖一个独立的 Image 视图展示旋转, 旋转完成后再将其移除

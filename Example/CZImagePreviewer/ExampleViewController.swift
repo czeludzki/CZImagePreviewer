@@ -7,7 +7,7 @@
 //
 
 import UIKit
-import Pods_CZImagePreviewer_Example
+import CZImagePreviewer
 
 class ExampleViewController: UIViewController {
     

@@ -11,9 +11,8 @@ extension CZImagePreviewer {
     
     public enum ImageLoadingState {
         case `default`  // 正常可预览状态
-        case loading(receivedSize: Int, expectedSize: Int)  // 加载中
+        case loading(receivedSize: Int64, expectedSize: Int64)  // 加载中
         case loadingFaiure  // 加载失败
-        case processing     // 图片解码中
     }
     
     /// DateSource 方法要求返回的辅助视图类

@@ -6,22 +6,24 @@
 //
 
 import UIKit
-import SDWebImage
+import Kingfisher
+import CoreMedia
 
 // 定义协议, 规定 CZImagePreviewerDataSource 数据源代理方法返回的泛型支持此协议
 public protocol ResourceProtocol {
     /// 加载进度
-    typealias LoadImageProgress = (Int, Int, URL?) -> ()
+    typealias LoadImageProgress = Kingfisher.DownloadProgressBlock
     /// 完成
-    typealias LoadImageCompletion = (UIImage?, Data?, Error?, SDImageCacheType, Bool, URL?) -> ()
+    typealias LoadImageCompletion = (_ image: UIImage?, _ result: Result<RetrieveImageResult, KingfisherError>?) -> Void
     
     /// 加载图片的方法.
     /// 使用者只需遵循此协议, 在此方法参数两个闭包中提供内容, 即可作为数据源返回值
-    func loadImage(progress: LoadImageProgress?, completion: LoadImageCompletion?)
+    func loadImage(progress: Kingfisher.DownloadProgressBlock?, completion: LoadImageCompletion?)
 }
 
 /// 使 结构体ImgSourceNamespaceWrapper 遵循 ResourceProtocol 协议, 以便 下面的 String, URL, UIImage 的实例可以通过 .szt 命名空间(属性) 调用 ResourceProtocol 协议的方法
 extension ImgSourceNamespaceWrapper: ResourceProtocol {
+    
     // 默认实现中不做操作
     public func loadImage(progress: LoadImageProgress?, completion: LoadImageCompletion?) {
         
@@ -47,6 +49,7 @@ extension ImgSourceNamespaceWrapper: ResourceProtocol {
         
         fatalError("错误的类型调用了 loadImage(progress: LoadImageProgress?, completion: LoadImageCompletion?) 函数, 请检查")
     }
+    
 }
 
 /*
@@ -63,16 +66,19 @@ extension ImgSourceNamespaceWrapper where WrappedValueType == String {
     }
     
     public func loadImage(progress: LoadImageProgress?, completion: LoadImageCompletion?) {
-        let completion = completion ?? {(_: UIImage?, _: Data?, _: Error?, SDImageCacheType, Bool, _: URL?) -> () in }
-        SDWebImageManager.shared.loadImage(with: self.toURL(), options: .retryFailed, progress: progress, completed: completion)
+        guard let url = self.toURL() else { return }
+        KingfisherManager.shared.retrieveImage(with: url, options: nil, progressBlock: progress, downloadTaskUpdated: nil) { result in
+            completion?(result.image, result)
+        }
     }
 }
 
 extension URL: ImgSourceNamespaceWrappable {}
 extension ImgSourceNamespaceWrapper where WrappedValueType == URL {
     public func loadImage(progress: LoadImageProgress?, completion: LoadImageCompletion?) {
-        let completion = completion ?? {(_: UIImage?, _: Data?, _: Error?, SDImageCacheType, Bool, _: URL?) -> () in }
-        SDWebImageManager.shared.loadImage(with: self.wrappedValue, options: .retryFailed, progress: progress, completed: completion)
+        KingfisherManager.shared.retrieveImage(with: self.wrappedValue, options: nil, progressBlock: progress, downloadTaskUpdated: nil) { result in
+            completion?(result.image, result)
+        }
     }
 }
 
@@ -82,10 +88,10 @@ extension ImgSourceNamespaceWrapper where WrappedValueType : UIImage {
     public func loadImage(progress: LoadImageProgress?, completion: LoadImageCompletion?) {
         let imgSize: Int = Int(self.wrappedValue.size.height * self.wrappedValue.size.width)
         if let progress = progress {
-            progress(imgSize, imgSize, nil)
+            progress(Int64(imgSize), Int64(imgSize))
         }
         if let completion = completion {
-            completion(self.wrappedValue, self.wrappedValue.sd_imageData(), nil, .none, true, nil)
+            completion(self.wrappedValue, nil)
         }
     }
     
@@ -102,6 +108,15 @@ extension ImgSourceNamespaceWrapper where WrappedValueType == CGSize {
         let fitingWidth = scale * originalSize.width
         let fitingHeight = scale * originalSize.height
         return CGSize.init(width: fitingWidth, height: fitingHeight)
+    }
+}
+
+extension Result where Success == RetrieveImageResult, Failure == KingfisherError {
+    var image: UIImage? {
+        if case let .success(result) = self {
+            return result.image
+        }
+        return nil
     }
 }
 

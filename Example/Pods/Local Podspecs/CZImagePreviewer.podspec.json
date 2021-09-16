@@ -16,14 +16,14 @@
     "tag": "1.0.6"
   },
   "platforms": {
-    "ios": "13.0"
+    "ios": "11.0"
   },
   "source_files": "CZImagePreviewer/Classes/**/*",
   "dependencies": {
     "SnapKit": [
 
     ],
-    "SDWebImage": [
+    "Kingfisher": [
 
     ]
   }

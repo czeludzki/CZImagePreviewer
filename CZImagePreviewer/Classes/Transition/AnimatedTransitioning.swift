@@ -6,7 +6,7 @@
 //
 
 import UIKit
-import SDWebImage
+import Kingfisher
 
 // MARK: 要求遵守了此协议的实例提供一个视图, 在转场动画发生时展示
 protocol AnimatedTransitioningContentProvider: UIViewController {
@@ -74,7 +74,7 @@ class AnimatedTransitioning: NSObject, UIViewControllerAnimatedTransitioning {
         imageView.contentMode = .scaleAspectFill
         
         // UIImageView 加载图片
-        elementResource.loadImage(progress: nil, completion: { img, _, _, _, _, _ in
+        elementResource.loadImage(progress: nil, completion: { img, result in
             imageView.image = img
         })
         

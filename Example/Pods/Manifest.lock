@@ -1,18 +1,16 @@
 PODS:
   - CZImagePreviewer (1.0.6):
-    - SDWebImage
+    - Kingfisher
     - SnapKit
-  - SDWebImage (5.11.1):
-    - SDWebImage/Core (= 5.11.1)
-  - SDWebImage/Core (5.11.1)
-  - SnapKit (4.2.0)
+  - Kingfisher (6.3.1)
+  - SnapKit (5.0.1)
 
 DEPENDENCIES:
   - CZImagePreviewer (from `../`)
 
 SPEC REPOS:
   trunk:
-    - SDWebImage
+    - Kingfisher
     - SnapKit
 
 EXTERNAL SOURCES:
@@ -20,10 +18,10 @@ EXTERNAL SOURCES:
     :path: "../"
 
 SPEC CHECKSUMS:
-  CZImagePreviewer: ad24dc5e29ea351608880905a06a7c9253b09dcb
-  SDWebImage: a7f831e1a65eb5e285e3fb046a23fcfbf08e696d
-  SnapKit: fe8a619752f3f27075cc9a90244d75c6c3f27e2a
+  CZImagePreviewer: f20030fec422dc65e143dd077e150efe7ccd8c1f
+  Kingfisher: 016c8b653a35add51dd34a3aba36b580041acc74
+  SnapKit: 97b92857e3df3a0c71833cce143274bf6ef8e5eb
 
-PODFILE CHECKSUM: 5cc3c66a62313604f5dc59137e539ce5db45318f
+PODFILE CHECKSUM: 51ed314df5877ccd7b793ce085cf1568ffe3e588
 
-COCOAPODS: 1.10.2
+COCOAPODS: 1.10.1

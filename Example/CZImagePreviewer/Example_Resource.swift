@@ -9,7 +9,7 @@
 import Foundation
 import UIKit
 import AVFoundation
-import Pods_CZImagePreviewer_Example
+import CZImagePreviewer
 
 class ResourceItem {
     var imagePath: String
@@ -59,7 +59,7 @@ class VideoPlayerViewModel: NSObject {
     // 加载菊花
     lazy var loadingIndicator: UIActivityIndicatorView = {
         let asshole = UIActivityIndicatorView()
-        asshole.activityIndicatorViewStyle = .medium
+        asshole.activityIndicatorViewStyle = .gray
         return asshole
     }()
     

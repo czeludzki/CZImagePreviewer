@@ -7,14 +7,15 @@
 //
 
 import UIKit
-import SDWebImage
+import Kingfisher
 
 class ExampelImageCollectionViewCell: UICollectionViewCell {
     @IBOutlet weak var resourceTypeLabel: UILabel!
     @IBOutlet var imageView: UIImageView!
     var imageURL: String? {
         didSet {
-            self.imageView.sd_setImage(with: URL(string: imageURL ?? ""))
+            guard let url = imageURL else { return }
+            self.imageView.kf.setImage(with: URL.init(string: url), placeholder: nil, options: nil, completionHandler: nil)
         }
     }
 }
