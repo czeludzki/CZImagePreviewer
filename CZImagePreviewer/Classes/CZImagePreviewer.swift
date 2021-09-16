@@ -43,6 +43,7 @@ open class CZImagePreviewer: UIViewController {
         flowLayout.scrollDirection = .horizontal
         flowLayout.sectionInset = .init(top: 0, left: self.spacingBetweenItem * 0.5, bottom: 0, right: self.spacingBetweenItem * 0.5)
         flowLayout.minimumLineSpacing = self.spacingBetweenItem
+        flowLayout.itemSize = self.view.bounds.size
         let collectionView = UICollectionView(frame: CGRect.zero, collectionViewLayout: flowLayout)
         collectionView.isPagingEnabled = true
         collectionView.showsVerticalScrollIndicator = false
@@ -125,7 +126,7 @@ open class CZImagePreviewer: UIViewController {
 
     }
     
-    /// collectionView在展示后需要将 contentOffset.x 设置为跟 self.currentIdx 同步, 此值用于记录 collectionView 当前展示的页是否已跟 self.currentIdx 已同步
+    /// collectionView 在首次展示后需要将 contentOffset.x 设置为跟 self.currentIdx 同步, 此值用于记录 collectionView 当前展示的页是否已跟 self.currentIdx 已同步
     var didSynchronizedCurrentIdx = false
     
     public override var prefersStatusBarHidden: Bool { true }
@@ -139,9 +140,11 @@ open class CZImagePreviewer: UIViewController {
     public override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
         super.viewWillTransition(to: size, with: coordinator)
         let mark_idx = self.currentIdx
+        
+        (self.collectionView.collectionViewLayout as? UICollectionViewFlowLayout)?.itemSize = size
         self.collectionView.performBatchUpdates {
-            self.collectionView.reloadData()
-//            self.collectionView.reloadSections(IndexSet.init(integer: 0))
+            self.collectionView.collectionViewLayout.invalidateLayout()
+//            self.collectionView.reloadData()
         } completion: { finish in
             self.scroll2Item(at: mark_idx, animated: false)
         }
@@ -303,10 +306,10 @@ extension CZImagePreviewer: UICollectionViewDelegateFlowLayout, UICollectionView
         return cell
     }
     
-    public func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        print("sizeForItemAtInexPath")
-        return UIScreen.main.bounds.size
-    }
+//    public func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
+//        print("sizeForItemAtInexPath")
+//        return UIScreen.main.bounds.size
+//    }
     
     /// 数据预加载
     public func collectionView(_ collectionView: UICollectionView, prefetchItemsAt indexPaths: [IndexPath]) {
@@ -386,18 +389,9 @@ extension CZImagePreviewer {
     
     // 在对比了微信的图片浏览后, 发现微信的图片浏览器在屏幕旋转事件发生时, 微信为了旋转动画的流畅和质量, 会在顶层覆盖一个独立的 Image 视图展示旋转, 旋转完成后再将其移除
     func executeWhenRotate(idx: Int, coordinator: UIViewControllerTransitionCoordinator) {
-        guard let cell = self.collectionView.cellForItem(at: IndexPath(item: idx, section: 0)) as? CollectionViewCell else { return }
-        // 把 Cell 从 collectionView 中取出来, 放到 self.view
-        let originalFrame = cell.frame
-        let originalSuperView = cell.superview
-        self.view.addSubview(cell)
-        cell.snp.makeConstraints { make in
-            make.edges.equalToSuperview()
-        }
         // 旋转动画完成后, 恢复原来的显示
         coordinator.animate(alongsideTransition: nil) { transitionCoordinatorContext in
-            originalSuperView?.addSubview(cell)
-            originalSuperView?.frame = originalFrame
+
         }
     }
     

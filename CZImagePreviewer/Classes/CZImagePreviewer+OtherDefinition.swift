@@ -47,9 +47,14 @@ extension CZImagePreviewer {
         open override func layoutSubviews() {
             superview?.layoutSubviews()
             if self.viewType == .videoView {
+                // 让 videoLayer 跟随 self.frame.size, 并且取消隐式动画
+                CATransaction.begin()
+                CATransaction.setDisableActions(true)
                 self.videoLayer?.frame = CGRect(origin: .zero, size: self.bounds.size)
+                CATransaction.commit()
             }
         }
+        
     }
     
 }
