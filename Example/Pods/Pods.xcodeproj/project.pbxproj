@@ -629,9 +629,9 @@
 		F886A371058710DEA940AA9635620462 /* CZImagePreviewer */ = {
 			isa = PBXGroup;
 			children = (
-				5816B3C69C4C89904A3D05A92F50D318 /* CollectionViewCell.swift */,
 				43686198BD1B09CB3117010C2A230AE5 /* CZImagePreviewer.swift */,
 				7C5FC6A93950B3892CDE097689F17B05 /* CZImagePreviewer+OtherDefinition.swift */,
+				5816B3C69C4C89904A3D05A92F50D318 /* CollectionViewCell.swift */,
 				DF0E1815E85CD3483C8DBA4DD131FE90 /* PreviewerCellViewModel.swift */,
 				F1471738C3387A57054B68798F72AA0F /* PreviewerProtocol.swift */,
 				018B403B1700326378142F306DC82FAA /* PreviewNamespace.swift */,

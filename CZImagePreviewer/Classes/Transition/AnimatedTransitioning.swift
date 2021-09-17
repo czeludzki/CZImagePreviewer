@@ -71,7 +71,7 @@ class AnimatedTransitioning: NSObject, UIViewControllerAnimatedTransitioning {
         let imageView = UIImageView.init(frame: .zero)
         imageView.clipsToBounds = true
         imageView.backgroundColor = .clear
-        imageView.contentMode = .scaleAspectFill
+        imageView.contentMode = .scaleAspectFit
         
         // UIImageView 加载图片
         elementResource.loadImage(progress: nil, completion: { img, result in

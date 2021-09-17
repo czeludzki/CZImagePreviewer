@@ -47,6 +47,8 @@ extension CZImagePreviewer {
         open override func layoutSubviews() {
             superview?.layoutSubviews()
             if self.viewType == .videoView {
+                self.setNeedsDisplay()
+                self.backgroundColor = .red
                 // 让 videoLayer 跟随 self.frame.size, 并且取消隐式动画
                 CATransaction.begin()
                 CATransaction.setDisableActions(true)

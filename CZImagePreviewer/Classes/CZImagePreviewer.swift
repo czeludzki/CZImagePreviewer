@@ -7,6 +7,8 @@
 
 import UIKit
 import SnapKit
+import Kingfisher
+
 
 open class CZImagePreviewer: UIViewController {
     
@@ -14,7 +16,7 @@ open class CZImagePreviewer: UIViewController {
     public var dataSource: PreviewerDataSource?
     
     /// Cell 之间的间距
-    public var spacingBetweenItem: CGFloat = 20.0
+    public var spacingBetweenItem: CGFloat = 40.0
     
     /// 通过DataSource协议返回的自定义控制层
     private var cus_console: UIView?
@@ -53,6 +55,7 @@ open class CZImagePreviewer: UIViewController {
         collectionView.prefetchDataSource = self
         collectionView.backgroundColor = .clear
         collectionView.register(CollectionViewCell.self, forCellWithReuseIdentifier: CollectionViewCell.CollectionViewCellReuseID)
+        collectionView.contentInsetAdjustmentBehavior = .never
         return collectionView
     }()
     
@@ -99,7 +102,7 @@ open class CZImagePreviewer: UIViewController {
     
     public override func viewDidLoad() {
         super.viewDidLoad()
-        self.view.backgroundColor = UIColor.black
+        self.view.backgroundColor = .black
         
         self.view.addSubview(self.collectionView)
         self.collectionView.snp.makeConstraints {
@@ -118,16 +121,18 @@ open class CZImagePreviewer: UIViewController {
         self.view.addGestureRecognizer(self.longPress)
         
         self.collectionView.performBatchUpdates {
-            self.collectionView.reloadData()
-        } completion: { finish in
             self.scroll2Item(at: self.currentIdx, animated: false)
-            self.didSynchronizedCurrentIdx = true
         }
-
+        
+//        let aaa = UIImageView(frame: .zero)
+//        self.view.addSubview(aaa)
+//        aaa.snp.makeConstraints {
+//            $0.edges.equalToSuperview()
+//        }
+//        aaa.kf.setImage(with: URL(string: "https://gimg2.baidu.com/image_search/src=http%3A%2F%2Fdesk.fd.zol-img.com.cn%2Fg5%2FM00%2F03%2F00%2FChMkJ1bK-nSIS40cAAEuXdS6ma4AALLAAM-v7QAAS51610.jpg&refer=http%3A%2F%2Fdesk.fd.zol-img.com.cn&app=2002&size=f9999,10000&q=a80&n=0&g=0n&fmt=jpeg?sec=1633608077&t=f8163c3b266a263733642ca2bc73fdb0"))
+//        aaa.contentMode = .scaleAspectFit
+//        self.collectionView.isHidden = true
     }
-    
-    /// collectionView 在首次展示后需要将 contentOffset.x 设置为跟 self.currentIdx 同步, 此值用于记录 collectionView 当前展示的页是否已跟 self.currentIdx 已同步
-    var didSynchronizedCurrentIdx = false
     
     public override var prefersStatusBarHidden: Bool { true }
     
@@ -136,22 +141,16 @@ open class CZImagePreviewer: UIViewController {
         return !self.isPaning
     }
     
+    private var idxBeforeRotate = -1
     // 屏幕旋转事件发生时触发
     public override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
+        
         super.viewWillTransition(to: size, with: coordinator)
-        let mark_idx = self.currentIdx
+        self.idxBeforeRotate = self.currentIdx
         
         (self.collectionView.collectionViewLayout as? UICollectionViewFlowLayout)?.itemSize = size
-        self.collectionView.performBatchUpdates {
-            self.collectionView.collectionViewLayout.invalidateLayout()
-//            self.collectionView.reloadData()
-        } completion: { finish in
-            self.scroll2Item(at: mark_idx, animated: false)
-        }
-        // 旋转时执行, 将 rotateAnimationImageView.isHidden 设为 false, 且为其设置图片
-//        self.executeWhenRotate(idx: mark_idx, coordinator: coordinator)
+        self.collectionView.collectionViewLayout.invalidateLayout()
     }
-    
 }
 
 // MARK: Action
@@ -285,9 +284,16 @@ extension CZImagePreviewer {
 // MARK: ScrollViewDelegate, CollectionViewDelegate, CollectionViewDataSource, UICollectionViewDataSourcePrefetching
 extension CZImagePreviewer: UICollectionViewDelegateFlowLayout, UICollectionViewDataSource, UICollectionViewDataSourcePrefetching {
     
-    public func scrollViewDidScroll(_ scrollView: UIScrollView) {
-        if !self.didSynchronizedCurrentIdx { return }    // 在非竖屏的情况下, collectionView 被添加到 superView 以后, 会马上调用 scrollViewDidScroll 方法, 导致 self.currentIdx 出错, 所以做此判断
+    public func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) {
         self.currentIdx = Int((scrollView.contentOffset.x + scrollView.bounds.size.width * 0.5) / scrollView.bounds.size.width)
+    }
+    
+    public func collectionView(_ collectionView: UICollectionView, targetContentOffsetForProposedContentOffset proposedContentOffset: CGPoint) -> CGPoint {
+        let attr = collectionView.layoutAttributesForItem(at: IndexPath(item: self.idxBeforeRotate, section: 0))
+        guard let newOffset = attr?.frame.origin else {
+            return proposedContentOffset
+        }
+        return CGPoint(x: newOffset.x + collectionView.frame.minX, y: newOffset.y)
     }
     
     public func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
@@ -305,11 +311,6 @@ extension CZImagePreviewer: UICollectionViewDelegateFlowLayout, UICollectionView
         self.dataSource?.imagePreviewer(self, videoSizeForCellWith: cell.cellModel, videoSizeSettingHandler: cell.cellModel.videoSizeSettingHandler!)
         return cell
     }
-    
-//    public func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-//        print("sizeForItemAtInexPath")
-//        return UIScreen.main.bounds.size
-//    }
     
     /// 数据预加载
     public func collectionView(_ collectionView: UICollectionView, prefetchItemsAt indexPaths: [IndexPath]) {
