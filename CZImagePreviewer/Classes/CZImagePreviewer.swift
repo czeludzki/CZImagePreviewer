@@ -7,6 +7,8 @@
 
 import UIKit
 import SnapKit
+import Kingfisher
+
 
 open class CZImagePreviewer: UIViewController {
     
@@ -14,7 +16,7 @@ open class CZImagePreviewer: UIViewController {
     public var dataSource: PreviewerDataSource?
     
     /// Cell 之间的间距
-    public var spacingBetweenItem: CGFloat = 20.0
+    public var spacingBetweenItem: CGFloat = 40.0
     
     /// 通过DataSource协议返回的自定义控制层
     private var cus_console: UIView?
@@ -58,6 +60,7 @@ open class CZImagePreviewer: UIViewController {
         collectionView.prefetchDataSource = self
         collectionView.backgroundColor = .clear
         collectionView.register(CollectionViewCell.self, forCellWithReuseIdentifier: CollectionViewCell.CollectionViewCellReuseID)
+        collectionView.contentInsetAdjustmentBehavior = .never
         return collectionView
     }()
     
@@ -97,7 +100,7 @@ open class CZImagePreviewer: UIViewController {
     
     public override func viewDidLoad() {
         super.viewDidLoad()
-        self.view.backgroundColor = UIColor.black
+        self.view.backgroundColor = .black
         
         self.view.addSubview(self.collectionView)
         self.collectionView.snp.makeConstraints {
@@ -114,7 +117,14 @@ open class CZImagePreviewer: UIViewController {
             self.scroll2Item(at: self.currentIdx, animated: false)
         }
         
-        self.transitioningDelegate
+//        let aaa = UIImageView(frame: .zero)
+//        self.view.addSubview(aaa)
+//        aaa.snp.makeConstraints {
+//            $0.edges.equalToSuperview()
+//        }
+//        aaa.kf.setImage(with: URL(string: "https://gimg2.baidu.com/image_search/src=http%3A%2F%2Fdesk.fd.zol-img.com.cn%2Fg5%2FM00%2F03%2F00%2FChMkJ1bK-nSIS40cAAEuXdS6ma4AALLAAM-v7QAAS51610.jpg&refer=http%3A%2F%2Fdesk.fd.zol-img.com.cn&app=2002&size=f9999,10000&q=a80&n=0&g=0n&fmt=jpeg?sec=1633608077&t=f8163c3b266a263733642ca2bc73fdb0"))
+//        aaa.contentMode = .scaleAspectFit
+//        self.collectionView.isHidden = true
     }
     
     public override var prefersStatusBarHidden: Bool { true }
@@ -131,8 +141,10 @@ open class CZImagePreviewer: UIViewController {
             self.collectionViewFlowLayout.rotatingInfo = rotatingInfo
         }
     }
+
     // 屏幕旋转事件发生时触发
     public override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
+        
         super.viewWillTransition(to: size, with: coordinator)
         self.rotatingInfo = RotatingInfo(true, self.currentIdx)
         (self.collectionView.collectionViewLayout as? UICollectionViewFlowLayout)?.itemSize = size
@@ -143,7 +155,6 @@ open class CZImagePreviewer: UIViewController {
             self.rotatingInfo = RotatingInfo(false, self.currentIdx)
         }
     }
-    
 }
 
 // MARK: Action
@@ -278,14 +289,14 @@ extension CZImagePreviewer {
 extension CZImagePreviewer: UICollectionViewDelegateFlowLayout, UICollectionViewDataSource, UICollectionViewDataSourcePrefetching {
     
     public func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) {
-        self.currentIdx = Int((scrollView.contentOffset.x + scrollView.bounds.size.width * 0.5) / scrollView.bounds.size.width)        
+        self.currentIdx = Int((scrollView.contentOffset.x + scrollView.bounds.size.width * 0.5) / scrollView.bounds.size.width)
     }
     
     public func collectionView(_ collectionView: UICollectionView, targetContentOffsetForProposedContentOffset proposedContentOffset: CGPoint) -> CGPoint {
-        guard self.rotatingInfo.isRotating, let ret = collectionView.layoutAttributesForItem(at: IndexPath(item: self.rotatingInfo.indexBeforeRotate, section: 0))?.frame.origin else {
+        guard self.rotatingInfo.isRotating, let newOffset = collectionView.layoutAttributesForItem(at: IndexPath(item: self.rotatingInfo.indexBeforeRotate, section: 0))?.frame.origin else {
             return proposedContentOffset
         }
-        return CGPoint(x: ret.x + collectionView.frame.minX, y: ret.y)
+        return CGPoint(x: newOffset.x + collectionView.frame.minX, y: newOffset.y)
     }
     
     public func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {

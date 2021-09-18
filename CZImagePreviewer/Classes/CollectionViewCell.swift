@@ -33,6 +33,7 @@ class CollectionViewCell: UICollectionViewCell {
         zoomingScrollView.backgroundColor = UIColor.clear
         zoomingScrollView.alwaysBounceVertical = false
         zoomingScrollView.alwaysBounceHorizontal = false
+        zoomingScrollView.contentInsetAdjustmentBehavior = .never
         return zoomingScrollView
     }()
     
