@@ -25,6 +25,7 @@ open class CZImagePreviewer: UIViewController {
             if oldValue != currentIdx {
                 // 当 currentIndex 发生改变, 尝试更新 self.cus_console 视图
                 self.updateConsole()
+                print("currentIdx = \(currentIdx)")
                 // 通知代理
                 self.delegate?.imagePreviewer(self, currentIndexDidChange: currentIdx)
             }
@@ -38,13 +39,17 @@ open class CZImagePreviewer: UIViewController {
     /// 记录图片弹出的容器, 用于展示时的动画
     private weak var imageTriggerContainer: UIView?
     
-    private lazy var collectionView: UICollectionView = {
-        let flowLayout = UICollectionViewFlowLayout.init()
+    private lazy var collectionViewFlowLayout: PreviewerFlowLayout = {
+        let flowLayout = PreviewerFlowLayout.init()
         flowLayout.scrollDirection = .horizontal
         flowLayout.sectionInset = .init(top: 0, left: self.spacingBetweenItem * 0.5, bottom: 0, right: self.spacingBetweenItem * 0.5)
         flowLayout.minimumLineSpacing = self.spacingBetweenItem
         flowLayout.itemSize = self.view.bounds.size
-        let collectionView = UICollectionView(frame: CGRect.zero, collectionViewLayout: flowLayout)
+        return flowLayout
+    }()
+    
+    private lazy var collectionView: UICollectionView = {
+        let collectionView = UICollectionView(frame: CGRect.zero, collectionViewLayout: self.collectionViewFlowLayout)
         collectionView.isPagingEnabled = true
         collectionView.showsVerticalScrollIndicator = false
         collectionView.showsHorizontalScrollIndicator = false
@@ -54,13 +59,6 @@ open class CZImagePreviewer: UIViewController {
         collectionView.backgroundColor = .clear
         collectionView.register(CollectionViewCell.self, forCellWithReuseIdentifier: CollectionViewCell.CollectionViewCellReuseID)
         return collectionView
-    }()
-    
-    private lazy var rotateAnimationImageView: UIImageView = {
-        let imgView = UIImageView.init(frame: CGRect.zero)
-        imgView.contentMode = .scaleAspectFit
-        imgView.isHidden = true
-        return imgView
     }()
     
     private lazy var tap: UITapGestureRecognizer = {
@@ -106,11 +104,6 @@ open class CZImagePreviewer: UIViewController {
             $0.edges.equalTo(UIEdgeInsets(top: 0, left: -spacingBetweenItem * 0.5, bottom: 0, right: -spacingBetweenItem * 0.5))
         }
         
-        self.view.addSubview(self.rotateAnimationImageView)
-        self.rotateAnimationImageView.snp.makeConstraints {
-            $0.edges.equalToSuperview()
-        }
-        
         self.view.addGestureRecognizer(self.tap)
         self.view.addGestureRecognizer(self.pan)
         self.view.addGestureRecognizer(self.doubleTap)
@@ -118,16 +111,11 @@ open class CZImagePreviewer: UIViewController {
         self.view.addGestureRecognizer(self.longPress)
         
         self.collectionView.performBatchUpdates {
-            self.collectionView.reloadData()
-        } completion: { finish in
             self.scroll2Item(at: self.currentIdx, animated: false)
-            self.didSynchronizedCurrentIdx = true
         }
-
+        
+        self.transitioningDelegate
     }
-    
-    /// collectionView 在首次展示后需要将 contentOffset.x 设置为跟 self.currentIdx 同步, 此值用于记录 collectionView 当前展示的页是否已跟 self.currentIdx 已同步
-    var didSynchronizedCurrentIdx = false
     
     public override var prefersStatusBarHidden: Bool { true }
     
@@ -136,20 +124,24 @@ open class CZImagePreviewer: UIViewController {
         return !self.isPaning
     }
     
+    // 记录旋转发生前的 idx, 以及记录当前是否正在旋转
+    typealias RotatingInfo = (isRotating: Bool, indexBeforeRotate: Int)
+    private lazy var rotatingInfo = RotatingInfo(isRotating: false, indexBeforeRotate: -1) {
+        didSet {
+            self.collectionViewFlowLayout.rotatingInfo = rotatingInfo
+        }
+    }
     // 屏幕旋转事件发生时触发
     public override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
         super.viewWillTransition(to: size, with: coordinator)
-        let mark_idx = self.currentIdx
-        
+        self.rotatingInfo = RotatingInfo(true, self.currentIdx)
         (self.collectionView.collectionViewLayout as? UICollectionViewFlowLayout)?.itemSize = size
-        self.collectionView.performBatchUpdates {
-            self.collectionView.collectionViewLayout.invalidateLayout()
-//            self.collectionView.reloadData()
-        } completion: { finish in
-            self.scroll2Item(at: mark_idx, animated: false)
+        self.collectionView.collectionViewLayout.invalidateLayout()
+        coordinator.animate { context in
+            
+        } completion: { context in
+            self.rotatingInfo = RotatingInfo(false, self.currentIdx)
         }
-        // 旋转时执行, 将 rotateAnimationImageView.isHidden 设为 false, 且为其设置图片
-//        self.executeWhenRotate(idx: mark_idx, coordinator: coordinator)
     }
     
 }
@@ -285,9 +277,15 @@ extension CZImagePreviewer {
 // MARK: ScrollViewDelegate, CollectionViewDelegate, CollectionViewDataSource, UICollectionViewDataSourcePrefetching
 extension CZImagePreviewer: UICollectionViewDelegateFlowLayout, UICollectionViewDataSource, UICollectionViewDataSourcePrefetching {
     
-    public func scrollViewDidScroll(_ scrollView: UIScrollView) {
-        if !self.didSynchronizedCurrentIdx { return }    // 在非竖屏的情况下, collectionView 被添加到 superView 以后, 会马上调用 scrollViewDidScroll 方法, 导致 self.currentIdx 出错, 所以做此判断
-        self.currentIdx = Int((scrollView.contentOffset.x + scrollView.bounds.size.width * 0.5) / scrollView.bounds.size.width)
+    public func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) {
+        self.currentIdx = Int((scrollView.contentOffset.x + scrollView.bounds.size.width * 0.5) / scrollView.bounds.size.width)        
+    }
+    
+    public func collectionView(_ collectionView: UICollectionView, targetContentOffsetForProposedContentOffset proposedContentOffset: CGPoint) -> CGPoint {
+        guard self.rotatingInfo.isRotating, let ret = collectionView.layoutAttributesForItem(at: IndexPath(item: self.rotatingInfo.indexBeforeRotate, section: 0))?.frame.origin else {
+            return proposedContentOffset
+        }
+        return CGPoint(x: ret.x + collectionView.frame.minX, y: ret.y)
     }
     
     public func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
@@ -305,11 +303,6 @@ extension CZImagePreviewer: UICollectionViewDelegateFlowLayout, UICollectionView
         self.dataSource?.imagePreviewer(self, videoSizeForCellWith: cell.cellModel, videoSizeSettingHandler: cell.cellModel.videoSizeSettingHandler!)
         return cell
     }
-    
-//    public func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-//        print("sizeForItemAtInexPath")
-//        return UIScreen.main.bounds.size
-//    }
     
     /// 数据预加载
     public func collectionView(_ collectionView: UICollectionView, prefetchItemsAt indexPaths: [IndexPath]) {
@@ -385,14 +378,6 @@ extension CZImagePreviewer {
         let ret: UIViewController? = lambda(viewController: rootViewController)
         
         return ret
-    }
-    
-    // 在对比了微信的图片浏览后, 发现微信的图片浏览器在屏幕旋转事件发生时, 微信为了旋转动画的流畅和质量, 会在顶层覆盖一个独立的 Image 视图展示旋转, 旋转完成后再将其移除
-    func executeWhenRotate(idx: Int, coordinator: UIViewControllerTransitionCoordinator) {
-        // 旋转动画完成后, 恢复原来的显示
-        coordinator.animate(alongsideTransition: nil) { transitionCoordinatorContext in
-
-        }
     }
     
     // 更新 self.cus_console

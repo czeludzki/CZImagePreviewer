@@ -1,0 +1,35 @@
+//
+//  PreviewerFlowLayout.swift
+//  CZImagePreviewer
+//
+//  Created by siuzeontou on 2021/9/17.
+//
+
+import UIKit
+
+class PreviewerFlowLayout: UICollectionViewFlowLayout {
+    
+    var rotatingInfo: CZImagePreviewer.RotatingInfo?
+    
+    var attributes: [IndexPath: UICollectionViewLayoutAttributes] = [:]
+    
+    override func prepare() {
+        super.prepare()
+        self.attributes.removeAll()
+        
+        guard let collectionView = self.collectionView else { return }
+        for item in 0..<collectionView.numberOfItems(inSection: 0) {
+            let idxPath = IndexPath(item: item, section: 0)
+            let attr = self.layoutAttributesForItem(at: idxPath)
+            self.attributes[idxPath] = attr
+        }
+    }
+    
+//    override func targetContentOffset(forProposedContentOffset proposedContentOffset: CGPoint) -> CGPoint {
+//        guard self.rotatingInfo?.isRotating == true, let idx = self.rotatingInfo?.indexBeforeRotate, let newOffset = self.attributes[IndexPath(item: idx, section: 0)]?.frame.origin else {
+//            return proposedContentOffset
+//        }
+//        print(proposedContentOffset, newOffset)
+//        return CGPoint(x: (newOffset.x + (self.collectionView?.frame.minX ?? 0)), y: newOffset.y)
+//    }
+}

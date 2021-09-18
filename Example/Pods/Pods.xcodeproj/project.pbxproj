@@ -27,6 +27,7 @@
 		251FD6F3F448100A5A87B6B28F26F07D /* Pods-CZImagePreviewer_Example-dummy.m in Sources */ = {isa = PBXBuildFile; fileRef = 00342E1B9DC50D1F55C4E9BBC4D2B249 /* Pods-CZImagePreviewer_Example-dummy.m */; };
 		264E6ECD3B4AE34A8F8FFEC514CCF0A2 /* ImageDownloaderDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9128B6619885FA88C0E3D1CF7317E222 /* ImageDownloaderDelegate.swift */; };
 		27124CED75639D96CAB8D31B516705BB /* ImageView+Kingfisher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2FA836C3796C6DA39310E3E9A4D67F49 /* ImageView+Kingfisher.swift */; };
+		2A7E5FE326F474BE001088E0 /* PreviewerFlowLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A7E5FE226F474BE001088E0 /* PreviewerFlowLayout.swift */; };
 		2AFC10CD1768B967446DEFCBA306897B /* Storage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1213B667921A324F25F426EFD6518986 /* Storage.swift */; };
 		2C0F70A0CD21210D40D4F9CDBA6F08CC /* KFImage.swift in Sources */ = {isa = PBXBuildFile; fileRef = C77803DEF93EEAF854390A4708E04FB6 /* KFImage.swift */; };
 		300F1D098787B6D6083808A6A2905E1D /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0263D52BE8FC4C62B17FDFF5C2A98B34 /* Foundation.framework */; };
@@ -204,6 +205,7 @@
 		28484C7A4E6F1A0EB70FF93C1D0B095F /* UILayoutSupport+Extensions.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = "UILayoutSupport+Extensions.swift"; path = "Source/UILayoutSupport+Extensions.swift"; sourceTree = "<group>"; };
 		29CC5FE3D87B2AD0E1EFCA42A4986BA4 /* README.md */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		2A419FD775559E58BDD9772343BCD5CE /* Pods-CZImagePreviewer_Tests-dummy.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = "Pods-CZImagePreviewer_Tests-dummy.m"; sourceTree = "<group>"; };
+		2A7E5FE226F474BE001088E0 /* PreviewerFlowLayout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = PreviewerFlowLayout.swift; path = CZImagePreviewer/Classes/PreviewerFlowLayout.swift; sourceTree = "<group>"; };
 		2B416B7D7CA28509B26CCFE61B369B66 /* ConstraintView+Extensions.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = "ConstraintView+Extensions.swift"; path = "Source/ConstraintView+Extensions.swift"; sourceTree = "<group>"; };
 		2F105292F6CA2384A50E25E1DBEA28DE /* Constraint.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = Constraint.swift; path = Source/Constraint.swift; sourceTree = "<group>"; };
 		2FA836C3796C6DA39310E3E9A4D67F49 /* ImageView+Kingfisher.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = "ImageView+Kingfisher.swift"; path = "Sources/Extensions/ImageView+Kingfisher.swift"; sourceTree = "<group>"; };
@@ -629,9 +631,10 @@
 		F886A371058710DEA940AA9635620462 /* CZImagePreviewer */ = {
 			isa = PBXGroup;
 			children = (
-				5816B3C69C4C89904A3D05A92F50D318 /* CollectionViewCell.swift */,
 				43686198BD1B09CB3117010C2A230AE5 /* CZImagePreviewer.swift */,
+				2A7E5FE226F474BE001088E0 /* PreviewerFlowLayout.swift */,
 				7C5FC6A93950B3892CDE097689F17B05 /* CZImagePreviewer+OtherDefinition.swift */,
+				5816B3C69C4C89904A3D05A92F50D318 /* CollectionViewCell.swift */,
 				DF0E1815E85CD3483C8DBA4DD131FE90 /* PreviewerCellViewModel.swift */,
 				F1471738C3387A57054B68798F72AA0F /* PreviewerProtocol.swift */,
 				018B403B1700326378142F306DC82FAA /* PreviewNamespace.swift */,
@@ -1002,6 +1005,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				9E6CCE23BFDFAFE5416D44F35B9AEB3E /* AnimatedTransitioning.swift in Sources */,
+				2A7E5FE326F474BE001088E0 /* PreviewerFlowLayout.swift in Sources */,
 				6B4670CCCB5171D2CF7A4B1E610BCF38 /* CollectionViewCell.swift in Sources */,
 				F00F5F5A885A0784107B55BD5AB98394 /* CZImagePreviewer+OtherDefinition.swift in Sources */,
 				1E9312BBBD193EFC7DE419970B38FAC0 /* CZImagePreviewer-dummy.m in Sources */,
