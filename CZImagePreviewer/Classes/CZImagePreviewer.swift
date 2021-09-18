@@ -38,7 +38,7 @@ open class CZImagePreviewer: UIViewController {
     lazy private var animatedTransitioning_display: AnimatedTransitioning = AnimatedTransitioning(transitionFor: .present)
     /// dismiss 转场动画处理
     lazy private var animatedTransitioning_dismiss: AnimatedTransitioning = AnimatedTransitioning(transitionFor: .dismiss)
-    /// 记录图片弹出的容器, 用于展示时的动画
+    /// 记录图片弹出的容器, 用于 diaplay 时的动画
     private weak var imageTriggerContainer: UIView?
     
     private lazy var collectionViewFlowLayout: PreviewerFlowLayout = {
@@ -144,14 +144,13 @@ open class CZImagePreviewer: UIViewController {
 
     // 屏幕旋转事件发生时触发
     public override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
-        
         super.viewWillTransition(to: size, with: coordinator)
         self.rotatingInfo = RotatingInfo(true, self.currentIdx)
         (self.collectionView.collectionViewLayout as? UICollectionViewFlowLayout)?.itemSize = size
-        self.collectionView.collectionViewLayout.invalidateLayout()
-        coordinator.animate { context in
-            
-        } completion: { context in
+        UIView.animate(withDuration: 0) {
+            self.collectionView.collectionViewLayout.invalidateLayout()
+        }
+        coordinator.animate(alongsideTransition: nil) { context in
             self.rotatingInfo = RotatingInfo(false, self.currentIdx)
         }
     }
@@ -290,13 +289,6 @@ extension CZImagePreviewer: UICollectionViewDelegateFlowLayout, UICollectionView
     
     public func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) {
         self.currentIdx = Int((scrollView.contentOffset.x + scrollView.bounds.size.width * 0.5) / scrollView.bounds.size.width)
-    }
-    
-    public func collectionView(_ collectionView: UICollectionView, targetContentOffsetForProposedContentOffset proposedContentOffset: CGPoint) -> CGPoint {
-        guard self.rotatingInfo.isRotating, let newOffset = collectionView.layoutAttributesForItem(at: IndexPath(item: self.rotatingInfo.indexBeforeRotate, section: 0))?.frame.origin else {
-            return proposedContentOffset
-        }
-        return CGPoint(x: newOffset.x + collectionView.frame.minX, y: newOffset.y)
     }
     
     public func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {

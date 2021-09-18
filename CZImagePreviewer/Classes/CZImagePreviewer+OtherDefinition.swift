@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import QuartzCore
 
 extension CZImagePreviewer {
     
@@ -14,6 +15,8 @@ extension CZImagePreviewer {
         case loading(receivedSize: Int64, expectedSize: Int64)  // 加载中
         case loadingFaiure  // 加载失败
     }
+    
+//    public enum Image
     
     /// DateSource 方法要求返回的辅助视图类
     open class AccessoryView: UIView {
@@ -47,11 +50,16 @@ extension CZImagePreviewer {
         open override func layoutSubviews() {
             superview?.layoutSubviews()
             if self.viewType == .videoView {
-                self.setNeedsDisplay()
-                self.backgroundColor = .red
-                // 让 videoLayer 跟随 self.frame.size, 并且取消隐式动画
+                // 参考 https://stackoverflow.com/questions/24670269/how-do-you-animate-the-sublayers-of-the-layer-of-a-uiview-during-a-uiview-animat?r=SearchResults#
                 CATransaction.begin()
-                CATransaction.setDisableActions(true)
+                if let anim = self.layer.animation(forKey: "bounds.size") {
+                    // 使 videoLayer 跟随 superLayer 的动画. UIView.animate() 动画返回时会走这里
+                    CATransaction.setAnimationDuration(anim.duration)
+                    CATransaction.setAnimationTimingFunction(anim.timingFunction)
+                }else{
+                    // 让 videoLayer 跟随 self.frame.size, 并且取消隐式动画. 手动拖拽时会走这里
+                    CATransaction.setDisableActions(true)
+                }
                 self.videoLayer?.frame = CGRect(origin: .zero, size: self.bounds.size)
                 CATransaction.commit()
             }

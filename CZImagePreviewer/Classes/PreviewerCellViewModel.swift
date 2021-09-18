@@ -14,7 +14,7 @@ protocol PreviewerCellViewModelDelegate: AnyObject {
 }
 
 // 资源模型
-struct PreviewerCellItem {
+internal struct PreviewerCellItem {
     var resource: ResourceProtocol?
     var idx: Int
 }

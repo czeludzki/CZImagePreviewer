@@ -25,11 +25,38 @@ class PreviewerFlowLayout: UICollectionViewFlowLayout {
         }
     }
     
-//    override func targetContentOffset(forProposedContentOffset proposedContentOffset: CGPoint) -> CGPoint {
-//        guard self.rotatingInfo?.isRotating == true, let idx = self.rotatingInfo?.indexBeforeRotate, let newOffset = self.attributes[IndexPath(item: idx, section: 0)]?.frame.origin else {
-//            return proposedContentOffset
-//        }
-//        print(proposedContentOffset, newOffset)
-//        return CGPoint(x: (newOffset.x + (self.collectionView?.frame.minX ?? 0)), y: newOffset.y)
-//    }
+    override func targetContentOffset(forProposedContentOffset proposedContentOffset: CGPoint) -> CGPoint {
+        guard self.rotatingInfo?.isRotating == true, let idx = self.rotatingInfo?.indexBeforeRotate, let newOffset = self.attributes[IndexPath(item: idx, section: 0)]?.frame.origin else {
+            return proposedContentOffset
+        }
+        return CGPoint(x: (newOffset.x + (self.collectionView?.frame.minX ?? 0)), y: newOffset.y)
+    }
+    
+    override var flipsHorizontallyInOppositeLayoutDirection: Bool {
+        return true
+    }
+    
+    override func finalizeCollectionViewUpdates() {
+        
+    }
+    
+    override func finalizeAnimatedBoundsChange() {
+        
+    }
+    
+    override func finalizeLayoutTransition() {
+        
+    }
+    
+    override func prepare(forAnimatedBoundsChange oldBounds: CGRect) {
+        
+    }
+    
+    override func prepareForTransition(to newLayout: UICollectionViewLayout) {
+        
+    }
+    
+    override func prepareForTransition(from oldLayout: UICollectionViewLayout) {
+        
+    }
 }
