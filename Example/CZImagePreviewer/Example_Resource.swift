@@ -91,7 +91,7 @@ class VideoPlayerViewModel: NSObject {
         }
         
         self.player = AVPlayer.init(playerItem: self.playItem)
-        self.playerLayer = AVPlayerLayer.init(player: self.player)
+//        self.playerLayer = AVPlayerLayer.init(player: self.player)
         
         self.player?.addObserver(self, forKeyPath: "rate", options: .new, context: nil)
         self.player?.addObserver(self, forKeyPath: "status", options: .new, context: nil)

@@ -116,15 +116,6 @@ open class CZImagePreviewer: UIViewController {
         self.collectionView.performBatchUpdates {
             self.scroll2Item(at: self.currentIdx, animated: false)
         }
-        
-//        let aaa = UIImageView(frame: .zero)
-//        self.view.addSubview(aaa)
-//        aaa.snp.makeConstraints {
-//            $0.edges.equalToSuperview()
-//        }
-//        aaa.kf.setImage(with: URL(string: "https://gimg2.baidu.com/image_search/src=http%3A%2F%2Fdesk.fd.zol-img.com.cn%2Fg5%2FM00%2F03%2F00%2FChMkJ1bK-nSIS40cAAEuXdS6ma4AALLAAM-v7QAAS51610.jpg&refer=http%3A%2F%2Fdesk.fd.zol-img.com.cn&app=2002&size=f9999,10000&q=a80&n=0&g=0n&fmt=jpeg?sec=1633608077&t=f8163c3b266a263733642ca2bc73fdb0"))
-//        aaa.contentMode = .scaleAspectFit
-//        self.collectionView.isHidden = true
     }
     
     public override var prefersStatusBarHidden: Bool { true }
@@ -147,9 +138,7 @@ open class CZImagePreviewer: UIViewController {
         super.viewWillTransition(to: size, with: coordinator)
         self.rotatingInfo = RotatingInfo(true, self.currentIdx)
         (self.collectionView.collectionViewLayout as? UICollectionViewFlowLayout)?.itemSize = size
-        UIView.animate(withDuration: 0) {
-            self.collectionView.collectionViewLayout.invalidateLayout()
-        }
+        self.collectionView.collectionViewLayout.invalidateLayout()
         coordinator.animate(alongsideTransition: nil) { context in
             self.rotatingInfo = RotatingInfo(false, self.currentIdx)
         }

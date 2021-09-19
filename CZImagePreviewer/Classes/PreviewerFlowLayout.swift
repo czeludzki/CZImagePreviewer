@@ -15,6 +15,7 @@ class PreviewerFlowLayout: UICollectionViewFlowLayout {
     
     override func prepare() {
         super.prepare()
+        
         self.attributes.removeAll()
         
         guard let collectionView = self.collectionView else { return }
@@ -31,32 +32,13 @@ class PreviewerFlowLayout: UICollectionViewFlowLayout {
         }
         return CGPoint(x: (newOffset.x + (self.collectionView?.frame.minX ?? 0)), y: newOffset.y)
     }
-    
-    override var flipsHorizontallyInOppositeLayoutDirection: Bool {
-        return true
-    }
-    
-    override func finalizeCollectionViewUpdates() {
         
-    }
+    // 去掉旋转时默认的淡出淡入隐式动画
+    override func initialLayoutAttributesForAppearingItem(at itemIndexPath: IndexPath) -> UICollectionViewLayoutAttributes? { nil }
     
-    override func finalizeAnimatedBoundsChange() {
-        
-    }
-    
-    override func finalizeLayoutTransition() {
-        
-    }
-    
-    override func prepare(forAnimatedBoundsChange oldBounds: CGRect) {
-        
-    }
-    
-    override func prepareForTransition(to newLayout: UICollectionViewLayout) {
-        
-    }
-    
-    override func prepareForTransition(from oldLayout: UICollectionViewLayout) {
-        
+    // 去掉旋转时 DisappearingItem 的隐式动画
+    override func finalLayoutAttributesForDisappearingItem(at itemIndexPath: IndexPath) -> UICollectionViewLayoutAttributes? {
+        let attr = self.layoutAttributesForItem(at: itemIndexPath)
+        return attr
     }
 }
