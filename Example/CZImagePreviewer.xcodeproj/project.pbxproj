@@ -41,7 +41,6 @@
 		43DA12BD26F0E94100F98F77 /* Example_Resource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Example_Resource.swift; sourceTree = "<group>"; };
 		43DA12C126F0EB8100F98F77 /* 2.mp4 */ = {isa = PBXFileReference; lastKnownFileType = file; path = 2.mp4; sourceTree = "<group>"; };
 		43DA12C426F0EBAF00F98F77 /* 1.mp4 */ = {isa = PBXFileReference; lastKnownFileType = file; path = 1.mp4; sourceTree = "<group>"; };
-		43FEEBAA26E7C2D700E2350D /* CZImagePreviewer_Example-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "CZImagePreviewer_Example-Bridging-Header.h"; sourceTree = "<group>"; };
 		43FEEBBA26E7C37900E2350D /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		607FACD01AFB9204008FA782 /* CZImagePreviewer_Example.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = CZImagePreviewer_Example.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		607FACD41AFB9204008FA782 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -125,10 +124,9 @@
 				607FACDE1AFB9204008FA782 /* LaunchScreen.xib */,
 				43DA12BF26F0EB8100F98F77 /* Resource */,
 				607FACD31AFB9204008FA782 /* Supporting Files */,
-				43FEEBAA26E7C2D700E2350D /* CZImagePreviewer_Example-Bridging-Header.h */,
 			);
 			name = "Example for CZImagePreviewer";
-			path = CZImagePreviewer;
+			path = Demo;
 			sourceTree = "<group>";
 		};
 		607FACD31AFB9204008FA782 /* Supporting Files */ = {
@@ -519,14 +517,13 @@
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = CZImagePreviewer_Example.entitlements;
 				DEVELOPMENT_TEAM = 5YG2N89PSR;
-				INFOPLIST_FILE = CZImagePreviewer/Info.plist;
+				INFOPLIST_FILE = Demo/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				MODULE_NAME = ExampleApp;
 				PRODUCT_BUNDLE_IDENTIFIER = "org.cocoapods.demo.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SUPPORTS_MACCATALYST = NO;
-				SWIFT_OBJC_BRIDGING_HEADER = "CZImagePreviewer/CZImagePreviewer_Example-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_SWIFT3_OBJC_INFERENCE = Default;
 				SWIFT_VERSION = 4.0;
@@ -542,14 +539,13 @@
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = CZImagePreviewer_Example.entitlements;
 				DEVELOPMENT_TEAM = 5YG2N89PSR;
-				INFOPLIST_FILE = CZImagePreviewer/Info.plist;
+				INFOPLIST_FILE = Demo/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				MODULE_NAME = ExampleApp;
 				PRODUCT_BUNDLE_IDENTIFIER = "org.cocoapods.demo.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SUPPORTS_MACCATALYST = NO;
-				SWIFT_OBJC_BRIDGING_HEADER = "CZImagePreviewer/CZImagePreviewer_Example-Bridging-Header.h";
 				SWIFT_SWIFT3_OBJC_INFERENCE = Default;
 				SWIFT_VERSION = 4.0;
 				TARGETED_DEVICE_FAMILY = "1,2";

@@ -30,7 +30,7 @@ public protocol PreviewerDataSource: AnyObject {
     /// 为每一个 Cell 提供自定义操作视图, 这个视图会覆盖在每个Cell的顶部
     func imagePreviewer(_ imagePreviewer: CZImagePreviewer, accessoryViewForCellWith viewModel: PreviewerCellViewModel) -> CZImagePreviewer.AccessoryView?
     
-    /// 为每一个 Cell 提供视频播放容器, 你可以将你的视频播放器 Layer, 添加到 参数: videoView.layer 中
+    /// 为每一个 Cell 提供视频播放容器, 你可以将你的视频播放器 Layer, 添加到 videoView.layer 中
     func imagePreviewer(_ imagePreviewer: CZImagePreviewer, videoLayerForCellWith viewModel: PreviewerCellViewModel) -> CALayer?
     
     typealias VideoSizeSettingHandler = (CGSize?) -> Void

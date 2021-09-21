@@ -16,7 +16,7 @@ open class CZImagePreviewer: UIViewController {
     public var dataSource: PreviewerDataSource?
     
     /// Cell 之间的间距
-    public var spacingBetweenItem: CGFloat = 40.0
+    public var spacingBetweenItem: CGFloat = 40
     
     /// 通过DataSource协议返回的自定义控制层
     private var cus_console: UIView?
@@ -25,8 +25,6 @@ open class CZImagePreviewer: UIViewController {
     public private(set) var currentIdx = -1 {
         didSet {
             if oldValue != -1, oldValue != currentIdx {
-                // 当 currentIndex 发生改变, 尝试更新 self.cus_console 视图
-                self.updateConsole()
                 print("currentIdx = \(currentIdx)")
                 // 通知代理
                 self.delegate?.imagePreviewer(self, index: oldValue, didChangedTo: currentIdx)
@@ -117,6 +115,9 @@ open class CZImagePreviewer: UIViewController {
         
         self.collectionView.performBatchUpdates {
             self.scroll2Item(at: self.currentIdx, animated: false)
+        } completion: { finish in
+            // 首次展示时, 要求dataSource返回一个铺在视图顶部的控制视图
+            self.updateConsole(for: self.currentIdx)
         }
     }
     
@@ -129,22 +130,18 @@ open class CZImagePreviewer: UIViewController {
     
     // 记录旋转发生前的 idx, 以及记录当前是否正在旋转
     typealias RotatingInfo = (isRotating: Bool, indexBeforeRotate: Int)
-    private lazy var rotatingInfo = RotatingInfo(isRotating: false, indexBeforeRotate: -1) {
-        didSet {
-            self.collectionViewFlowLayout.rotatingInfo = rotatingInfo
-        }
-    }
-
     // 屏幕旋转事件发生时触发
     public override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
         super.viewWillTransition(to: size, with: coordinator)
-        self.rotatingInfo = RotatingInfo(true, self.currentIdx)
+        self.collectionViewFlowLayout.rotatingInfo = RotatingInfo(true, self.currentIdx)
         (self.collectionView.collectionViewLayout as? UICollectionViewFlowLayout)?.itemSize = size
         self.collectionView.collectionViewLayout.invalidateLayout()
+        print(self.collectionView.visibleCells)
         coordinator.animate(alongsideTransition: nil) { context in
-            self.rotatingInfo = RotatingInfo(false, self.currentIdx)
+            self.collectionViewFlowLayout.rotatingInfo = RotatingInfo(false, self.currentIdx)
         }
     }
+    
 }
 
 // MARK: Action
@@ -296,6 +293,8 @@ extension CZImagePreviewer: UICollectionViewDelegateFlowLayout, UICollectionView
     
     public func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) {
         self.currentIdx = Int((scrollView.contentOffset.x + scrollView.bounds.size.width * 0.5) / scrollView.bounds.size.width)
+        // 当 currentIndex 发生改变, 尝试更新 self.cus_console 视图
+        self.updateConsole(for: self.currentIdx)
     }
     
     public func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
@@ -402,8 +401,8 @@ extension CZImagePreviewer {
     }
     
     // 更新 self.cus_console
-    func updateConsole() {
-        guard let console = self.dataSource?.imagePreviewer(self, consoleForItemAtIndex: self.currentIdx) else { return }
+    func updateConsole(for index: Int) {
+        guard let console = self.dataSource?.imagePreviewer(self, consoleForItemAtIndex: index) else { return }
         if self.cus_console === console { return }
         // 先移除
         self.cus_console?.removeFromSuperview()
