@@ -26,6 +26,10 @@ public class PreviewerCellViewModel: NSObject {     // 继承自 NSObject 是因
     public private(set) var idx = 0
     // 弱引用 CZImagePreviewerCollectionViewCell 实例
     unowned var cell: CollectionViewCell
+    
+    public var zoomingScrollView: UIScrollView { self.cell.zoomingScrollView }
+    public var videoView: UIView { self.cell.videoContainer }
+    
     // delegate
     weak var delegate: PreviewerCellViewModelDelegate?
     

@@ -10,10 +10,10 @@
 		041CFC05EF53DDDE8287F5D4 /* Pods_CZImagePreviewer_Example.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 63A0A4BC96B72D27732E67A9 /* Pods_CZImagePreviewer_Example.framework */; };
 		1962DA3B691B8BF08BE7242D /* Pods_CZImagePreviewer_Tests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 98B7A2824F2AE11C46EA6751 /* Pods_CZImagePreviewer_Tests.framework */; };
 		2A4BF85026E853D6001D7759 /* ExampelImageCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A4BF84F26E853D6001D7759 /* ExampelImageCollectionViewCell.swift */; };
+		4356A53D26F75F64000CC0EC /* 3.mp4 in Resources */ = {isa = PBXBuildFile; fileRef = 4356A53C26F75D01000CC0EC /* 3.mp4 */; };
 		43DA12BE26F0E94100F98F77 /* Example_Resource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 43DA12BD26F0E94100F98F77 /* Example_Resource.swift */; };
 		43DA12C326F0EB8100F98F77 /* 2.mp4 in Resources */ = {isa = PBXBuildFile; fileRef = 43DA12C126F0EB8100F98F77 /* 2.mp4 */; };
 		43DA12C526F0EBAF00F98F77 /* 1.mp4 in Resources */ = {isa = PBXBuildFile; fileRef = 43DA12C426F0EBAF00F98F77 /* 1.mp4 */; };
-		43DA12C726F0F46F00F98F77 /* 3.mp4 in Resources */ = {isa = PBXBuildFile; fileRef = 43DA12C626F0F46F00F98F77 /* 3.mp4 */; };
 		43FEEBBB26E7C37900E2350D /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 43FEEBB926E7C37900E2350D /* Main.storyboard */; };
 		607FACD61AFB9204008FA782 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 607FACD51AFB9204008FA782 /* AppDelegate.swift */; };
 		607FACD81AFB9204008FA782 /* ExampleViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 607FACD71AFB9204008FA782 /* ExampleViewController.swift */; };
@@ -36,11 +36,11 @@
 		2A4BF84F26E853D6001D7759 /* ExampelImageCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExampelImageCollectionViewCell.swift; sourceTree = "<group>"; };
 		2B6B452F1563A486151A7FDF /* CZImagePreviewer.podspec */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; name = CZImagePreviewer.podspec; path = ../CZImagePreviewer.podspec; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.ruby; };
 		3BFEFA685F9F34B66A8A38C1 /* LICENSE */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; name = LICENSE; path = ../LICENSE; sourceTree = "<group>"; };
+		4356A53C26F75D01000CC0EC /* 3.mp4 */ = {isa = PBXFileReference; lastKnownFileType = file; path = 3.mp4; sourceTree = "<group>"; };
 		43BF7F0E26EE4532002B3560 /* CZImagePreviewer_Example.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = CZImagePreviewer_Example.entitlements; sourceTree = "<group>"; };
 		43DA12BD26F0E94100F98F77 /* Example_Resource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Example_Resource.swift; sourceTree = "<group>"; };
 		43DA12C126F0EB8100F98F77 /* 2.mp4 */ = {isa = PBXFileReference; lastKnownFileType = file; path = 2.mp4; sourceTree = "<group>"; };
 		43DA12C426F0EBAF00F98F77 /* 1.mp4 */ = {isa = PBXFileReference; lastKnownFileType = file; path = 1.mp4; sourceTree = "<group>"; };
-		43DA12C626F0F46F00F98F77 /* 3.mp4 */ = {isa = PBXFileReference; lastKnownFileType = file; path = 3.mp4; sourceTree = "<group>"; };
 		43FEEBAA26E7C2D700E2350D /* CZImagePreviewer_Example-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "CZImagePreviewer_Example-Bridging-Header.h"; sourceTree = "<group>"; };
 		43FEEBBA26E7C37900E2350D /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		607FACD01AFB9204008FA782 /* CZImagePreviewer_Example.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = CZImagePreviewer_Example.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -84,7 +84,7 @@
 		43DA12BF26F0EB8100F98F77 /* Resource */ = {
 			isa = PBXGroup;
 			children = (
-				43DA12C626F0F46F00F98F77 /* 3.mp4 */,
+				4356A53C26F75D01000CC0EC /* 3.mp4 */,
 				43DA12C426F0EBAF00F98F77 /* 1.mp4 */,
 				43DA12C126F0EB8100F98F77 /* 2.mp4 */,
 			);
@@ -278,7 +278,7 @@
 				43FEEBBB26E7C37900E2350D /* Main.storyboard in Resources */,
 				607FACE01AFB9204008FA782 /* LaunchScreen.xib in Resources */,
 				607FACDD1AFB9204008FA782 /* Images.xcassets in Resources */,
-				43DA12C726F0F46F00F98F77 /* 3.mp4 in Resources */,
+				4356A53D26F75F64000CC0EC /* 3.mp4 in Resources */,
 				43DA12C326F0EB8100F98F77 /* 2.mp4 in Resources */,
 				43DA12C526F0EBAF00F98F77 /* 1.mp4 in Resources */,
 			);

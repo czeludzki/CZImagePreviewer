@@ -102,7 +102,6 @@ class AnimatedTransitioning: NSObject, UIViewControllerAnimatedTransitioning {
     func dismiss(_ transitionContext: UIViewControllerContextTransitioning) {
         
         guard let keyWindow = CZImagePreviewer.keyWindow,
-              let fromView = transitionContext.view(forKey: .from),
               let fromVC = transitionContext.viewController(forKey: .from) as? AnimatedTransitioningContentProvider,
               let back2Container = fromVC.transitioningElementForDismiss(animatedTransitioning: self).container,  // 动画要返回到哪个容器, 主要是为了得到其在 keywindow 上的相对定位
               let animationActor = fromVC.transitioningElementForDismiss(animatedTransitioning: self).animationActor  // 动画要素

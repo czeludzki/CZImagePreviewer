@@ -34,9 +34,19 @@ class VideoPlayerViewModel: NSObject {
     
     unowned let resourceItem: ResourceItem
     
-    var player: AVPlayer?
+    lazy var player: AVPlayer = {
+        let player = AVPlayer()
+        player.addObserver(self, forKeyPath: "status", options: .new, context: nil)
+        player.addObserver(self, forKeyPath: "rate", options: .new, context: nil)
+        return player
+    }()
+    
+    lazy var playerLayer: AVPlayerLayer = {
+        let layer = AVPlayerLayer(player: self.player)
+        return layer
+    }()
+    
     var playItem: AVPlayerItem?
-    var playerLayer: AVPlayerLayer?
     
     // 控制视图
     lazy var consoleView: CZImagePreviewer.AccessoryView = {
@@ -88,41 +98,40 @@ class VideoPlayerViewModel: NSObject {
         
         if let vURL = self.resourceItem.videoURL {
             self.playItem = AVPlayerItem(url: vURL)
+            self.player.replaceCurrentItem(with: self.playItem)
+            NotificationCenter.default.addObserver(forName: Notification.Name.AVPlayerItemDidPlayToEndTime, object: self.playItem, queue: nil) { notification in
+                self.player.seek(to: CMTime(value: 0, timescale: 1))
+            }
         }
         
-        self.player = AVPlayer.init(playerItem: self.playItem)
-//        self.playerLayer = AVPlayerLayer.init(player: self.player)
-        
-        self.player?.addObserver(self, forKeyPath: "rate", options: .new, context: nil)
-        self.player?.addObserver(self, forKeyPath: "status", options: .new, context: nil)
     }
     
     @objc func playbackControlBtnOnClick(sender: UIButton) {
         if self.isPlaying {
-            self.player?.pause()
+            self.player.pause()
         }else{
-            self.player?.play()            
+            self.player.play()
         }
     }
     
     override func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey : Any]?, context: UnsafeMutableRawPointer?) {
         if object as? AVPlayer !== self.player { return }
         if keyPath == "rate" {
-            self.isPlaying = self.player?.rate != 0
+            self.isPlaying = self.player.rate != 0
         }
         if keyPath == "status" {
-            if self.player?.status == .readyToPlay {
+            if self.player.status == .readyToPlay {
                 self.loadingIndicator.stopAnimating()
             }
-            if self.player?.status == .failed {
+            if self.player.status == .failed {
                 self.loadingIndicator.stopAnimating()
             }
         }
     }
     
     deinit {
-        self.player?.removeObserver(self, forKeyPath: "rate")
-        self.player?.removeObserver(self, forKeyPath: "status")
+        self.player.removeObserver(self, forKeyPath: "rate")
+        self.player.removeObserver(self, forKeyPath: "status")
     }
 }
 

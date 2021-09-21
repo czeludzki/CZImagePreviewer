@@ -8,6 +8,7 @@
 
 import UIKit
 import CZImagePreviewer
+import AVFoundation
 
 class ExampleViewController: UIViewController {
     
@@ -30,17 +31,13 @@ class ExampleViewController: UIViewController {
         super.viewDidLoad()
         // Do any additional setup after loading the view, typically from a nib.
     }
-
-    override func didReceiveMemoryWarning() {
-        super.didReceiveMemoryWarning()
-        // Dispose of any resources that can be recreated.
-    }
     
     override var shouldAutorotate: Bool { true }
     
     override var supportedInterfaceOrientations: UIInterfaceOrientationMask { .all }
     
     override var preferredInterfaceOrientationForPresentation: UIInterfaceOrientation { .portrait }
+    
 }
 
 extension ExampleViewController: UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
@@ -71,6 +68,13 @@ extension ExampleViewController: PreviewerDelegate {
     func imagePreviewer(_ imagePreviewer: CZImagePreviewer, willDismissWithCellViewModel viewModel: PreviewerCellViewModel) -> UIView? {
         self.collectionView.cellForItem(at: IndexPath(item: viewModel.idx, section: 0))
     }
+    
+    func imagePreviewer(_ imagePreviewer: CZImagePreviewer, index oldIndex: Int, didChangedTo newIndex: Int) {
+        if self.res[oldIndex].vm?.isPlaying == true {
+            self.res[oldIndex].vm?.player.pause()
+        }
+    }
+
 }
 
 extension ExampleViewController: PreviewerDataSource {
@@ -105,19 +109,19 @@ extension ExampleViewController: PreviewerDataSource {
         return view
     }
     
-    
     func imagePreviewer(_ imagePreviewer: CZImagePreviewer, accessoryViewForCellWith viewModel: PreviewerCellViewModel) -> CZImagePreviewer.AccessoryView? {
         let view = self.res[viewModel.idx].vm?.consoleView
         return view
     }
     
     func imagePreviewer(_ imagePreviewer: CZImagePreviewer, videoLayerForCellWith viewModel: PreviewerCellViewModel) -> CALayer? {
-        return self.res[viewModel.idx].vm?.playerLayer
+        let vm = self.res[viewModel.idx].vm
+        return vm?.playerLayer
     }
     
-    func imagePreviewer(_ imagePreviewer: CZImagePreviewer, videoSizeForCellWith viewModel: PreviewerCellViewModel, videoSizeSettingHandler: VideoSizeSettingHandler) {
-        videoSizeSettingHandler(self.res[viewModel.idx].vm?.player?.currentItem?.presentationSize ?? .zero)
+    func imagePreviewer(_ imagePreviewer: CZImagePreviewer, videoSizeForItemWith viewModel: PreviewerCellViewModel, videoSizeSettingHandler: VideoSizeSettingHandler) {
+        let vm = self.res[viewModel.idx].vm
+        videoSizeSettingHandler(vm?.player.currentItem?.presentationSize ?? .zero)
     }
-    
     
 }

@@ -24,15 +24,17 @@ open class CZImagePreviewer: UIViewController {
     /// 当前索引
     public private(set) var currentIdx = -1 {
         didSet {
-            if oldValue != currentIdx {
+            if oldValue != -1, oldValue != currentIdx {
                 // 当 currentIndex 发生改变, 尝试更新 self.cus_console 视图
                 self.updateConsole()
                 print("currentIdx = \(currentIdx)")
                 // 通知代理
-                self.delegate?.imagePreviewer(self, currentIndexDidChange: currentIdx)
+                self.delegate?.imagePreviewer(self, index: oldValue, didChangedTo: currentIdx)
             }
         }
     }
+    
+    @objc public var contentOffset: CGPoint { self.collectionView.contentOffset }
     
     /// display 转场动画处理
     lazy private var animatedTransitioning_display: AnimatedTransitioning = AnimatedTransitioning(transitionFor: .present)
@@ -271,6 +273,22 @@ extension CZImagePreviewer {
         self.collectionView.setContentOffset(CGPoint(x: x, y: 0), animated: animated)
     }
     
+    /// 默认状态下, 视频层(videoView)位于图片层(zoomingScrollView)之上
+    /// 此方法可使当前显示的cell隐藏视频层(videoView)
+    /// 当这个 cell 被移出屏幕后, 此值会被重置到默认状态
+    public func hideVideoViewAtCurrentItem() {
+        let cell = self.collectionView.cellForItem(at: IndexPath(item: self.currentIdx, section: 0)) as? CollectionViewCell
+        cell?.cellModel.videoView.isHidden = true
+    }
+    
+    /// 默认状态下, 视频层(videoView)位于图片层(zoomingScrollView)之上
+    /// 此方法可使当前显示的cell隐藏图片层(zoomingScrollView)
+    /// 当这个 cell 被移出屏幕后, 此值会被重置到默认状态
+    public func hideImageViewAtCurrentItem() {
+        let cell = self.collectionView.cellForItem(at: IndexPath(item: self.currentIdx, section: 0)) as? CollectionViewCell
+        cell?.cellModel.zoomingScrollView.isHidden = true
+    }
+    
 }
 
 // MARK: ScrollViewDelegate, CollectionViewDelegate, CollectionViewDataSource, UICollectionViewDataSourcePrefetching
@@ -290,10 +308,20 @@ extension CZImagePreviewer: UICollectionViewDelegateFlowLayout, UICollectionView
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: CollectionViewCell.CollectionViewCellReuseID, for: indexPath) as! CollectionViewCell
         cell.cellModel.delegate = self
         cell.cellModel.item = PreviewerCellItem(resource: imgRes, idx: indexPath.item)
+        return cell
+    }
+    
+    public func collectionView(_ collectionView: UICollectionView, willDisplay cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
+        guard let cell = cell as? CollectionViewCell else { return }
         cell.cellModel.videoLayer = self.dataSource?.imagePreviewer(self, videoLayerForCellWith: cell.cellModel)
         cell.cellModel.accessoryView = self.dataSource?.imagePreviewer(self, accessoryViewForCellWith: cell.cellModel)
-        self.dataSource?.imagePreviewer(self, videoSizeForCellWith: cell.cellModel, videoSizeSettingHandler: cell.cellModel.videoSizeSettingHandler!)
-        return cell
+        self.dataSource?.imagePreviewer(self, videoSizeForItemWith: cell.cellModel, videoSizeSettingHandler: cell.cellModel.videoSizeSettingHandler!)
+    }
+    
+    public func collectionView(_ collectionView: UICollectionView, didEndDisplaying cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
+        // 在 cell 离开屏幕后, 重置其 zoomingScrollView 和 videoView 的隐藏状态. 默认是 图像层 不隐藏, 视频层 隐藏
+        (cell as? CollectionViewCell)?.cellModel.videoView.isHidden = true
+        (cell as? CollectionViewCell)?.cellModel.zoomingScrollView.isHidden = false
     }
     
     /// 数据预加载
@@ -303,6 +331,7 @@ extension CZImagePreviewer: UICollectionViewDelegateFlowLayout, UICollectionView
             imgRes?.loadImage(progress: nil, completion: nil)
         }
     }
+    
 }
 
 /// MARK: PreviewerCellViewModelDelegate

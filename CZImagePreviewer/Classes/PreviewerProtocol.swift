@@ -34,13 +34,16 @@ public protocol PreviewerDataSource: AnyObject {
     func imagePreviewer(_ imagePreviewer: CZImagePreviewer, videoLayerForCellWith viewModel: PreviewerCellViewModel) -> CALayer?
     
     typealias VideoSizeSettingHandler = (CGSize?) -> Void
-    /// 告知 Previewer 视频尺寸
-    func imagePreviewer(_ imagePreviewer: CZImagePreviewer, videoSizeForCellWith viewModel: PreviewerCellViewModel, videoSizeSettingHandler: VideoSizeSettingHandler)
+    /// 通过此代理方法告知 Previewer 视频尺寸
+    func imagePreviewer(_ imagePreviewer: CZImagePreviewer, videoSizeForItemWith viewModel: PreviewerCellViewModel, videoSizeSettingHandler: VideoSizeSettingHandler)
 }
 
 public protocol PreviewerDelegate: AnyObject {
-    /// currentIdx 发生改变
-    func imagePreviewer(_ imagePreviewer: CZImagePreviewer, currentIndexDidChange index: Int)
+    /// index 发生改变
+    func imagePreviewer(_ imagePreviewer: CZImagePreviewer, index oldIndex: Int, didChangedTo newIndex: Int)
+    
+    /// contentOffset 发生改变
+    func imagePreviewer(_ imagePreviewer: CZImagePreviewer, contentOffsetDidChanged: CGPoint)
     
     /// 当 imagePreviewer 即将要退出显示时调用
     /// - Returns: 根据返回值决定返回动画: 退回到某个UIView视图的动画
@@ -52,8 +55,10 @@ public protocol PreviewerDelegate: AnyObject {
 
 public extension PreviewerDelegate {
     
-    func imagePreviewer(_ imagePreviewer: CZImagePreviewer, currentIndexDidChange index: Int) {}
+    func imagePreviewer(_ imagePreviewer: CZImagePreviewer, index oldIndex: Int, didChangedTo newIndex: Int) {}
     
+    func imagePreviewer(_ imagePreviewer: CZImagePreviewer, contentOffsetDidChanged: CGPoint) {}
+
     func imagePreviewer(_ imagePreviewer: CZImagePreviewer, willDismissWithCellViewModel viewModel: PreviewerCellViewModel) -> UIView? { nil }
     
     func imagePreviewer(_ imagePreviewer: CZImagePreviewer, didLongPressAtIndex index: Int) {}
@@ -68,5 +73,5 @@ public extension PreviewerDataSource {
     
     func imagePreviewer(_ imagePreviewer: CZImagePreviewer, imageLoadingStateDidChanged state: CZImagePreviewer.ImageLoadingState, with viewModel: PreviewerCellViewModel) {}
     
-    func imagePreviewer(_ imagePreviewer: CZImagePreviewer, videoSizeForCellWith viewModel: PreviewerCellViewModel, videoSizeSettingHandler: VideoSizeSettingHandler) {}
+    func imagePreviewer(_ imagePreviewer: CZImagePreviewer, videoSizeForItemWith viewModel: PreviewerCellViewModel, videoSizeSettingHandler: VideoSizeSettingHandler) {}
 }
