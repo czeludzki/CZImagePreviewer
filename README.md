@@ -13,14 +13,14 @@ To run the example project, clone the repo, and run `pod install` from the Examp
 
 ## 介绍
 #### 概览
-**放大缩小**
-![放大缩小](introduction/zooming.gif)
-**滑动dismiss**
-![滑动dismiss](introduction/dismiss.gif)
-**旋转**
-![旋转](introduction/rotate.gif)
-**视频播放**
-![视频播放](introduction/videoplay.gif)
+**放大缩小**  
+![放大缩小](introduction/zooming.gif)  
+**滑动dismiss**  
+![滑动dismiss](introduction/dismiss.gif)  
+**旋转**  
+![旋转](introduction/rotate.gif)  
+**视频播放**  
+![视频播放](introduction/videoplay.gif)  
 
 #### 设计
 为了保证图片浏览器的简单易用, 也可应付尽可能广泛的需求, 它提供以下功能:  
