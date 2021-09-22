@@ -69,7 +69,7 @@ class VideoPlayerViewModel: NSObject {
     // 加载菊花
     lazy var loadingIndicator: UIActivityIndicatorView = {
         let asshole = UIActivityIndicatorView()
-        asshole.activityIndicatorViewStyle = .gray
+        asshole.style = .gray
         return asshole
     }()
     
