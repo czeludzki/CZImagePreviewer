@@ -13,14 +13,10 @@ To run the example project, clone the repo, and run `pod install` from the Examp
 
 ## 介绍
 #### 概览
-**放大缩小**  
-![放大缩小](introduction/zooming.gif)  
-**滑动dismiss**  
-![滑动dismiss](introduction/dismiss.gif)  
-**旋转**  
-![旋转](introduction/rotate.gif)  
-**视频播放**  
-![视频播放](introduction/videoplay.gif)  
+ **放大缩小** | **滑动dismiss**  
+![放大缩小](introduction/zooming.gif) ![滑动dismiss](introduction/dismiss.gif)  
+ **旋转** | **视频播放**  
+![旋转](introduction/rotate.gif) ![视频播放](introduction/videoplay.gif)  
 
 #### 设计
 为了保证图片浏览器的简单易用, 也可应付尽可能广泛的需求, 它提供以下功能:  
@@ -44,7 +40,7 @@ To run the example project, clone the repo, and run `pod install` from the Examp
     > Custom console (the basic custom on Controller.view, front of the CollectionView)
 ```
 
-#### 使用
+#### 重要的方法
 ``` swift
 /// 展示
 public func display(fromImageContainer container: UIView? = nil, current index: Int = 0)
@@ -81,17 +77,17 @@ func imagePreviewer(_ imagePreviewer: CZImagePreviewer, willDismissWithCellViewM
 func imagePreviewer(_ imagePreviewer: CZImagePreviewer, didLongPressAtIndex index: Int)
 ```
 
-## 更具体的使用可参照项目中的 demo, demo中提供了比较基本的使用方法以及配合AVPlayer做了一个比较简单的视频播放例子
+#### 更具体的使用可参照项目中的 demo, demo中提供了比较基本的使用方法以及配合AVPlayer做了一个比较简单的视频播放例子
 
 ## 如有问题欢迎提 issues 或者 pull request
 
 ## Requirements
 
-iOS 11+
+iOS 12+
 
 ## Dependence
-SnapKit  
-Kingfisher
+[SnapKit](https://github.com/SnapKit/SnapKit)  
+[Kingfisher](https://github.com/onevcat/Kingfisher)  
 
 ## Installation
 
