@@ -12,8 +12,8 @@ import Kingfisher
 
 open class CZImagePreviewer: UIViewController {
     
-    public weak var delegate: PreviewerDelegate?
-    public var dataSource: PreviewerDataSource?
+    public weak var delegate: ImagePreviewerDelegate?
+    public var dataSource: ImagePreviewerDataSource?
     
     /// Cell 之间的间距
     public var spacingBetweenItem: CGFloat = 40
@@ -264,6 +264,17 @@ extension CZImagePreviewer {
     public func reloadData() {
         self.collectionView.reloadData()
     }
+    
+    public func deleteItems(at indexs: [Int]) {
+        let idxPaths: [IndexPath] = indexs.compactMap { i in
+            return IndexPath(item: i, section: 0)
+        }
+        self.collectionView.performBatchUpdates({
+            self.collectionView.deleteItems(at: idxPaths)
+        }, completion: nil)
+    }
+    
+    public func deleteItem(at index: Int) { self.deleteItems(at: [index]) }
     
     public func scroll2Item(at index: Int, animated: Bool) {
         let x = CGFloat(index) * self.view.bounds.size.width + CGFloat(index) * self.spacingBetweenItem

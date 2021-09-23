@@ -8,7 +8,7 @@
 import Foundation
 import UIKit
 
-public protocol PreviewerDataSource: AnyObject {
+public protocol ImagePreviewerDataSource: AnyObject {
     /// 向 dataSource 获取数据量
     func numberOfItems(in imagePreviewer: CZImagePreviewer) -> Int
     
@@ -38,7 +38,7 @@ public protocol PreviewerDataSource: AnyObject {
     func imagePreviewer(_ imagePreviewer: CZImagePreviewer, videoSizeForItemWith viewModel: PreviewerCellViewModel, videoSizeSettingHandler: VideoSizeSettingHandler)
 }
 
-public protocol PreviewerDelegate: AnyObject {
+public protocol ImagePreviewerDelegate: AnyObject {
     /// index 发生改变
     func imagePreviewer(_ imagePreviewer: CZImagePreviewer, index oldIndex: Int, didChangedTo newIndex: Int)
     
@@ -53,7 +53,7 @@ public protocol PreviewerDelegate: AnyObject {
     func imagePreviewer(_ imagePreviewer: CZImagePreviewer, didLongPressAtIndex index: Int)
 }
 
-public extension PreviewerDelegate {
+public extension ImagePreviewerDelegate {
     
     func imagePreviewer(_ imagePreviewer: CZImagePreviewer, index oldIndex: Int, didChangedTo newIndex: Int) {}
     
@@ -64,7 +64,7 @@ public extension PreviewerDelegate {
     func imagePreviewer(_ imagePreviewer: CZImagePreviewer, didLongPressAtIndex index: Int) {}
 }
 
-public extension PreviewerDataSource {
+public extension ImagePreviewerDataSource {
     func imagePreviewer(_ imagePreviewer: CZImagePreviewer, consoleForItemAtIndex index: Int) -> CZImagePreviewer.AccessoryView? { nil }
     
     func imagePreviewer(_ imagePreviewer: CZImagePreviewer, accessoryViewForCellWith viewModel: PreviewerCellViewModel) -> CZImagePreviewer.AccessoryView? { nil }

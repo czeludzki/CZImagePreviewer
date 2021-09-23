@@ -27,6 +27,8 @@ class ExampleViewController: UIViewController {
     
     @IBOutlet weak var collectionView: UICollectionView!
     
+    weak var imagePreviewer: CZImagePreviewer?
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view, typically from a nib.
@@ -60,24 +62,27 @@ extension ExampleViewController: UICollectionViewDataSource, UICollectionViewDel
         previewer.dataSource = self
         let cell = self.collectionView.cellForItem(at: indexPath)
         previewer.display(fromImageContainer: cell, current: indexPath.item)
+        self.imagePreviewer = previewer
     }
     
 }
 
-extension ExampleViewController: PreviewerDelegate {
+extension ExampleViewController: ImagePreviewerDelegate {
     func imagePreviewer(_ imagePreviewer: CZImagePreviewer, willDismissWithCellViewModel viewModel: PreviewerCellViewModel) -> UIView? {
         self.collectionView.cellForItem(at: IndexPath(item: viewModel.idx, section: 0))
     }
     
     func imagePreviewer(_ imagePreviewer: CZImagePreviewer, index oldIndex: Int, didChangedTo newIndex: Int) {
-        if self.res[oldIndex].vm?.isPlaying == true {
-            self.res[oldIndex].vm?.player.pause()
+        if case 0..<self.res.count = oldIndex {
+            if self.res[oldIndex].vm?.isPlaying == true {
+                self.res[oldIndex].vm?.player.pause()
+            }
         }
     }
 
 }
 
-extension ExampleViewController: PreviewerDataSource {
+extension ExampleViewController: ImagePreviewerDataSource {
     
     func numberOfItems(in imagePreviewer: CZImagePreviewer) -> Int {
         self.res.count
@@ -93,18 +98,33 @@ extension ExampleViewController: PreviewerDataSource {
     // 使用者也可以自己持有这个视图实例, 然后每次都返回相同的视图实例, CZImagePreviewer 在加入此视图到superview前会对视图实例进行地址判断, 防止重复添加 或 没必要的先移除再添加
     func imagePreviewer(_ imagePreviewer: CZImagePreviewer, consoleForItemAtIndex index: Int) -> CZImagePreviewer.AccessoryView? {
         let view = CZImagePreviewer.AccessoryView(frame: .zero)
-        let centerView = UIButton(type: .system)
-        centerView.setTitle(String(index), for: .normal)
-        centerView.tintColor = .black
-        centerView.layer.cornerRadius = 8
-        centerView.layer.borderWidth = 1
-        centerView.layer.borderColor = UIColor.white.cgColor
-        centerView.backgroundColor = UIColor(red: 1, green: 1, blue: 1, alpha: 0.5)
-        view.addSubview(centerView)
-        centerView.snp.makeConstraints { make in
+        let idxTag = UIButton(type: .system)
+        idxTag.setTitle(String(index), for: .normal)
+        idxTag.tintColor = .black
+        idxTag.layer.cornerRadius = 8
+        idxTag.layer.borderWidth = 1
+        idxTag.layer.borderColor = UIColor.white.cgColor
+        idxTag.backgroundColor = UIColor(red: 1, green: 1, blue: 1, alpha: 0.5)
+        view.addSubview(idxTag)
+        idxTag.snp.makeConstraints { make in
             make.left.equalTo(12)
             make.bottomMargin.equalTo(view.snp.bottomMargin)
             make.size.equalTo(CGSize(width: 30, height: 30))
+        }
+        
+        let deleteBtn = UIButton(type: .system)
+        deleteBtn.setTitle("删除", for: .normal)
+        deleteBtn.tintColor = .white
+        deleteBtn.layer.cornerRadius = 8
+        deleteBtn.layer.borderWidth = 1
+        deleteBtn.layer.borderColor = UIColor.white.cgColor
+        deleteBtn.backgroundColor = UIColor(red: 1, green: 1, blue: 1, alpha: 0.5)
+        deleteBtn.addTarget(self, action: #selector(deleteBtnOnClick(sender:)), for: .touchUpInside)
+        deleteBtn.contentEdgeInsets = UIEdgeInsets.init(top: 6, left: 12, bottom: 6, right: 12)
+        view.addSubview(deleteBtn)
+        deleteBtn.snp.makeConstraints { make in
+            make.right.equalTo(-12)
+            make.bottomMargin.equalTo(view.snp.bottomMargin)
         }
         return view
     }
@@ -124,4 +144,14 @@ extension ExampleViewController: PreviewerDataSource {
         videoSizeSettingHandler(vm?.player.currentItem?.presentationSize ?? .zero)
     }
     
+}
+
+// MARK: Action
+extension ExampleViewController {
+    @objc func deleteBtnOnClick(sender: UIButton) {
+        guard let currentIdx = self.imagePreviewer?.currentIdx else { return }
+        self.res.remove(at: currentIdx)
+        self.imagePreviewer?.deleteItem(at: currentIdx)
+        self.collectionView.reloadData()
+    }
 }
