@@ -13,14 +13,13 @@ import AVFoundation
 class ExampleViewController: UIViewController {
     
     lazy var res: [ResourceItem] = {
-        var ret: [ResourceItem] = []
-        self.imagePaths.forEach {
+        var ret: [ResourceItem] = Self.imagePaths.compactMap {
             var item = ResourceItem(imgPath: $0)
             if Int.random(in: 1...100) % 3 == 0 {
-                let url = videoURLs[Int.random(in: 0...2)]
+                let url = Self.videoURLs[Int.random(in: 0...2)]
                 item.videoURL = url
             }
-            ret.append(item)
+            return item
         }
         return ret
     }()
@@ -100,7 +99,7 @@ extension ExampleViewController: ImagePreviewerDataSource {
         let view = CZImagePreviewer.AccessoryView(frame: .zero)
         let idxTag = UIButton(type: .system)
         idxTag.setTitle(String(index), for: .normal)
-        idxTag.tintColor = .black
+        idxTag.tintColor = .white
         idxTag.layer.cornerRadius = 8
         idxTag.layer.borderWidth = 1
         idxTag.layer.borderColor = UIColor.white.cgColor

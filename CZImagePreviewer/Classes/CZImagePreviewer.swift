@@ -26,6 +26,7 @@ open class CZImagePreviewer: UIViewController {
         didSet {
             if oldValue != -1, oldValue != currentIdx {
                 print("currentIdx = \(currentIdx)")
+                self.updateConsole(for: currentIdx)
                 // 通知代理
                 self.delegate?.imagePreviewer(self, index: oldValue, didChangedTo: currentIdx)
             }
@@ -271,7 +272,10 @@ extension CZImagePreviewer {
         }
         self.collectionView.performBatchUpdates({
             self.collectionView.deleteItems(at: idxPaths)
-        }, completion: nil)
+        }, completion: { finish in
+            // 删除完毕后更新 currentIdx
+            self.currentIdx = Int((self.collectionView.contentOffset.x + self.collectionView.bounds.size.width * 0.5) / self.collectionView.bounds.size.width)
+        })
     }
     
     public func deleteItem(at index: Int) { self.deleteItems(at: [index]) }
@@ -304,8 +308,6 @@ extension CZImagePreviewer: UICollectionViewDelegateFlowLayout, UICollectionView
     
     public func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) {
         self.currentIdx = Int((scrollView.contentOffset.x + scrollView.bounds.size.width * 0.5) / scrollView.bounds.size.width)
-        // 当 currentIndex 发生改变, 尝试更新 self.cus_console 视图
-        self.updateConsole(for: self.currentIdx)
     }
     
     public func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {

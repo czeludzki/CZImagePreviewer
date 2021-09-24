@@ -33,12 +33,22 @@ class PreviewerFlowLayout: UICollectionViewFlowLayout {
         return CGPoint(x: (newOffset.x + (self.collectionView?.frame.minX ?? 0)), y: newOffset.y)
     }
         
-    // 去掉旋转时默认的淡出淡入隐式动画
-    override func initialLayoutAttributesForAppearingItem(at itemIndexPath: IndexPath) -> UICollectionViewLayoutAttributes? { nil }
+    override func initialLayoutAttributesForAppearingItem(at itemIndexPath: IndexPath) -> UICollectionViewLayoutAttributes? {
+        if self.rotatingInfo?.isRotating == true {
+            // 去掉旋转时默认的淡出淡入隐式动画
+            return nil
+        }else{
+            return super.initialLayoutAttributesForAppearingItem(at: itemIndexPath)
+        }
+    }
     
-    // 去掉旋转时 DisappearingItem 的隐式动画
     override func finalLayoutAttributesForDisappearingItem(at itemIndexPath: IndexPath) -> UICollectionViewLayoutAttributes? {
-        let attr = self.layoutAttributesForItem(at: itemIndexPath)
-        return attr
+        if self.rotatingInfo?.isRotating == true {
+            // 去掉旋转时 DisappearingItem 的隐式动画
+            let attr = self.layoutAttributesForItem(at: itemIndexPath)
+            return attr
+        }else{
+            return super.finalLayoutAttributesForDisappearingItem(at: itemIndexPath)
+        }
     }
 }
