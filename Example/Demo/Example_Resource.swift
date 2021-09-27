@@ -49,8 +49,8 @@ class VideoPlayerViewModel: NSObject {
     var playItem: AVPlayerItem?
     
     // 控制视图
-    lazy var consoleView: CZImagePreviewer.AccessoryView = {
-        let view = CZImagePreviewer.AccessoryView()
+    lazy var consoleView: CZImagePreviewerAccessoryView = {
+        let view = CZImagePreviewerAccessoryView()
         
         view.addSubview(self.playbackControlBtn)
         self.playbackControlBtn.snp.makeConstraints({

@@ -12,6 +12,12 @@ import Kingfisher
 
 open class CZImagePreviewer: UIViewController {
     
+    public enum ImageLoadingState {
+        case `default`  // 正常可预览状态
+        case loading(receivedSize: Int64, expectedSize: Int64)  // 加载中
+        case loadingFaiure  // 加载失败
+    }
+    
     public weak var delegate: ImagePreviewerDelegate?
     public var dataSource: ImagePreviewerDataSource?
     

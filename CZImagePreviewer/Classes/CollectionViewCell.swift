@@ -37,8 +37,8 @@ class CollectionViewCell: UICollectionViewCell {
         return zoomingScrollView
     }()
     
-    lazy var videoContainer: CZImagePreviewer.AccessoryView = {
-        let videoContainer = CZImagePreviewer.AccessoryView.init()
+    lazy var videoContainer: CZImagePreviewerAccessoryView = {
+        let videoContainer = CZImagePreviewerAccessoryView.init()
         videoContainer._viewType = .videoView
         return videoContainer
     }()

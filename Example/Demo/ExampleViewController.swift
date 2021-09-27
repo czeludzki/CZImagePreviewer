@@ -96,8 +96,8 @@ extension ExampleViewController: ImagePreviewerDataSource {
     
     // 这个视图被添加到 CZImagePreviewer 的顶部, 不参与滑动交互, 可以放一些通用按钮例如 下载图片/分享/编辑 等等
     // 使用者也可以自己持有这个视图实例, 然后每次都返回相同的视图实例, CZImagePreviewer 在加入此视图到superview前会对视图实例进行地址判断, 防止重复添加 或 没必要的先移除再添加
-    func imagePreviewer(_ imagePreviewer: CZImagePreviewer, consoleForItemAtIndex index: Int) -> CZImagePreviewer.AccessoryView? {
-        let view = CZImagePreviewer.AccessoryView(frame: .zero)
+    func imagePreviewer(_ imagePreviewer: CZImagePreviewer, consoleForItemAtIndex index: Int) -> CZImagePreviewerAccessoryView? {
+        let view = CZImagePreviewerAccessoryView(frame: .zero)
         let idxTag = UIButton(type: .system)
         idxTag.setTitle(String(index), for: .normal)
         idxTag.tintColor = .black
@@ -129,7 +129,7 @@ extension ExampleViewController: ImagePreviewerDataSource {
         return view
     }
     
-    func imagePreviewer(_ imagePreviewer: CZImagePreviewer, accessoryViewForCellWith viewModel: PreviewerCellViewModel) -> CZImagePreviewer.AccessoryView? {
+    func imagePreviewer(_ imagePreviewer: CZImagePreviewer, accessoryViewForCellWith viewModel: PreviewerCellViewModel) -> CZImagePreviewerAccessoryView? {
         let view = self.res[viewModel.idx].vm?.consoleView
         return view
     }
