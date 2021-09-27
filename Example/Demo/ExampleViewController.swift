@@ -67,8 +67,8 @@ extension ExampleViewController: UICollectionViewDataSource, UICollectionViewDel
 }
 
 extension ExampleViewController: ImagePreviewerDelegate {
-    func imagePreviewer(_ imagePreviewer: CZImagePreviewer, willDismissWithCellViewModel viewModel: PreviewerCellViewModel) -> UIView? {
-        self.collectionView.cellForItem(at: IndexPath(item: viewModel.idx, section: 0))
+    func imagePreviewer(_ imagePreviewer: CZImagePreviewer, willDismissWithCellViewController controller: PreviewerCellViewController) -> UIView? {
+        self.collectionView.cellForItem(at: IndexPath(item: controller.idx, section: 0))
     }
     
     func imagePreviewer(_ imagePreviewer: CZImagePreviewer, index oldIndex: Int, didChangedTo newIndex: Int) {
@@ -128,17 +128,17 @@ extension ExampleViewController: ImagePreviewerDataSource {
         return view
     }
     
-    func imagePreviewer(_ imagePreviewer: CZImagePreviewer, accessoryViewForCellWith viewModel: PreviewerCellViewModel) -> CZImagePreviewer.AccessoryView? {
+    func imagePreviewer(_ imagePreviewer: CZImagePreviewer, accessoryViewForCellWith viewModel: PreviewerCellViewController) -> CZImagePreviewer.AccessoryView? {
         let view = self.res[viewModel.idx].vm?.consoleView
         return view
     }
     
-    func imagePreviewer(_ imagePreviewer: CZImagePreviewer, videoLayerForCellWith viewModel: PreviewerCellViewModel) -> CALayer? {
+    func imagePreviewer(_ imagePreviewer: CZImagePreviewer, videoLayerForCellWith viewModel: PreviewerCellViewController) -> CALayer? {
         let vm = self.res[viewModel.idx].vm
         return vm?.playerLayer
     }
     
-    func imagePreviewer(_ imagePreviewer: CZImagePreviewer, videoSizeForItemWith viewModel: PreviewerCellViewModel, videoSizeSettingHandler: VideoSizeSettingHandler) {
+    func imagePreviewer(_ imagePreviewer: CZImagePreviewer, videoSizeForItemWith viewModel: PreviewerCellViewController, videoSizeSettingHandler: VideoSizeSettingHandler) {
         let vm = self.res[viewModel.idx].vm
         videoSizeSettingHandler(vm?.player.currentItem?.presentationSize ?? .zero)
     }

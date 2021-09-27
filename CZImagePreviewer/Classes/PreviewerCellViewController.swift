@@ -8,9 +8,9 @@
 import UIKit
 import Kingfisher
 
-protocol PreviewerCellViewModelDelegate: AnyObject {
+protocol PreviewerCellViewControllerDelegate: AnyObject {
     /// 通知代理图片加载进度
-    func collectionCellViewModel(_ viewModel: PreviewerCellViewModel, idx: Int, resourceLoadingStateDidChanged state: CZImagePreviewer.ImageLoadingState)
+    func collectionCellViewController(_ controller: PreviewerCellViewController, idx: Int, resourceLoadingStateDidChanged state: CZImagePreviewer.ImageLoadingState)
 }
 
 // 资源模型
@@ -20,7 +20,7 @@ internal struct PreviewerCellItem {
 }
 
 /// 此类会被 CZImagePreviewerCollectionViewCell 懒加载生成, 专门处理 视图 与 PreviewerCellItem 之间的通讯
-public class PreviewerCellViewModel: NSObject {     // 继承自 NSObject 是因为此类需要遵循 ScrollViewDelegate 协议
+public class PreviewerCellViewController: NSObject {     // 继承自 NSObject 是因为此类需要遵循 ScrollViewDelegate 协议
     
     // 记录当前索引
     public private(set) var idx = 0
@@ -31,7 +31,7 @@ public class PreviewerCellViewModel: NSObject {     // 继承自 NSObject 是因
     public var videoView: UIView { self.cell.videoContainer }
     
     // delegate
-    weak var delegate: PreviewerCellViewModelDelegate?
+    weak var delegate: PreviewerCellViewControllerDelegate?
     
     // 从 dataSource 取得的辅助视图, 在 willSet 时, 加入到 cell.contentView
     public weak var accessoryView: UIView? {
@@ -108,7 +108,7 @@ public class PreviewerCellViewModel: NSObject {     // 继承自 NSObject 是因
 }
 
 // MARK: ScrollViewDelegate
-extension PreviewerCellViewModel: UIScrollViewDelegate {
+extension PreviewerCellViewController: UIScrollViewDelegate {
     public func viewForZooming(in scrollView: UIScrollView) -> UIView? {
         return self.cell.imageView
     }
@@ -119,7 +119,7 @@ extension PreviewerCellViewModel: UIScrollViewDelegate {
 }
 
 // MARK: Public function
-extension PreviewerCellViewModel {
+extension PreviewerCellViewController {
     func clearZooming(animate: Bool = true) {
         self.cell.zoomingScrollView.setZoomScale(1, animated: animate)
     }
@@ -135,11 +135,11 @@ extension PreviewerCellViewModel {
 }
 
 // MARK: Helper
-extension PreviewerCellViewModel {
+extension PreviewerCellViewController {
     
     // 图片加载进度闭包
     func progress(receivedSize: Int64, expectedSize: Int64) {
-        self.delegate?.collectionCellViewModel(self, idx: self.idx, resourceLoadingStateDidChanged: .loading(receivedSize: receivedSize, expectedSize: expectedSize))
+        self.delegate?.collectionCellViewController(self, idx: self.idx, resourceLoadingStateDidChanged: .loading(receivedSize: receivedSize, expectedSize: expectedSize))
     }
     
     // 图片加载结果
@@ -147,10 +147,10 @@ extension PreviewerCellViewModel {
         self.cell.imageView.image = image
         self.updateScrollViewConfiguration()
         if case .failure(_) = result {
-            self.delegate?.collectionCellViewModel(self, idx: self.idx, resourceLoadingStateDidChanged: .loadingFaiure)
+            self.delegate?.collectionCellViewController(self, idx: self.idx, resourceLoadingStateDidChanged: .loadingFaiure)
             return
         }
-        self.delegate?.collectionCellViewModel(self, idx: self.idx, resourceLoadingStateDidChanged: .default)
+        self.delegate?.collectionCellViewController(self, idx: self.idx, resourceLoadingStateDidChanged: .default)
     }
     
     /// 更新 zoomingScroll 的配置

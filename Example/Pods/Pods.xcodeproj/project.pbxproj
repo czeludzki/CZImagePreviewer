@@ -101,7 +101,7 @@
 		C735F9831259ABE2EE16BDADC66CD9F3 /* KF.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62D815E22042A174FB95A3267294CDBC /* KF.swift */; };
 		C76268C8FE9DD4111DA3D568ED1ADEE5 /* ExtensionHelpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8ACE1FC624B86CDFF6FF8AEA07BEABDD /* ExtensionHelpers.swift */; };
 		CA79BC1357CEAFF31CDEBCB905BFBCF9 /* Filter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7044E186F862F338F1D91CE90DA1F918 /* Filter.swift */; };
-		CE4AD57A4165D4F03E3538A27AE9999F /* PreviewerCellViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF0E1815E85CD3483C8DBA4DD131FE90 /* PreviewerCellViewModel.swift */; };
+		CE4AD57A4165D4F03E3538A27AE9999F /* PreviewerCellViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF0E1815E85CD3483C8DBA4DD131FE90 /* PreviewerCellViewController.swift */; };
 		D1978E0EB42309A88516C9F54EB15B2A /* ConstraintRelation.swift in Sources */ = {isa = PBXBuildFile; fileRef = D214A6C45EB6E6779C3BA8517653DFF7 /* ConstraintRelation.swift */; };
 		D25E9EA4ED73181540894105AE0E3523 /* SnapKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 32F712DAF03B50CE6E4DE01105DDEDBA /* SnapKit.framework */; };
 		D399755E3EDAC9A001628CEA1B75B157 /* ConstraintRelatableTarget.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BEAFB27D0784736512D39543AEF8D1F /* ConstraintRelatableTarget.swift */; };
@@ -306,7 +306,7 @@
 		DD21B5F74ED89B51DB42B97EDD2DF8B9 /* Kingfisher.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = Kingfisher.swift; path = Sources/General/Kingfisher.swift; sourceTree = "<group>"; };
 		DD913F7DC5ADDC2559261BA7911B5116 /* Pods-CZImagePreviewer_Tests-acknowledgements.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = "Pods-CZImagePreviewer_Tests-acknowledgements.plist"; sourceTree = "<group>"; };
 		DE7B9E9598AB66333BD38B48EB35405E /* Resource.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = Resource.swift; path = Sources/General/ImageSource/Resource.swift; sourceTree = "<group>"; };
-		DF0E1815E85CD3483C8DBA4DD131FE90 /* PreviewerCellViewModel.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = PreviewerCellViewModel.swift; path = CZImagePreviewer/Classes/PreviewerCellViewModel.swift; sourceTree = "<group>"; };
+		DF0E1815E85CD3483C8DBA4DD131FE90 /* PreviewerCellViewController.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = PreviewerCellViewController.swift; path = CZImagePreviewer/Classes/PreviewerCellViewController.swift; sourceTree = "<group>"; };
 		E0C1195973E01B898C1823DADD8100F7 /* Pods-CZImagePreviewer_Example-umbrella.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "Pods-CZImagePreviewer_Example-umbrella.h"; sourceTree = "<group>"; };
 		E1B7BF06F1D1A9314A0CD0D2CB76C63D /* CZImagePreviewer.podspec */ = {isa = PBXFileReference; explicitFileType = text.script.ruby; includeInIndex = 1; indentWidth = 2; path = CZImagePreviewer.podspec; sourceTree = "<group>"; tabWidth = 2; xcLanguageSpecificationIdentifier = xcode.lang.ruby; };
 		E2DA82BE04EAF6F1CD97BA78F29FB019 /* UIButton+Kingfisher.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = "UIButton+Kingfisher.swift"; path = "Sources/Extensions/UIButton+Kingfisher.swift"; sourceTree = "<group>"; };
@@ -636,7 +636,7 @@
 				2A7E5FE226F474BE001088E0 /* PreviewerFlowLayout.swift */,
 				7C5FC6A93950B3892CDE097689F17B05 /* CZImagePreviewer+OtherDefinition.swift */,
 				5816B3C69C4C89904A3D05A92F50D318 /* CollectionViewCell.swift */,
-				DF0E1815E85CD3483C8DBA4DD131FE90 /* PreviewerCellViewModel.swift */,
+				DF0E1815E85CD3483C8DBA4DD131FE90 /* PreviewerCellViewController.swift */,
 				018B403B1700326378142F306DC82FAA /* PreviewNamespace.swift */,
 				A1F172E0AF1FC77069D9BC34311FF53A /* ResourceProtocol.swift */,
 				E057B03B3DECA67786BF8EC45E55F439 /* Transition */,
@@ -821,7 +821,7 @@
 			isa = PBXProject;
 			attributes = {
 				LastSwiftUpdateCheck = 1100;
-				LastUpgradeCheck = 1100;
+				LastUpgradeCheck = 1300;
 				TargetAttributes = {
 					1190DE23C05E4FA5BCB7F66E61714D6F = {
 						LastSwiftMigration = 1250;
@@ -1015,7 +1015,7 @@
 				F00F5F5A885A0784107B55BD5AB98394 /* CZImagePreviewer+OtherDefinition.swift in Sources */,
 				1E9312BBBD193EFC7DE419970B38FAC0 /* CZImagePreviewer-dummy.m in Sources */,
 				9A34CDCE7B380826A7B84B48578D2CD1 /* CZImagePreviewer.swift in Sources */,
-				CE4AD57A4165D4F03E3538A27AE9999F /* PreviewerCellViewModel.swift in Sources */,
+				CE4AD57A4165D4F03E3538A27AE9999F /* PreviewerCellViewController.swift in Sources */,
 				ACAD7E56D09932F7350CEE33B2D1080A /* PreviewerProtocol.swift in Sources */,
 				E6E407DC61D13B0612D30F6654D9E36E /* PreviewNamespace.swift in Sources */,
 				98B832CACAE465F2584D2596C0918ABC /* ResourceProtocol.swift in Sources */,
@@ -1077,7 +1077,6 @@
 			baseConfigurationReference = F4DBFE87ADB964A56D7A2CDCEC6C827C /* Pods-CZImagePreviewer_Example.debug.xcconfig */;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = NO;
-				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
 				CLANG_ENABLE_OBJC_WEAK = NO;
 				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
@@ -1089,7 +1088,7 @@
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
 				INFOPLIST_FILE = "Target Support Files/Pods-CZImagePreviewer_Example/Pods-CZImagePreviewer_Example-Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				MACH_O_TYPE = staticlib;
 				MODULEMAP_FILE = "Target Support Files/Pods-CZImagePreviewer_Example/Pods-CZImagePreviewer_Example.modulemap";
@@ -1110,7 +1109,6 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 03C26374545D36FA1AB403211EC087CF /* CZImagePreviewer.release.xcconfig */;
 			buildSettings = {
-				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
 				CLANG_ENABLE_OBJC_WEAK = NO;
 				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
@@ -1123,7 +1121,7 @@
 				GCC_PREFIX_HEADER = "Target Support Files/CZImagePreviewer/CZImagePreviewer-prefix.pch";
 				INFOPLIST_FILE = "Target Support Files/CZImagePreviewer/CZImagePreviewer-Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				MODULEMAP_FILE = "Target Support Files/CZImagePreviewer/CZImagePreviewer.modulemap";
 				PRODUCT_MODULE_NAME = CZImagePreviewer;
@@ -1143,7 +1141,6 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = F3D79C6C3BB72AE1B10D772A4EFB2D4E /* SnapKit.release.xcconfig */;
 			buildSettings = {
-				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
 				CLANG_ENABLE_OBJC_WEAK = NO;
 				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
@@ -1156,7 +1153,7 @@
 				GCC_PREFIX_HEADER = "Target Support Files/SnapKit/SnapKit-prefix.pch";
 				INFOPLIST_FILE = "Target Support Files/SnapKit/SnapKit-Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				MODULEMAP_FILE = "Target Support Files/SnapKit/SnapKit.modulemap";
 				PRODUCT_MODULE_NAME = SnapKit;
@@ -1177,7 +1174,6 @@
 			baseConfigurationReference = 91F61AEF3DE781B38E04948250581D62 /* Pods-CZImagePreviewer_Tests.debug.xcconfig */;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = NO;
-				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
 				CLANG_ENABLE_OBJC_WEAK = NO;
 				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
@@ -1189,7 +1185,7 @@
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
 				INFOPLIST_FILE = "Target Support Files/Pods-CZImagePreviewer_Tests/Pods-CZImagePreviewer_Tests-Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				MACH_O_TYPE = staticlib;
 				MODULEMAP_FILE = "Target Support Files/Pods-CZImagePreviewer_Tests/Pods-CZImagePreviewer_Tests.modulemap";
@@ -1210,7 +1206,6 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 15945A4FDCE8ADA77D11E7A35F882465 /* SnapKit.debug.xcconfig */;
 			buildSettings = {
-				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
 				CLANG_ENABLE_OBJC_WEAK = NO;
 				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
@@ -1223,7 +1218,7 @@
 				GCC_PREFIX_HEADER = "Target Support Files/SnapKit/SnapKit-prefix.pch";
 				INFOPLIST_FILE = "Target Support Files/SnapKit/SnapKit-Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				MODULEMAP_FILE = "Target Support Files/SnapKit/SnapKit.modulemap";
 				PRODUCT_MODULE_NAME = SnapKit;
@@ -1288,7 +1283,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -1303,7 +1298,6 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = C1C722E6522D0911121BE5B9C37A07E1 /* Kingfisher.debug.xcconfig */;
 			buildSettings = {
-				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
 				CLANG_ENABLE_OBJC_WEAK = NO;
 				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
@@ -1316,7 +1310,7 @@
 				GCC_PREFIX_HEADER = "Target Support Files/Kingfisher/Kingfisher-prefix.pch";
 				INFOPLIST_FILE = "Target Support Files/Kingfisher/Kingfisher-Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				MODULEMAP_FILE = "Target Support Files/Kingfisher/Kingfisher.modulemap";
 				PRODUCT_MODULE_NAME = Kingfisher;
@@ -1335,7 +1329,6 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = C9DCA9F29BFD99BF45988D2F68D1A348 /* Kingfisher.release.xcconfig */;
 			buildSettings = {
-				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
 				CLANG_ENABLE_OBJC_WEAK = NO;
 				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
@@ -1348,7 +1341,7 @@
 				GCC_PREFIX_HEADER = "Target Support Files/Kingfisher/Kingfisher-prefix.pch";
 				INFOPLIST_FILE = "Target Support Files/Kingfisher/Kingfisher-Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				MODULEMAP_FILE = "Target Support Files/Kingfisher/Kingfisher.modulemap";
 				PRODUCT_MODULE_NAME = Kingfisher;
@@ -1417,7 +1410,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
@@ -1434,7 +1427,6 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 53539DF7B5EBD1ADA40CE4F3707535AA /* CZImagePreviewer.debug.xcconfig */;
 			buildSettings = {
-				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
 				CLANG_ENABLE_OBJC_WEAK = NO;
 				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
@@ -1447,7 +1439,7 @@
 				GCC_PREFIX_HEADER = "Target Support Files/CZImagePreviewer/CZImagePreviewer-prefix.pch";
 				INFOPLIST_FILE = "Target Support Files/CZImagePreviewer/CZImagePreviewer-Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				MODULEMAP_FILE = "Target Support Files/CZImagePreviewer/CZImagePreviewer.modulemap";
 				PRODUCT_MODULE_NAME = CZImagePreviewer;
@@ -1467,7 +1459,6 @@
 			baseConfigurationReference = 9121F3E2AA3D4305C1C6EAD1D37D4FE3 /* Pods-CZImagePreviewer_Tests.release.xcconfig */;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = NO;
-				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
 				CLANG_ENABLE_OBJC_WEAK = NO;
 				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
@@ -1479,7 +1470,7 @@
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
 				INFOPLIST_FILE = "Target Support Files/Pods-CZImagePreviewer_Tests/Pods-CZImagePreviewer_Tests-Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				MACH_O_TYPE = staticlib;
 				MODULEMAP_FILE = "Target Support Files/Pods-CZImagePreviewer_Tests/Pods-CZImagePreviewer_Tests.modulemap";
@@ -1502,7 +1493,6 @@
 			baseConfigurationReference = E896FE14A0E7F8E1D58213D27B2C4FB7 /* Pods-CZImagePreviewer_Example.release.xcconfig */;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = NO;
-				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
 				CLANG_ENABLE_OBJC_WEAK = NO;
 				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
@@ -1514,7 +1504,7 @@
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
 				INFOPLIST_FILE = "Target Support Files/Pods-CZImagePreviewer_Example/Pods-CZImagePreviewer_Example-Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				MACH_O_TYPE = staticlib;
 				MODULEMAP_FILE = "Target Support Files/Pods-CZImagePreviewer_Example/Pods-CZImagePreviewer_Example.modulemap";
