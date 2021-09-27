@@ -136,7 +136,7 @@ class VideoPlayerViewModel: NSObject {
 }
 
 extension ExampleViewController {
-    var imagePaths: [String] {
+    static var imagePaths: [String] = {
         var arr = [
             "https://gimg2.baidu.com/image_search/src=http%3A%2F%2Fdesk.fd.zol-img.com.cn%2Fg5%2FM00%2F03%2F00%2FChMkJ1bK-nSIS40cAAEuXdS6ma4AALLAAM-v7QAAS51610.jpg&refer=http%3A%2F%2Fdesk.fd.zol-img.com.cn&app=2002&size=f9999,10000&q=a80&n=0&g=0n&fmt=jpeg?sec=1633608077&t=f8163c3b266a263733642ca2bc73fdb0",
     "https://img1.baidu.com/it/u=194556351,9437364&fm=26&fmt=auto",
@@ -149,15 +149,15 @@ extension ExampleViewController {
         arr += arr
         arr += arr
         return arr
-    }
+    }()
     
-    var videoURLs: [URL] {
+    static var videoURLs: [URL] = {
         var ret: [URL] = []
         for n in 1...3 {
             let url = Bundle.main.url(forResource: String(n), withExtension: "mp4")!
             ret.append(url)
         }
         return ret
-    }
+    }()
     
 }

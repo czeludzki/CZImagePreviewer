@@ -11,8 +11,8 @@ class CollectionViewCell: UICollectionViewCell {
     
     static let CollectionViewCellReuseID = NSStringFromClass(CollectionViewCell.self) + "ReuseID"
     
-    lazy var cellModel: PreviewerCellViewModel = {
-        PreviewerCellViewModel(cell: self)
+    lazy var cellViewController: PreviewerCellViewController = {
+        PreviewerCellViewController(cell: self)
     }()
     
     lazy var imageView: UIImageView = {
@@ -25,7 +25,7 @@ class CollectionViewCell: UICollectionViewCell {
     
     lazy var zoomingScrollView: UIScrollView = {
         let zoomingScrollView = UIScrollView.init(frame: CGRect.zero)
-        zoomingScrollView.delegate = self.cellModel
+        zoomingScrollView.delegate = self.cellViewController
         zoomingScrollView.showsVerticalScrollIndicator = false
         zoomingScrollView.showsHorizontalScrollIndicator = false
         zoomingScrollView.bounces = true
@@ -56,6 +56,6 @@ class CollectionViewCell: UICollectionViewCell {
     
     override func layoutSubviews() {
         super.layoutSubviews()
-        self.cellModel.cellDidLayoutSubviews()
+        self.cellViewController.cellDidLayoutSubviews()
     }
 }

@@ -17,7 +17,7 @@ public protocol ImagePreviewerDataSource: AnyObject {
     func imagePreviewer(_ imagePreviewer: CZImagePreviewer, imageResourceForItemAtIndex index: Int) -> ResourceProtocol?
     
     /// 图片加载状态改变
-    func imagePreviewer(_ imagePreviewer: CZImagePreviewer, imageLoadingStateDidChanged state: CZImagePreviewer.ImageLoadingState, with viewModel: PreviewerCellViewModel)
+    func imagePreviewer(_ imagePreviewer: CZImagePreviewer, imageLoadingStateDidChanged state: CZImagePreviewer.ImageLoadingState, with cellViewController: PreviewerCellViewController)
     
     /// 为图片浏览器提供自定义操作视图, 该视图会平铺在图片浏览器子视图集顶部, 不参与缩放, 不受滑动交互影响
     /// 调用时机:
@@ -28,14 +28,14 @@ public protocol ImagePreviewerDataSource: AnyObject {
     func imagePreviewer(_ imagePreviewer: CZImagePreviewer, consoleForItemAtIndex index: Int) -> CZImagePreviewerAccessoryView?
     
     /// 为每一个 Cell 提供自定义操作视图, 这个视图会覆盖在每个Cell的顶部
-    func imagePreviewer(_ imagePreviewer: CZImagePreviewer, accessoryViewForCellWith viewModel: PreviewerCellViewModel) -> CZImagePreviewerAccessoryView?
+    func imagePreviewer(_ imagePreviewer: CZImagePreviewer, accessoryViewForCellWith cellViewController: PreviewerCellViewController) -> CZImagePreviewerAccessoryView?
     
     /// 为每一个 Cell 提供视频播放容器, 你可以将你的视频播放器 Layer, 添加到 videoView.layer 中
-    func imagePreviewer(_ imagePreviewer: CZImagePreviewer, videoLayerForCellWith viewModel: PreviewerCellViewModel) -> CALayer?
+    func imagePreviewer(_ imagePreviewer: CZImagePreviewer, videoLayerForCellWith cellViewController: PreviewerCellViewController) -> CALayer?
     
     typealias VideoSizeSettingHandler = (CGSize?) -> Void
     /// 通过此代理方法告知 Previewer 视频尺寸
-    func imagePreviewer(_ imagePreviewer: CZImagePreviewer, videoSizeForItemWith viewModel: PreviewerCellViewModel, videoSizeSettingHandler: VideoSizeSettingHandler)
+    func imagePreviewer(_ imagePreviewer: CZImagePreviewer, videoSizeForItemWith cellViewController: PreviewerCellViewController, videoSizeSettingHandler: VideoSizeSettingHandler)
 }
 
 public protocol ImagePreviewerDelegate: AnyObject {
@@ -47,7 +47,7 @@ public protocol ImagePreviewerDelegate: AnyObject {
     
     /// 当 imagePreviewer 即将要退出显示时调用
     /// - Returns: 根据返回值决定返回动画: 退回到某个UIView视图的动画
-    func imagePreviewer(_ imagePreviewer: CZImagePreviewer, willDismissWithCellViewModel viewModel: PreviewerCellViewModel) -> UIView?
+    func imagePreviewer(_ imagePreviewer: CZImagePreviewer, willDismissWithCellViewController cellViewController: PreviewerCellViewController) -> UIView?
     
     /// 接收到长按事件
     func imagePreviewer(_ imagePreviewer: CZImagePreviewer, didLongPressAtIndex index: Int)
@@ -59,7 +59,7 @@ public extension ImagePreviewerDelegate {
     
     func imagePreviewer(_ imagePreviewer: CZImagePreviewer, contentOffsetDidChanged: CGPoint) {}
 
-    func imagePreviewer(_ imagePreviewer: CZImagePreviewer, willDismissWithCellViewModel viewModel: PreviewerCellViewModel) -> UIView? { nil }
+    func imagePreviewer(_ imagePreviewer: CZImagePreviewer, willDismissWithCellViewController cellViewController: PreviewerCellViewController) -> UIView? { nil }
     
     func imagePreviewer(_ imagePreviewer: CZImagePreviewer, didLongPressAtIndex index: Int) {}
 }
@@ -67,11 +67,11 @@ public extension ImagePreviewerDelegate {
 public extension ImagePreviewerDataSource {
     func imagePreviewer(_ imagePreviewer: CZImagePreviewer, consoleForItemAtIndex index: Int) -> CZImagePreviewerAccessoryView? { nil }
     
-    func imagePreviewer(_ imagePreviewer: CZImagePreviewer, accessoryViewForCellWith viewModel: PreviewerCellViewModel) -> CZImagePreviewerAccessoryView? { nil }
+    func imagePreviewer(_ imagePreviewer: CZImagePreviewer, accessoryViewForCellWith cellViewController: PreviewerCellViewController) -> CZImagePreviewerAccessoryView? { nil }
     
-    func imagePreviewer(_ imagePreviewer: CZImagePreviewer, videoLayerForCellWith viewModel: PreviewerCellViewModel) -> CALayer? { nil }
+    func imagePreviewer(_ imagePreviewer: CZImagePreviewer, videoLayerForCellWith cellViewController: PreviewerCellViewController) -> CALayer? { nil }
     
-    func imagePreviewer(_ imagePreviewer: CZImagePreviewer, imageLoadingStateDidChanged state: CZImagePreviewer.ImageLoadingState, with viewModel: PreviewerCellViewModel) {}
+    func imagePreviewer(_ imagePreviewer: CZImagePreviewer, imageLoadingStateDidChanged state: CZImagePreviewer.ImageLoadingState, with cellViewController: PreviewerCellViewController) {}
     
-    func imagePreviewer(_ imagePreviewer: CZImagePreviewer, videoSizeForItemWith viewModel: PreviewerCellViewModel, videoSizeSettingHandler: VideoSizeSettingHandler) {}
+    func imagePreviewer(_ imagePreviewer: CZImagePreviewer, videoSizeForItemWith cellViewController: PreviewerCellViewController, videoSizeSettingHandler: VideoSizeSettingHandler) {}
 }

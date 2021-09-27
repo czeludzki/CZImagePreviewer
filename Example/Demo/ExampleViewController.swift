@@ -13,14 +13,13 @@ import AVFoundation
 class ExampleViewController: UIViewController {
     
     lazy var res: [ResourceItem] = {
-        var ret: [ResourceItem] = []
-        self.imagePaths.forEach {
+        var ret: [ResourceItem] = Self.imagePaths.compactMap {
             var item = ResourceItem(imgPath: $0)
             if Int.random(in: 1...100) % 3 == 0 {
-                let url = videoURLs[Int.random(in: 0...2)]
+                let url = Self.videoURLs[Int.random(in: 0...2)]
                 item.videoURL = url
             }
-            ret.append(item)
+            return item
         }
         return ret
     }()
@@ -68,8 +67,8 @@ extension ExampleViewController: UICollectionViewDataSource, UICollectionViewDel
 }
 
 extension ExampleViewController: ImagePreviewerDelegate {
-    func imagePreviewer(_ imagePreviewer: CZImagePreviewer, willDismissWithCellViewModel viewModel: PreviewerCellViewModel) -> UIView? {
-        self.collectionView.cellForItem(at: IndexPath(item: viewModel.idx, section: 0))
+    func imagePreviewer(_ imagePreviewer: CZImagePreviewer, willDismissWithCellViewController controller: PreviewerCellViewController) -> UIView? {
+        self.collectionView.cellForItem(at: IndexPath(item: controller.idx, section: 0))
     }
     
     func imagePreviewer(_ imagePreviewer: CZImagePreviewer, index oldIndex: Int, didChangedTo newIndex: Int) {
@@ -100,7 +99,7 @@ extension ExampleViewController: ImagePreviewerDataSource {
         let view = CZImagePreviewerAccessoryView(frame: .zero)
         let idxTag = UIButton(type: .system)
         idxTag.setTitle(String(index), for: .normal)
-        idxTag.tintColor = .black
+        idxTag.tintColor = .white
         idxTag.layer.cornerRadius = 8
         idxTag.layer.borderWidth = 1
         idxTag.layer.borderColor = UIColor.white.cgColor
@@ -129,17 +128,17 @@ extension ExampleViewController: ImagePreviewerDataSource {
         return view
     }
     
-    func imagePreviewer(_ imagePreviewer: CZImagePreviewer, accessoryViewForCellWith viewModel: PreviewerCellViewModel) -> CZImagePreviewerAccessoryView? {
+    func imagePreviewer(_ imagePreviewer: CZImagePreviewer, accessoryViewForCellWith viewModel: PreviewerCellViewController) -> CZImagePreviewerAccessoryView? {
         let view = self.res[viewModel.idx].vm?.consoleView
         return view
     }
     
-    func imagePreviewer(_ imagePreviewer: CZImagePreviewer, videoLayerForCellWith viewModel: PreviewerCellViewModel) -> CALayer? {
+    func imagePreviewer(_ imagePreviewer: CZImagePreviewer, videoLayerForCellWith viewModel: PreviewerCellViewController) -> CALayer? {
         let vm = self.res[viewModel.idx].vm
         return vm?.playerLayer
     }
     
-    func imagePreviewer(_ imagePreviewer: CZImagePreviewer, videoSizeForItemWith viewModel: PreviewerCellViewModel, videoSizeSettingHandler: VideoSizeSettingHandler) {
+    func imagePreviewer(_ imagePreviewer: CZImagePreviewer, videoSizeForItemWith viewModel: PreviewerCellViewController, videoSizeSettingHandler: VideoSizeSettingHandler) {
         let vm = self.res[viewModel.idx].vm
         videoSizeSettingHandler(vm?.player.currentItem?.presentationSize ?? .zero)
     }
