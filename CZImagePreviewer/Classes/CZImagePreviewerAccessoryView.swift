@@ -7,21 +7,20 @@
 
 import UIKit
 
+/// 辅助视图类型
+public enum ViewType {
+    /// 放在 Previewer 顶部的控制面板
+    case console
+    /// 放在 Cell 上的辅助视图
+    case accessoryView
+    /// Cell 上的视频容器视图
+    case videoView
+}
+
 /// DateSource 方法要求返回的辅助视图类
 open class CZImagePreviewerAccessoryView: UIView {
-
-    /// 辅助视图类型
-    public enum ViewType {
-        /// 放在 Previewer 顶部的控制面板
-        case console
-        /// 放在 Cell 上的辅助视图
-        case accessoryView
-        /// Cell 上的视频容器视图
-        case videoView
-    }
     
-    var _viewType: ViewType = .console
-    public var viewType: ViewType { _viewType }
+    public var viewType: ViewType = .console
     
     /// 对 hitTest 方法进行处理, 防止 AccessoryView 参与事件处理
     open override func hitTest(_ point: CGPoint, with event: UIEvent?) -> UIView? {
@@ -37,7 +36,7 @@ open class CZImagePreviewerAccessoryView: UIView {
     
     var videoLayer: CALayer?
     open override func layoutSubviews() {
-        superview?.layoutSubviews()
+        super.layoutSubviews()
         if self.viewType == .videoView {
             // 参考 https://stackoverflow.com/questions/24670269/how-do-you-animate-the-sublayers-of-the-layer-of-a-uiview-during-a-uiview-animat?r=SearchResults#
             CATransaction.begin()

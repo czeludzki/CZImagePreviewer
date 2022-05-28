@@ -20,6 +20,10 @@
 		607FACDD1AFB9204008FA782 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 607FACDC1AFB9204008FA782 /* Images.xcassets */; };
 		607FACE01AFB9204008FA782 /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = 607FACDE1AFB9204008FA782 /* LaunchScreen.xib */; };
 		607FACEC1AFB9204008FA782 /* Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 607FACEB1AFB9204008FA782 /* Tests.swift */; };
+		C4C350F82841B122002F6F08 /* VideoPlayerItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = C4C350F42841B122002F6F08 /* VideoPlayerItem.swift */; };
+		C4C350F92841B122002F6F08 /* VideoConsole.swift in Sources */ = {isa = PBXBuildFile; fileRef = C4C350F52841B122002F6F08 /* VideoConsole.swift */; };
+		C4C350FA2841B122002F6F08 /* PlayerProgressControl.swift in Sources */ = {isa = PBXBuildFile; fileRef = C4C350F62841B122002F6F08 /* PlayerProgressControl.swift */; };
+		C4C350FB2841B122002F6F08 /* PlayerProgressSlider.swift in Sources */ = {isa = PBXBuildFile; fileRef = C4C350F72841B122002F6F08 /* PlayerProgressSlider.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -38,7 +42,7 @@
 		3BFEFA685F9F34B66A8A38C1 /* LICENSE */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; name = LICENSE; path = ../LICENSE; sourceTree = "<group>"; };
 		4356A53C26F75D01000CC0EC /* 3.mp4 */ = {isa = PBXFileReference; lastKnownFileType = file; path = 3.mp4; sourceTree = "<group>"; };
 		43BF7F0E26EE4532002B3560 /* CZImagePreviewer_Example.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = CZImagePreviewer_Example.entitlements; sourceTree = "<group>"; };
-		43DA12BD26F0E94100F98F77 /* Example_Resource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Example_Resource.swift; sourceTree = "<group>"; };
+		43DA12BD26F0E94100F98F77 /* Example_Resource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Example_Resource.swift; sourceTree = "<group>"; tabWidth = 4; };
 		43DA12C126F0EB8100F98F77 /* 2.mp4 */ = {isa = PBXFileReference; lastKnownFileType = file; path = 2.mp4; sourceTree = "<group>"; };
 		43DA12C426F0EBAF00F98F77 /* 1.mp4 */ = {isa = PBXFileReference; lastKnownFileType = file; path = 1.mp4; sourceTree = "<group>"; };
 		43FEEBBA26E7C37900E2350D /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
@@ -57,6 +61,10 @@
 		AF4764304CDF24C595B09FC0 /* Pods-CZImagePreviewer_Example.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-CZImagePreviewer_Example.debug.xcconfig"; path = "Target Support Files/Pods-CZImagePreviewer_Example/Pods-CZImagePreviewer_Example.debug.xcconfig"; sourceTree = "<group>"; };
 		B48CB23CA2F25E2EDF837A2C /* Pods-CZImagePreviewer_Example.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-CZImagePreviewer_Example.release.xcconfig"; path = "Target Support Files/Pods-CZImagePreviewer_Example/Pods-CZImagePreviewer_Example.release.xcconfig"; sourceTree = "<group>"; };
 		B4C9A5793D86986EB7C12843 /* Pods-CZImagePreviewer_Tests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-CZImagePreviewer_Tests.debug.xcconfig"; path = "Target Support Files/Pods-CZImagePreviewer_Tests/Pods-CZImagePreviewer_Tests.debug.xcconfig"; sourceTree = "<group>"; };
+		C4C350F42841B122002F6F08 /* VideoPlayerItem.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VideoPlayerItem.swift; sourceTree = "<group>"; };
+		C4C350F52841B122002F6F08 /* VideoConsole.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VideoConsole.swift; sourceTree = "<group>"; };
+		C4C350F62841B122002F6F08 /* PlayerProgressControl.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PlayerProgressControl.swift; sourceTree = "<group>"; };
+		C4C350F72841B122002F6F08 /* PlayerProgressSlider.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PlayerProgressSlider.swift; sourceTree = "<group>"; };
 		EF6EF2A66369DC301DDACFB2 /* Pods-CZImagePreviewer_Tests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-CZImagePreviewer_Tests.release.xcconfig"; path = "Target Support Files/Pods-CZImagePreviewer_Tests/Pods-CZImagePreviewer_Tests.release.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -115,6 +123,7 @@
 		607FACD21AFB9204008FA782 /* Example for CZImagePreviewer */ = {
 			isa = PBXGroup;
 			children = (
+				C4C350F32841B122002F6F08 /* VideoPlayer */,
 				607FACD51AFB9204008FA782 /* AppDelegate.swift */,
 				607FACD71AFB9204008FA782 /* ExampleViewController.swift */,
 				43DA12BD26F0E94100F98F77 /* Example_Resource.swift */,
@@ -173,6 +182,17 @@
 				EF6EF2A66369DC301DDACFB2 /* Pods-CZImagePreviewer_Tests.release.xcconfig */,
 			);
 			path = Pods;
+			sourceTree = "<group>";
+		};
+		C4C350F32841B122002F6F08 /* VideoPlayer */ = {
+			isa = PBXGroup;
+			children = (
+				C4C350F42841B122002F6F08 /* VideoPlayerItem.swift */,
+				C4C350F52841B122002F6F08 /* VideoConsole.swift */,
+				C4C350F62841B122002F6F08 /* PlayerProgressControl.swift */,
+				C4C350F72841B122002F6F08 /* PlayerProgressSlider.swift */,
+			);
+			path = VideoPlayer;
 			sourceTree = "<group>";
 		};
 		D65D87EC9FE0A753E52AB35C /* Frameworks */ = {
@@ -364,6 +384,10 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				C4C350F82841B122002F6F08 /* VideoPlayerItem.swift in Sources */,
+				C4C350F92841B122002F6F08 /* VideoConsole.swift in Sources */,
+				C4C350FB2841B122002F6F08 /* PlayerProgressSlider.swift in Sources */,
+				C4C350FA2841B122002F6F08 /* PlayerProgressControl.swift in Sources */,
 				43DA12BE26F0E94100F98F77 /* Example_Resource.swift in Sources */,
 				607FACD81AFB9204008FA782 /* ExampleViewController.swift in Sources */,
 				2A4BF85026E853D6001D7759 /* ExampelImageCollectionViewCell.swift in Sources */,

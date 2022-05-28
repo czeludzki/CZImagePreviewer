@@ -15,10 +15,11 @@ class ResourceItem {
     var imagePath: String
     var videoURL: URL? {
         didSet {
-            self.vm = VideoPlayerViewModel(resourceItem: self)
+            guard let videoURL = videoURL else { return }
+            self.videoItem = VideoPlayerItem.init(videoURL: videoURL)
         }
     }
-    var vm: VideoPlayerViewModel?
+    var videoItem: VideoPlayerItem?
     
     var resType: String {
         return self.videoURL == nil ? "Image" : "Video"
@@ -30,110 +31,6 @@ class ResourceItem {
     
 }
 
-class VideoPlayerViewModel: NSObject {
-    
-    unowned let resourceItem: ResourceItem
-    
-    lazy var player: AVPlayer = {
-        let player = AVPlayer()
-        player.addObserver(self, forKeyPath: "status", options: .new, context: nil)
-        player.addObserver(self, forKeyPath: "rate", options: .new, context: nil)
-        return player
-    }()
-    
-    lazy var playerLayer: AVPlayerLayer = {
-        let layer = AVPlayerLayer(player: self.player)
-        return layer
-    }()
-    
-    var playItem: AVPlayerItem?
-    
-    // 控制视图
-    lazy var consoleView: CZImagePreviewerAccessoryView = {
-        let view = CZImagePreviewerAccessoryView()
-        
-        view.addSubview(self.playbackControlBtn)
-        self.playbackControlBtn.snp.makeConstraints({
-            $0.center.equalToSuperview()
-        })
-        
-        view.addSubview(self.loadingIndicator)
-        self.loadingIndicator.snp.makeConstraints {
-            $0.top.equalTo(self.playbackControlBtn.snp_bottomMargin)
-            $0.centerX.equalToSuperview()
-        }
-        
-        return view
-    }()
-    
-    // 加载菊花
-    lazy var loadingIndicator: UIActivityIndicatorView = {
-        let asshole = UIActivityIndicatorView()
-        asshole.style = .gray
-        return asshole
-    }()
-    
-    lazy var playbackControlBtn: UIButton = {
-        let btn = UIButton(type: .system)
-        btn.tintColor = .white
-        btn.layer.cornerRadius = 8
-        btn.layer.borderWidth = 1
-        btn.layer.borderColor = UIColor.white.cgColor
-        btn.backgroundColor = UIColor(red: 0, green: 0, blue: 0, alpha: 0.5)
-        btn.setTitle("播放", for: .normal)
-        btn.contentEdgeInsets = UIEdgeInsets.init(top: 8, left: 12, bottom: 8, right: 12)
-        btn.addTarget(self, action: #selector(playbackControlBtnOnClick(sender:)), for: .touchUpInside)
-        return btn
-    }()
-    
-    var isPlaying: Bool = false {
-        didSet {
-            self.playbackControlBtn.setTitle(isPlaying ? "暂停" : "播放", for: .normal)
-        }
-    }
-    
-    init(resourceItem: ResourceItem) {
-        self.resourceItem = resourceItem
-        super.init()
-        
-        if let vURL = self.resourceItem.videoURL {
-            self.playItem = AVPlayerItem(url: vURL)
-            self.player.replaceCurrentItem(with: self.playItem)
-            NotificationCenter.default.addObserver(forName: Notification.Name.AVPlayerItemDidPlayToEndTime, object: self.playItem, queue: nil) { notification in
-                self.player.seek(to: CMTime(value: 0, timescale: 1))
-            }
-        }
-        
-    }
-    
-    @objc func playbackControlBtnOnClick(sender: UIButton) {
-        if self.isPlaying {
-            self.player.pause()
-        }else{
-            self.player.play()
-        }
-    }
-    
-    override func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey : Any]?, context: UnsafeMutableRawPointer?) {
-        if object as? AVPlayer !== self.player { return }
-        if keyPath == "rate" {
-            self.isPlaying = self.player.rate != 0
-        }
-        if keyPath == "status" {
-            if self.player.status == .readyToPlay {
-                self.loadingIndicator.stopAnimating()
-            }
-            if self.player.status == .failed {
-                self.loadingIndicator.stopAnimating()
-            }
-        }
-    }
-    
-    deinit {
-        self.player.removeObserver(self, forKeyPath: "rate")
-        self.player.removeObserver(self, forKeyPath: "status")
-    }
-}
 
 extension ExampleViewController {
     static var imagePaths: [String] = {

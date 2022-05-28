@@ -8,11 +8,10 @@
 
 import UIKit
 import CZImagePreviewer
-import AVFoundation
 
 class ExampleViewController: UIViewController {
     
-    lazy var res: [ResourceItem] = {
+    lazy var dataSources: [ResourceItem] = {
         var ret: [ResourceItem] = Self.imagePaths.compactMap {
             var item = ResourceItem(imgPath: $0)
             if Int.random(in: 1...100) % 3 == 0 {
@@ -39,18 +38,27 @@ class ExampleViewController: UIViewController {
     
     override var preferredInterfaceOrientationForPresentation: UIInterfaceOrientation { .portrait }
     
+    override var preferredStatusBarStyle: UIStatusBarStyle {
+        if #available(iOS 13.0, *) {
+            return .darkContent
+        } else {
+            return .default
+        }
+    }
+    
+    override var prefersStatusBarHidden: Bool { false }
 }
 
 extension ExampleViewController: UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return self.res.count
+        return self.dataSources.count
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "CollectionViewCellID", for: indexPath) as! ExampelImageCollectionViewCell
-        cell.imageURL = self.res[indexPath.item].imagePath
-        cell.resourceTypeLabel.text = self.res[indexPath.item].resType
+        cell.imageURL = self.dataSources[indexPath.item].imagePath
+        cell.resourceTypeLabel.text = self.dataSources[indexPath.item].resType
         return cell
     }
     
@@ -66,30 +74,30 @@ extension ExampleViewController: UICollectionViewDataSource, UICollectionViewDel
     
 }
 
-extension ExampleViewController: ImagePreviewerDelegate {
-    func imagePreviewer(_ imagePreviewer: CZImagePreviewer, willDismissWithCellViewController controller: PreviewerCellViewController) -> UIView? {
-        self.collectionView.cellForItem(at: IndexPath(item: controller.idx, section: 0))
+extension ExampleViewController: CZImagePreviewerDelegate {
+    func imagePreviewer(_ imagePreviewer: CZImagePreviewer, willDismissWithCell cell: CZImagePreviewerCollectionViewCell, at index: Int) -> UIView? {
+        self.collectionView.cellForItem(at: IndexPath(item: index, section: 0))
     }
     
     func imagePreviewer(_ imagePreviewer: CZImagePreviewer, index oldIndex: Int, didChangedTo newIndex: Int) {
-        if case 0..<self.res.count = oldIndex {
-            if self.res[oldIndex].vm?.isPlaying == true {
-                self.res[oldIndex].vm?.player.pause()
+        if case 0..<self.dataSources.count = oldIndex {
+            if self.dataSources[oldIndex].videoItem?.isPlaying == true {
+                self.dataSources[oldIndex].videoItem?.player.pause()
             }
         }
     }
 
 }
 
-extension ExampleViewController: ImagePreviewerDataSource {
+extension ExampleViewController: CZImagePreviewerDataSource {
     
     func numberOfItems(in imagePreviewer: CZImagePreviewer) -> Int {
-        self.res.count
+        self.dataSources.count
     }
     
-    func imagePreviewer(_ imagePreviewer: CZImagePreviewer, imageResourceForItemAtIndex index: Int) -> ResourceProtocol? {
+    func imagePreviewer(_ imagePreviewer: CZImagePreviewer, imageResourceForItemAtIndex index: Int) -> CZImagePreviewerResourceProtocol? {
         // String / URL / UIImage 类型可以将属性 .asImgRes 作为返回值直接返回
-        let res = self.res[index].imagePath.asImgRes
+        let res = self.dataSources[index].imagePath.czi
         return res
     }
     
@@ -128,19 +136,19 @@ extension ExampleViewController: ImagePreviewerDataSource {
         return view
     }
     
-    func imagePreviewer(_ imagePreviewer: CZImagePreviewer, accessoryViewForCellWith viewModel: PreviewerCellViewController) -> CZImagePreviewerAccessoryView? {
-        let view = self.res[viewModel.idx].vm?.consoleView
+    func imagePreviewer(_ imagePreviewer: CZImagePreviewer, accessoryViewForCell cell: CZImagePreviewerCollectionViewCell, at index: Int) -> CZImagePreviewerAccessoryView? {
+        let view = self.dataSources[index].videoItem?.videoConsole
         return view
     }
     
-    func imagePreviewer(_ imagePreviewer: CZImagePreviewer, videoLayerForCellWith viewModel: PreviewerCellViewController) -> CALayer? {
-        let vm = self.res[viewModel.idx].vm
-        return vm?.playerLayer
+    func imagePreviewer(_ imagePreviewer: CZImagePreviewer, videoLayerForCell cell: CZImagePreviewerCollectionViewCell, at index: Int) -> CALayer? {
+        let videoItem = self.dataSources[index].videoItem
+        return videoItem?.playerLayer
     }
     
-    func imagePreviewer(_ imagePreviewer: CZImagePreviewer, videoSizeForItemWith viewModel: PreviewerCellViewController, videoSizeSettingHandler: VideoSizeSettingHandler) {
-        let vm = self.res[viewModel.idx].vm
-        videoSizeSettingHandler(vm?.player.currentItem?.presentationSize ?? .zero)
+    func imagePreviewer(_ imagePreviewer: CZImagePreviewer, videoSizeForCell cell: CZImagePreviewerCollectionViewCell, at index: Int, videoSizeSettingHandler: (CGSize?) -> Void) {
+        let videoItem = self.dataSources[index].videoItem
+        videoSizeSettingHandler(videoItem?.player.currentItem?.presentationSize ?? .zero)
     }
     
 }
@@ -149,8 +157,8 @@ extension ExampleViewController: ImagePreviewerDataSource {
 extension ExampleViewController {
     @objc func deleteBtnOnClick(sender: UIButton) {
         guard let currentIdx = self.imagePreviewer?.currentIdx else { return }
-        self.res.remove(at: currentIdx)
-        self.imagePreviewer?.deleteItem(at: currentIdx)
+        self.dataSources.remove(at: currentIdx)
+        self.imagePreviewer?.deleteItems(at: [currentIdx])
         self.collectionView.reloadData()
     }
 }

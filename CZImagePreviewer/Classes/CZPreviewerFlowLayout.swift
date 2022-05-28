@@ -7,7 +7,7 @@
 
 import UIKit
 
-class PreviewerFlowLayout: UICollectionViewFlowLayout {
+class CZPreviewerFlowLayout: UICollectionViewFlowLayout {
     
     var rotatingInfo: CZImagePreviewer.RotatingInfo?
     
