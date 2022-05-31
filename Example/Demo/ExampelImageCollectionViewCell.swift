@@ -15,7 +15,13 @@ class ExampelImageCollectionViewCell: UICollectionViewCell {
     var imageURL: String? {
         didSet {
             guard let url = imageURL else { return }
-            self.imageView.kf.setImage(with: URL.init(string: url), placeholder: nil, options: nil, completionHandler: nil)
+            self.imageView.kf.setImage(with: URL.init(string: url), placeholder: nil, options: nil) {
+                if case let .success(res) = $0 {
+                    print(res.image.images)
+                }else{
+                    
+                }
+            }
         }
     }
 }

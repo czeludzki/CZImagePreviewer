@@ -8,6 +8,7 @@
 import UIKit
 import Combine
 import CZImagePreviewer
+import SnapKit
 
 class VideoConsole: CZImagePreviewerAccessoryView {
     
@@ -61,9 +62,9 @@ class VideoConsole: CZImagePreviewerAccessoryView {
         
         self.addSubview(self.playerProgressControl)
         self.playerProgressControl.snp.makeConstraints { make in
-            make.bottom.equalTo(self.safeAreaLayoutGuide.snp.bottom).offset(-88)
-            make.left.equalTo(self.safeAreaLayoutGuide.snp.left)
-            make.right.equalTo(self.safeAreaLayoutGuide.snp.right)
+            make.bottom.equalTo(self.snp.bottom).offset(-88)
+            make.left.equalTo(self.safeAreaLayoutGuide.snp.left).priority(ConstraintPriority.medium)
+            make.right.equalTo(self.safeAreaLayoutGuide.snp.right).priority(ConstraintPriority.medium)
         }
     }
     

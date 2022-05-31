@@ -8,7 +8,7 @@
 
 Pod::Spec.new do |s|
   s.name             = 'CZImagePreviewer'
-  s.version          = '1.1.5'
+  s.version          = '1.1.6'
   s.summary          = 'iOS下的图片浏览工具'
   s.swift_version    = '5.0'
 

@@ -15,7 +15,7 @@ public protocol CZImagePreviewerDataSource: AnyObject {
     
     /// 数据源方法
     /// 返回值类型默认可以是 String, URL, UIImage, 或者是任何自定义遵循了 ImageResourceProtocol 协议的类型, 具体操作见 CZImageSourceProtocol.swift
-    func imagePreviewer(_ imagePreviewer: CZImagePreviewer, imageResourceForItemAtIndex index: Int) -> CZImagePreviewerResourceProtocol?
+    func imagePreviewer(_ imagePreviewer: CZImagePreviewer, imageResourceForItemAtIndex index: Int) -> CZImagePreviewerResource?
     
     /// 图片加载状态改变
     func imagePreviewer(_ imagePreviewer: CZImagePreviewer, imageLoadingStateDidChanged state: CZImagePreviewer.ImageLoadingState, at index: Int, accessoryView: CZImagePreviewerAccessoryView?)

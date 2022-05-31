@@ -187,7 +187,7 @@ extension CZImagePreviewer {
     @objc func panOnView(sender: UIPanGestureRecognizer) {
         
         guard let cell = self.collectionView.cellForItem(at: IndexPath(item: self.currentIdx, section: 0)) as? CZImagePreviewerCollectionViewCell else { return }
-        let animationActor = cell.dismissAnimationActor
+        let animationActor = cell.draginglyActor
         
         // 百分比
         let translationInView = sender.translation(in: self.view)
@@ -339,7 +339,7 @@ extension CZImagePreviewer: UICollectionViewDelegateFlowLayout, UICollectionView
     public func collectionView(_ collectionView: UICollectionView, willDisplay cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
         guard let cell = cell as? CZImagePreviewerCollectionViewCell else { return }
         // 从 dataSource 取得 数据
-        let imgRes: CZImagePreviewerResourceProtocol? = self.dataSource?.imagePreviewer(self, imageResourceForItemAtIndex: indexPath.item)
+        let imgRes: CZImagePreviewerResource? = self.dataSource?.imagePreviewer(self, imageResourceForItemAtIndex: indexPath.item)
         cell.videoLayer = self.dataSource?.imagePreviewer(self, videoLayerForCell: cell, at: indexPath.item)
         cell.accessoryView = self.dataSource?.imagePreviewer(self, accessoryViewForCell: cell, at: indexPath.item)
         cell.item = PreviewerCellItem(resource: imgRes, idx: indexPath.item)
@@ -355,7 +355,7 @@ extension CZImagePreviewer: UICollectionViewDelegateFlowLayout, UICollectionView
     /// 数据预加载
     public func collectionView(_ collectionView: UICollectionView, prefetchItemsAt indexPaths: [IndexPath]) {
         indexPaths.forEach { idxPath in
-            let imgRes: CZImagePreviewerResourceProtocol? = self.dataSource?.imagePreviewer(self, imageResourceForItemAtIndex: idxPath.item)
+            let imgRes: CZImagePreviewerResource? = self.dataSource?.imagePreviewer(self, imageResourceForItemAtIndex: idxPath.item)
             imgRes?.loadImage(progress: nil, completion: nil)
         }
     }
@@ -470,7 +470,7 @@ extension CZImagePreviewer: AnimatedTransitioningContentProvider {
         guard let container = self.delegate?.imagePreviewer(self, willDismissWithCell: cell, at: self.currentIdx) else {
             return (nil, nil)
         }
-        return ElementForDismissTransition(container, cell.dismissAnimationActor)
+        return ElementForDismissTransition(container, cell.draginglyActor)
     }
 
 }

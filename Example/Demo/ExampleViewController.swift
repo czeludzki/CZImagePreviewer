@@ -95,9 +95,9 @@ extension ExampleViewController: CZImagePreviewerDataSource {
         self.dataSources.count
     }
     
-    func imagePreviewer(_ imagePreviewer: CZImagePreviewer, imageResourceForItemAtIndex index: Int) -> CZImagePreviewerResourceProtocol? {
+    func imagePreviewer(_ imagePreviewer: CZImagePreviewer, imageResourceForItemAtIndex index: Int) -> CZImagePreviewerResource? {
         // String / URL / UIImage 类型可以将属性 .asImgRes 作为返回值直接返回
-        let res = self.dataSources[index].imagePath.czi
+        let res = self.dataSources[index].imagePath
         return res
     }
     

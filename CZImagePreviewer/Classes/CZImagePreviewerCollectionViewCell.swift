@@ -10,7 +10,7 @@ import Kingfisher
 
 // 资源模型
 internal struct PreviewerCellItem {
-    var resource: CZImagePreviewerResourceProtocol?
+    var resource: CZImagePreviewerResource?
     var idx: Int
 }
 
@@ -64,14 +64,12 @@ public class CZImagePreviewerCollectionViewCell: UICollectionViewCell {
     
     /// 视频尺寸配置闭包
     public private(set) lazy var videoSizeSettingHandler: ((CGSize?) -> Void) = { [weak self] size in
-        guard let size = size else {
-            return
-        }
+        guard let size = size else { return }
         self?.videoSize = size
     }
     
-    /// dismiss动画发生时, 需要判断该由 imageView 或是 videoView 作为动画主角
-    var dismissAnimationActor: UIView {
+    /// 拖拽事件发生时, 需要判断该由 imageView 或是 videoView 作为拖拽主角
+    var draginglyActor: UIView {
         if self.videoLayer != nil {
             return self.videoContainer
         }
@@ -85,7 +83,7 @@ public class CZImagePreviewerCollectionViewCell: UICollectionViewCell {
         }
     }
     
-    var resource: CZImagePreviewerResourceProtocol? {
+    var resource: CZImagePreviewerResource? {
         didSet {
             self.imageView.image = nil
             guard let resource = resource else { return }

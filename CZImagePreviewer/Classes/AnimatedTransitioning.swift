@@ -12,7 +12,7 @@ import Kingfisher
 protocol AnimatedTransitioningContentProvider: UIViewController {
 
     /// 要求取得展示时的转场关键元素
-    typealias ElementForDisplayTransition = (container: UIView?, resource: CZImagePreviewerResourceProtocol?)
+    typealias ElementForDisplayTransition = (container: UIView?, resource: CZImagePreviewerResource?)
     func transitioningElementForDisplay(animatedTransitioning: AnimatedTransitioning) -> ElementForDisplayTransition
     
     /// 要求取得消失时的转场关键元素

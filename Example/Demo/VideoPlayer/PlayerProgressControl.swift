@@ -37,7 +37,7 @@ class PlayerProgressControl: UIView {
         
         self.addSubview(self.progressTimeLabel)
         self.progressTimeLabel.snp.makeConstraints { make in
-            make.left.equalTo(self.safeAreaLayoutGuide.snp.left).offset(12)
+            make.left.equalTo(self.snp.left).offset(12)
             make.centerY.equalToSuperview()
             make.width.equalTo(32)
         }
