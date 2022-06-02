@@ -620,11 +620,11 @@
 		F886A371058710DEA940AA9635620462 /* CZImagePreviewer */ = {
 			isa = PBXGroup;
 			children = (
+				F1471738C3387A57054B68798F72AA0F /* CZImagePreviewerProtocol.swift */,
 				C4C350F12841B065002F6F08 /* AnimatedTransitioning.swift */,
 				43686198BD1B09CB3117010C2A230AE5 /* CZImagePreviewer.swift */,
 				43D6B8A9270222EE004ABAC6 /* CZImagePreviewerAccessoryView.swift */,
 				5816B3C69C4C89904A3D05A92F50D318 /* CZImagePreviewerCollectionViewCell.swift */,
-				F1471738C3387A57054B68798F72AA0F /* CZImagePreviewerProtocol.swift */,
 				A1F172E0AF1FC77069D9BC34311FF53A /* CZImagePreviewerResource.swift */,
 				2A7E5FE226F474BE001088E0 /* CZPreviewerFlowLayout.swift */,
 				018B403B1700326378142F306DC82FAA /* Helper.swift */,

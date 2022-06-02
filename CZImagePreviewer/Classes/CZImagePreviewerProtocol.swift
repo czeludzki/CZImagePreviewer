@@ -60,7 +60,7 @@ public protocol CZImagePreviewerDelegate: AnyObject {
     func imagePreviewer(_ imagePreviewer: CZImagePreviewer, didDisplayAtIndex index: Int)
     
     /// index 发生改变
-    func imagePreviewer(_ imagePreviewer: CZImagePreviewer, index oldIndex: Int, didChangedTo newIndex: Int)
+    func imagePreviewer(_ imagePreviewer: CZImagePreviewer, indexDidChangedTo newIndex: Int, fromOldIndex oldIndex: Int)
     
     /// contentOffset 发生改变
     func imagePreviewer(_ imagePreviewer: CZImagePreviewer, contentOffsetDidChanged: CGPoint)
@@ -78,6 +78,10 @@ public protocol CZImagePreviewerDelegate: AnyObject {
     /// 接收到 点击 或 拖拽企图导致dismiss 的手势, 此返回值决定是否执行 dismiss 操作
     /// 此方法也可用作单击事件的监听. 通过判断 gestureType 的类型是否为 UITapGestureRecognizer 类型来决定是否为点击事件
     func imagePreviewer(_ imagePreviewer: CZImagePreviewer, shouldDismissWithGesture gesture: UIGestureRecognizer, at index: Int) -> Bool
+    
+    /// deleteItems(at indexs: [Int])  调用后, 删除操作结束后, 会触发此方法
+    func imagePreviewer(_ imagePreviewer: CZImagePreviewer, didFinishDeletedItems indexs: [Int])
+    
 }
 
 public extension CZImagePreviewerDelegate {
@@ -86,7 +90,7 @@ public extension CZImagePreviewerDelegate {
     
     func imagePreviewer(_ imagePreviewer: CZImagePreviewer, didDisplayAtIndex index: Int) {}
     
-    func imagePreviewer(_ imagePreviewer: CZImagePreviewer, index oldIndex: Int, didChangedTo newIndex: Int) {}
+    func imagePreviewer(_ imagePreviewer: CZImagePreviewer, indexDidChangedTo newIndex: Int, fromOldIndex oldIndex: Int) {}
     
     func imagePreviewer(_ imagePreviewer: CZImagePreviewer, contentOffsetDidChanged: CGPoint) {}
 
@@ -97,4 +101,7 @@ public extension CZImagePreviewerDelegate {
     func imagePreviewer(_ imagePreviewer: CZImagePreviewer, didLongPressAtIndex index: Int) {}
     
     func imagePreviewer(_ imagePreviewer: CZImagePreviewer, shouldDismissWithGesture gesture: UIGestureRecognizer, at index: Int) -> Bool { true }
+    
+    func imagePreviewer(_ imagePreviewer: CZImagePreviewer, didFinishDeletedItems indexs: [Int]) {}
+    
 }

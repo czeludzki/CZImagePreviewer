@@ -37,7 +37,7 @@ open class CZImagePreviewer: UIViewController {
                 print("currentIdx = \(currentIdx)")
                 self.updateConsole(for: currentIdx)
                 // 通知代理
-                self.delegate?.imagePreviewer(self, index: oldValue, didChangedTo: currentIdx)
+                self.delegate?.imagePreviewer(self, indexDidChangedTo: currentIdx, fromOldIndex: oldValue)
             }
         }
     }
@@ -293,6 +293,8 @@ extension CZImagePreviewer {
         }, completion: { finish in
             // 删除完毕后更新 currentIdx
             self.currentIdx = Int((self.collectionView.contentOffset.x + self.collectionView.bounds.size.width * 0.5) / self.collectionView.bounds.size.width)
+            // 删除操作完成
+            self.delegate?.imagePreviewer(self, didFinishDeletedItems: indexs)
         })
     }
     
