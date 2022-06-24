@@ -112,18 +112,32 @@ class AnimatedTransitioning: NSObject, UIViewControllerAnimatedTransitioning {
     func dismiss(_ transitionContext: UIViewControllerContextTransitioning) {
         
         guard let keyWindow = CZImagePreviewer.keyWindow,
-              let fromVC = transitionContext.viewController(forKey: .from) as? AnimatedTransitioningContentProvider,
-              let back2Container = fromVC.transitioningElementForDismiss(animatedTransitioning: self).container,  // 动画要返回到哪个容器, 主要是为了得到其在 keywindow 上的相对定位
-              let animationActor = fromVC.transitioningElementForDismiss(animatedTransitioning: self).animationActor  // 动画要素
+              let fromVC = transitionContext.viewController(forKey: .from) as? AnimatedTransitioningContentProvider
         else {
             transitionContext.completeTransition(!transitionContext.transitionWasCancelled)
+            return
+        }
+        
+        // 动画要返回到哪个容器, 主要是为了得到其在 keywindow 上的相对定位
+        guard let back2Container = fromVC.transitioningElementForDismiss(animatedTransitioning: self).container,
+              let animationActor = fromVC.transitioningElementForDismiss(animatedTransitioning: self).animationActor  // 动画要素
+        else {
+            UIView.animate(withDuration: self.transitionDuration(using: transitionContext), delay: 0, options: .curveEaseOut) {
+                fromVC.view.alpha = 0
+            } completion: { _ in
+                transitionContext.completeTransition(!transitionContext.transitionWasCancelled)
+            }
             return
         }
         
         // 计算 back2Container 在屏幕中的位置
         var targetFrame = back2Container.convert(back2Container.bounds, to: keyWindow)
         if !keyWindow.bounds.contains(targetFrame) {
-            transitionContext.completeTransition(!transitionContext.transitionWasCancelled)
+            UIView.animate(withDuration: self.transitionDuration(using: transitionContext), delay: 0, options: .curveEaseOut) {
+                fromVC.view.alpha = 0
+            } completion: { _ in
+                transitionContext.completeTransition(!transitionContext.transitionWasCancelled)
+            }
             return
         }
         
