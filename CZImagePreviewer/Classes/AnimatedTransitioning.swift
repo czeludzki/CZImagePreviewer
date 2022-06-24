@@ -50,7 +50,6 @@ class AnimatedTransitioning: NSObject, UIViewControllerAnimatedTransitioning {
         guard let keyWindow = CZImagePreviewer.keyWindow,
               let toView = transitionContext.view(forKey: .to),
               let toVC = transitionContext.viewController(forKey: .to) as? AnimatedTransitioningContentProvider,
-              let elementContainer = toVC.transitioningElementForDisplay(animatedTransitioning: self).container,
               let elementResource = toVC.transitioningElementForDisplay(animatedTransitioning: self).resource
         else {
             transitionContext.completeTransition(!transitionContext.transitionWasCancelled)
@@ -59,6 +58,17 @@ class AnimatedTransitioning: NSObject, UIViewControllerAnimatedTransitioning {
         
         toView.frame = transitionContext.containerView.bounds
         transitionContext.containerView.addSubview(toView)
+        
+        guard let elementContainer = toVC.transitioningElementForDisplay(animatedTransitioning: self).container else {
+            toView.alpha = 0
+            UIView.animate(withDuration: self.transitionDuration(using: transitionContext), delay: 0, options: .curveEaseOut) {
+                toView.alpha = 1
+            } completion: { _ in
+                transitionContext.completeTransition(!transitionContext.transitionWasCancelled)
+            }
+            return
+        }
+
         // 计算 targetContainer 在keyWindow中的位置
         let targetFrame = elementContainer.convert(elementContainer.bounds, to: keyWindow)
         // 如果该视图不在屏幕中, 执行 planB 动画
