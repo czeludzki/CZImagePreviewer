@@ -98,14 +98,18 @@ open class CZImagePreviewer: UIViewController {
     
     override init(nibName nibNameOrNil: String?, bundle nibBundleOrNil: Bundle?) {
         super.init(nibName: nibNameOrNil, bundle: nibBundleOrNil)
+        self.transitioningDelegate = self
         self.modalPresentationCapturesStatusBarAppearance = true    // 没有这一行的话, statusBar 不会隐藏
         self.modalPresentationStyle = .overFullScreen
-        self.transitioningDelegate = self
     }
     
     required public init?(coder: NSCoder) { fatalError("init(coder:) has not been implemented") }
     
-//    deinit { print(self, "销毁了") }
+    deinit {
+#if DEBUG
+        print(self, "deinit")
+#endif
+    }
     
     public override func viewDidLoad() {
         super.viewDidLoad()
@@ -153,7 +157,7 @@ open class CZImagePreviewer: UIViewController {
             self.collectionViewFlowLayout.rotatingInfo = RotatingInfo(false, self.currentIdx)
         }
     }
-    
+        
 }
 
 // MARK: Action
@@ -349,9 +353,10 @@ extension CZImagePreviewer: UICollectionViewDelegateFlowLayout, UICollectionView
     }
     
     public func collectionView(_ collectionView: UICollectionView, didEndDisplaying cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
+        guard let cell = cell as? CZImagePreviewerCollectionViewCell else { return }
         // 在 cell 离开屏幕后, 重置其 zoomingScrollView 和 videoView 的隐藏状态. 默认是 图像层 不隐藏, 视频层 隐藏
-        (cell as? CZImagePreviewerCollectionViewCell)?.videoContainer.isHidden = true
-        (cell as? CZImagePreviewerCollectionViewCell)?.zoomingScrollView.isHidden = false
+        cell.videoContainer.isHidden = true
+        cell.zoomingScrollView.isHidden = false
     }
     
     /// 数据预加载
@@ -451,9 +456,13 @@ extension CZImagePreviewer {
 
 // MARK: UIViewControllerTransitioningDelegate
 extension CZImagePreviewer: UIViewControllerTransitioningDelegate {
-    public func animationController(forPresented presented: UIViewController, presenting: UIViewController, source: UIViewController) -> UIViewControllerAnimatedTransitioning? { self.animatedTransitioning_display }
+    public func animationController(forPresented presented: UIViewController, presenting: UIViewController, source: UIViewController) -> UIViewControllerAnimatedTransitioning? {
+        self.animatedTransitioning_display
+    }
     
-    public func animationController(forDismissed dismissed: UIViewController) -> UIViewControllerAnimatedTransitioning? { self.animatedTransitioning_dismiss }
+    public func animationController(forDismissed dismissed: UIViewController) -> UIViewControllerAnimatedTransitioning? {
+        self.animatedTransitioning_dismiss
+    }
 }
 
 // MARK: UIViewControllerAnimatedTransitioning

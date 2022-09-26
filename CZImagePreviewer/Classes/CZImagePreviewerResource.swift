@@ -13,7 +13,7 @@ public protocol CZImagePreviewerResource {
     /// 加载进度
     typealias LoadImageProgress = Kingfisher.DownloadProgressBlock
     /// 完成
-    typealias LoadImageCompletion = (_ success: Bool, _ image: UIImage?) -> Void
+    typealias LoadImageCompletion = (Swift.Result<UIImage, KingfisherError>) -> Void
     
     /// 加载图片的方法.
     /// 使用者只需遵循此协议, 在此方法参数两个闭包中提供内容, 即可作为数据源返回值
@@ -28,11 +28,12 @@ extension String: CZImagePreviewerResource {
     
     public func loadImage(progress: LoadImageProgress?, completion: LoadImageCompletion?) {
         guard let url = URL(string: self) else { return }
-        KingfisherManager.shared.retrieveImage(with: url, options: [.preloadAllAnimationData], progressBlock: progress, downloadTaskUpdated: nil) {
-            if case .success(_) = $0 {
-                completion?(true, $0.image)
-            }else{
-                completion?(false, nil)
+        KingfisherManager.shared.retrieveImage(with: url, options: [], progressBlock: progress, downloadTaskUpdated: nil) {
+            if case let .success(res) = $0 {
+                completion?(.success(res.image))
+            }
+            if case let .failure(err) = $0 {
+                completion?(.failure(err))
             }
         }
     }
@@ -42,11 +43,12 @@ extension String: CZImagePreviewerResource {
 extension URL: CZImagePreviewerResource {
     
     public func loadImage(progress: LoadImageProgress?, completion: LoadImageCompletion?) {
-        KingfisherManager.shared.retrieveImage(with: self, options: [.preloadAllAnimationData], progressBlock: progress, downloadTaskUpdated: nil) {
-            if case .success(_) = $0 {
-                completion?(true, $0.image)
-            }else{
-                completion?(false, nil)
+        KingfisherManager.shared.retrieveImage(with: self, options: [], progressBlock: progress, downloadTaskUpdated: nil) {
+            if case let .success(res) = $0 {
+                completion?(.success(res.image))
+            }
+            if case let .failure(err) = $0 {
+                completion?(.failure(err))
             }
         }
     }
@@ -60,9 +62,7 @@ extension UIImage: CZImagePreviewerResource {
         if let progress = progress {
             progress(Int64(imgSize), Int64(imgSize))
         }
-        if let completion = completion {
-            completion(true, self)
-        }
+        completion?(.success(self))
     }
     
 }

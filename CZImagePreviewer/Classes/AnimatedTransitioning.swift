@@ -84,8 +84,10 @@ class AnimatedTransitioning: NSObject, UIViewControllerAnimatedTransitioning {
         imageView.contentMode = .scaleAspectFit
         
         // UIImageView 加载图片
-        elementResource.loadImage(progress: nil) { success, image in
-            imageView.image = image
+        elementResource.loadImage(progress: nil) {
+            if case let .success(img) = $0 {
+                imageView.image = img
+            }
         }
         
         // 计算图片以 scaleAspectFiting 的模式显示在屏幕上的实际大小

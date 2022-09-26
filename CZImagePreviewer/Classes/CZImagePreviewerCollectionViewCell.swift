@@ -87,12 +87,12 @@ public class CZImagePreviewerCollectionViewCell: UICollectionViewCell {
         didSet {
             self.imageView.image = nil
             guard let resource = resource else { return }
-            resource.loadImage(progress: self.progress(receivedSize:expectedSize:), completion: self.completion(success:image:))
+            resource.loadImage(progress: self.progress(receivedSize:expectedSize:), completion: self.completion(result:))
         }
     }
     
-    lazy var imageView: UIImageView = {
-        let ret = UIImageView.init(frame: CGRect.zero)
+    lazy var imageView: Kingfisher.AnimatedImageView = {
+        let ret = Kingfisher.AnimatedImageView.init(frame: CGRect.zero)
         ret.backgroundColor = .clear
         ret.clipsToBounds = true
         ret.contentMode = .scaleAspectFill
@@ -210,11 +210,14 @@ extension CZImagePreviewerCollectionViewCell {
     }
     
     // 图片加载结果
-    func completion(success: Bool, image: UIImage?) {
-        self.imageView.image = image
+    func completion(result: Result<UIImage, KingfisherError>) {
+        if case let .success(img) = result {
+            self.imageView.image = img
+            self.delegate?.collectionViewCell(self, resourceLoadingStateDidChanged: .default, idx: self.idx, accessoryView: self.accessoryView)
+        }else{
+            self.delegate?.collectionViewCell(self, resourceLoadingStateDidChanged: .loadingFaiure, idx: self.idx, accessoryView: self.accessoryView)
+        }
         self.updateScrollViewConfiguration()
-        let state: CZImagePreviewer.ImageLoadingState = success ? .default : .loadingFaiure
-        self.delegate?.collectionViewCell(self, resourceLoadingStateDidChanged: state, idx: self.idx, accessoryView: self.accessoryView)
     }
 }
 
