@@ -12,7 +12,7 @@ import Kingfisher
 protocol AnimatedTransitioningContentProvider: UIViewController {
 
     /// 要求取得展示时的转场关键元素
-    typealias ElementForDisplayTransition = (container: UIView?, resource: CZImagePreviewerResource?)
+    typealias ElementForDisplayTransition = (container: UIView?, resource: ImageProvider?)
     func transitioningElementForDisplay(animatedTransitioning: AnimatedTransitioning) -> ElementForDisplayTransition
     
     /// 要求取得消失时的转场关键元素
@@ -47,7 +47,7 @@ class AnimatedTransitioning: NSObject, UIViewControllerAnimatedTransitioning {
     
     func present(_ transitionContext: UIViewControllerContextTransitioning) {
         
-        guard let keyWindow = CZImagePreviewer.keyWindow,
+        guard let keyWindow = Previewer.keyWindow,
               let toView = transitionContext.view(forKey: .to),
               let toVC = transitionContext.viewController(forKey: .to) as? AnimatedTransitioningContentProvider,
               let elementResource = toVC.transitioningElementForDisplay(animatedTransitioning: self).resource
@@ -113,7 +113,7 @@ class AnimatedTransitioning: NSObject, UIViewControllerAnimatedTransitioning {
     
     func dismiss(_ transitionContext: UIViewControllerContextTransitioning) {
         
-        guard let keyWindow = CZImagePreviewer.keyWindow,
+        guard let keyWindow = Previewer.keyWindow,
               let fromVC = transitionContext.viewController(forKey: .from) as? AnimatedTransitioningContentProvider
         else {
             transitionContext.completeTransition(!transitionContext.transitionWasCancelled)

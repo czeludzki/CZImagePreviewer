@@ -39,7 +39,6 @@ class VideoPlayerItem: NSObject {
     init?(videoURL: URL) {
         
         self.videoURL = videoURL
-//        guard let url = URL.init(string: videoPath) else { fatalError("无法成功创建 VideoPlayerItem") }
         self.playItem = AVPlayerItem.init(url: videoURL)
         super.init()
         

@@ -25,11 +25,18 @@ class ExampleViewController: UIViewController {
     
     @IBOutlet weak var collectionView: UICollectionView!
     
-    weak var imagePreviewer: CZImagePreviewer?
+    weak var imagePreviewer: Previewer?
     
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view, typically from a nib.
+        
+//        let imgView = ImageZoomingView.init(.init(contentsOfFile: Bundle.main.path(forResource: "largeImg1", ofType: "jpg")!))
+        
+//        self.view.addSubview(imgView)
+//        imgView.snp.makeConstraints { make in
+//            make.edges.equalToSuperview()
+//        }
     }
     
     override var shouldAutorotate: Bool { true }
@@ -64,7 +71,7 @@ extension ExampleViewController: UICollectionViewDataSource, UICollectionViewDel
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         // 创建 CZImagePreviewer 以及 显示
-        let previewer = CZImagePreviewer.init()
+        let previewer = Previewer.init()
         previewer.delegate = self
         previewer.dataSource = self
         let cell = self.collectionView.cellForItem(at: indexPath)
@@ -74,12 +81,12 @@ extension ExampleViewController: UICollectionViewDataSource, UICollectionViewDel
     
 }
 
-extension ExampleViewController: CZImagePreviewerDelegate {
-    func imagePreviewer(_ imagePreviewer: CZImagePreviewer, willDismissWithCell cell: CZImagePreviewerCollectionViewCell, at index: Int) -> UIView? {
+extension ExampleViewController: Delegate {
+    func imagePreviewer(_ imagePreviewer: Previewer, willDismissWithCell cell: CollectionViewCell, at index: Int) -> UIView? {
         self.collectionView.cellForItem(at: IndexPath(item: index, section: 0))
     }
     
-    func imagePreviewer(_ imagePreviewer: CZImagePreviewer, index oldIndex: Int, didChangedTo newIndex: Int) {
+    func imagePreviewer(_ imagePreviewer: Previewer, index oldIndex: Int, didChangedTo newIndex: Int) {
         if case 0..<self.dataSources.count = oldIndex {
             if self.dataSources[oldIndex].videoItem?.isPlaying == true {
                 self.dataSources[oldIndex].videoItem?.player.pause()
@@ -89,13 +96,13 @@ extension ExampleViewController: CZImagePreviewerDelegate {
 
 }
 
-extension ExampleViewController: CZImagePreviewerDataSource {
+extension ExampleViewController: DataSource {
     
-    func numberOfItems(in imagePreviewer: CZImagePreviewer) -> Int {
+    func numberOfItems(in imagePreviewer: Previewer) -> Int {
         self.dataSources.count
     }
     
-    func imagePreviewer(_ imagePreviewer: CZImagePreviewer, imageResourceForItemAtIndex index: Int) -> CZImagePreviewerResource? {
+    func imagePreviewer(_ imagePreviewer: Previewer, imageResourceForItemAtIndex index: Int) -> ImageProvider? {
         // String / URL / UIImage 类型可以将属性 .asImgRes 作为返回值直接返回
         let res = self.dataSources[index].imagePath
         return res
@@ -103,8 +110,8 @@ extension ExampleViewController: CZImagePreviewerDataSource {
     
     // 这个视图被添加到 CZImagePreviewer 的顶部, 不参与滑动交互, 可以放一些通用按钮例如 下载图片/分享/编辑 等等
     // 使用者也可以自己持有这个视图实例, 然后每次都返回相同的视图实例, CZImagePreviewer 在加入此视图到superview前会对视图实例进行地址判断, 防止重复添加 或 没必要的先移除再添加
-    func imagePreviewer(_ imagePreviewer: CZImagePreviewer, consoleForItemAtIndex index: Int) -> CZImagePreviewerAccessoryView? {
-        let view = CZImagePreviewerAccessoryView(frame: .zero)
+    func imagePreviewer(_ imagePreviewer: Previewer, consoleForItemAtIndex index: Int) -> AccessoryView? {
+        let view = AccessoryView(frame: .zero)
         let idxTag = UIButton(type: .system)
         idxTag.setTitle(String(index), for: .normal)
         idxTag.tintColor = .white
@@ -136,17 +143,17 @@ extension ExampleViewController: CZImagePreviewerDataSource {
         return view
     }
     
-    func imagePreviewer(_ imagePreviewer: CZImagePreviewer, accessoryViewForCell cell: CZImagePreviewerCollectionViewCell, at index: Int) -> CZImagePreviewerAccessoryView? {
+    func imagePreviewer(_ imagePreviewer: Previewer, accessoryViewForCell cell: CollectionViewCell, at index: Int) -> AccessoryView? {
         let view = self.dataSources[index].videoItem?.videoConsole
         return view
     }
     
-    func imagePreviewer(_ imagePreviewer: CZImagePreviewer, videoLayerForCell cell: CZImagePreviewerCollectionViewCell, at index: Int) -> CALayer? {
+    func imagePreviewer(_ imagePreviewer: Previewer, videoLayerForCell cell: CollectionViewCell, at index: Int) -> CALayer? {
         let videoItem = self.dataSources[index].videoItem
         return videoItem?.playerLayer
     }
     
-    func imagePreviewer(_ imagePreviewer: CZImagePreviewer, videoSizeForCell cell: CZImagePreviewerCollectionViewCell, at index: Int, videoSizeSettingHandler: (CGSize?) -> Void) {
+    func imagePreviewer(_ imagePreviewer: Previewer, videoSizeForCell cell: CollectionViewCell, at index: Int, videoSizeSettingHandler: (CGSize?) -> Void) {
         let videoItem = self.dataSources[index].videoItem
         videoSizeSettingHandler(videoItem?.player.currentItem?.presentationSize ?? .zero)
     }

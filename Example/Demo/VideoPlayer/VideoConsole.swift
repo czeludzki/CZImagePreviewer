@@ -10,7 +10,7 @@ import Combine
 import CZImagePreviewer
 import SnapKit
 
-class VideoConsole: CZImagePreviewerAccessoryView {
+class VideoConsole: AccessoryView {
     
     var totalTimeLabelText: String? {
         didSet {

@@ -8,8 +8,8 @@
 import UIKit
 import Kingfisher
 
-// 定义协议, 任何模型只需遵循此协议, 在此方法参数两个闭包中提供内容, 即可作为数据源返回值
-public protocol CZImagePreviewerResource {
+// 任何模型只需遵循此协议, 在此方法参数两个闭包中提供内容, 即可作为数据源返回值
+public protocol Resource {
     /// 加载进度
     typealias LoadImageProgress = Kingfisher.DownloadProgressBlock
     /// 完成
@@ -23,8 +23,7 @@ public protocol CZImagePreviewerResource {
 /*
  使 UIImage, String, URL 三种类型默认遵循 ImgSourceNamespaceWrappable 协议
 */
-
-extension String: CZImagePreviewerResource {
+extension String: Resource {
     
     public func loadImage(progress: LoadImageProgress?, completion: LoadImageCompletion?) {
         guard let url = URL(string: self) else { return }
@@ -40,7 +39,7 @@ extension String: CZImagePreviewerResource {
     
 }
 
-extension URL: CZImagePreviewerResource {
+extension URL: Resource {
     
     public func loadImage(progress: LoadImageProgress?, completion: LoadImageCompletion?) {
         KingfisherManager.shared.retrieveImage(with: self, options: [], progressBlock: progress, downloadTaskUpdated: nil) {
@@ -55,7 +54,7 @@ extension URL: CZImagePreviewerResource {
     
 }
 
-extension UIImage: CZImagePreviewerResource {
+extension UIImage: Resource {
     
     public func loadImage(progress: LoadImageProgress?, completion: LoadImageCompletion?) {
         let imgSize: Int = Int(self.size.height * self.size.width)

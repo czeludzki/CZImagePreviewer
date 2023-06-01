@@ -1,7 +1,8 @@
 {
   "name": "CZImagePreviewer",
-  "version": "1.0.6",
+  "version": "1.1.9",
   "summary": "iOS下的图片浏览工具",
+  "swift_versions": "5.0",
   "description": "TODO: Add long description of the pod here.",
   "homepage": "https://github.com/czeludzki/CZImagePreviewer",
   "license": {
@@ -13,10 +14,10 @@
   },
   "source": {
     "git": "https://github.com/czeludzki/CZImagePreviewer.git",
-    "tag": "1.0.6"
+    "tag": "1.1.9"
   },
   "platforms": {
-    "ios": "11.0"
+    "ios": "12.0"
   },
   "source_files": "CZImagePreviewer/Classes/**/*",
   "dependencies": {
@@ -26,5 +27,6 @@
     "Kingfisher": [
 
     ]
-  }
+  },
+  "swift_version": "5.0"
 }
