@@ -70,8 +70,8 @@ open class Previewer: UIViewController {
         collectionView.prefetchDataSource = self
         collectionView.backgroundColor = .clear
         collectionView.contentInsetAdjustmentBehavior = .never
-        collectionView.register(CZImagePreviewer.CollectionViewCell.self, forCellWithReuseIdentifier: CZImagePreviewer.CollectionViewCell.description())
-        collectionView.register(CZImagePreviewer.CollectionViewCell.self, forCellWithReuseIdentifier: CZImagePreviewer.CollectionViewCell.description())
+        collectionView.register(CZImagePreviewer.VideoResourceCollectionViewCell.self, forCellWithReuseIdentifier: CZImagePreviewer.VideoResourceCollectionViewCell.description())
+        collectionView.register(CZImagePreviewer.ImageResourceCollectionViewCell.self, forCellWithReuseIdentifier: CZImagePreviewer.ImageResourceCollectionViewCell.description())
         return collectionView
     }()
     
@@ -80,6 +80,9 @@ open class Previewer: UIViewController {
         return tap
     }()
     
+    // 在 pan 事件发生时, 记录 actor 原来的 size 及 position
+    private var animationActorDefaultSize: CGSize = .zero
+    private var animationActorDefaultCenter: CGPoint = .zero
     private lazy var pan: UIPanGestureRecognizer = {
         let pan = UIPanGestureRecognizer.init(target: self, action: #selector(panOnView(sender:)))
         pan.delegate = self
@@ -106,11 +109,9 @@ open class Previewer: UIViewController {
     
     required public init?(coder: NSCoder) { fatalError("init(coder:) has not been implemented") }
     
-    deinit {
 #if DEBUG
-        print(self, "deinit")
+    deinit { print(self, "deinit") }
 #endif
-    }
     
     public override func viewDidLoad() {
         super.viewDidLoad()
@@ -153,7 +154,6 @@ open class Previewer: UIViewController {
         self.collectionViewFlowLayout.rotatingInfo = RotatingInfo(true, self.currentIdx)
         (self.collectionView.collectionViewLayout as? UICollectionViewFlowLayout)?.itemSize = size
         self.collectionView.collectionViewLayout.invalidateLayout()
-        print(self.collectionView.visibleCells)
         coordinator.animate(alongsideTransition: nil) { context in
             self.collectionViewFlowLayout.rotatingInfo = RotatingInfo(false, self.currentIdx)
         }
@@ -178,37 +178,38 @@ extension Previewer {
     }
     
     @objc func doubleTapOnView(sender: UITapGestureRecognizer) {
-        let cell = self.collectionView.cellForItem(at: IndexPath(item: self.currentIdx, section: 0)) as? CZImagePreviewer.CollectionViewCell
-        if cell?.zoomingScrollView.zoomScale != 1 {
-            cell?.clearZooming()
+        guard let cell = self.collectionView.cellForItem(at: IndexPath(item: self.currentIdx, section: 0)) as? CZImagePreviewer.ImageResourceCollectionViewCell,
+            let actor = cell.dragingActor as? ImageZoomingView else { return }
+        
+        if actor.scrollView.zoomScale != 1 {
+            actor.clearZooming()
         }else{
-            let touchOn = sender.location(in: cell?.imageView)
-            cell?.zoom(rect: CGRect(x: touchOn.x, y: touchOn.y, width: 1, height: 1))
+            let touchOn = sender.location(in: actor.target)
+            actor.zoom(to: .init(x: touchOn.x, y: touchOn.y, width: 1, height: 1), animated: true)
         }
     }
     
-    private static var animationActorDefaultSize: CGSize = .zero
-    private static var animationActorDefaultCenter: CGPoint = .zero
     @objc func panOnView(sender: UIPanGestureRecognizer) {
         
         guard let cell = self.collectionView.cellForItem(at: IndexPath(item: self.currentIdx, section: 0)) as? CZImagePreviewer.CollectionViewCell else { return }
-        let animationActor = cell.draginglyActor
+        let animationActor = cell.dragingActor ?? cell.contentView
         
         // 百分比
         let translationInView = sender.translation(in: self.view)
         var process = translationInView.y / self.view.bounds.size.height
         process = min(1.0, max(0.0, process))
+        print(process, translationInView.y)
         
         switch sender.state {
         case .began:
-            Self.animationActorDefaultCenter = animationActor.center
-            Self.animationActorDefaultSize = animationActor.frame.size
+            self.animationActorDefaultCenter = animationActor.center
+            self.animationActorDefaultSize = animationActor.frame.size
             self.cus_console?.isHidden = true
             cell.accessoryView?.isHidden = true
             self.isPaning = true
         case .changed:
-            animationActor.frame.size = CGSize(width: Self.animationActorDefaultSize.width * (1 - process), height: Self.animationActorDefaultSize.height * (1 - process))
-            animationActor.center = CGPoint(x: Self.animationActorDefaultCenter.x + translationInView.x, y: Self.animationActorDefaultCenter.y + translationInView.y)
+            animationActor.frame.size = CGSize(width: self.animationActorDefaultSize.width * (1 - process), height: self.animationActorDefaultSize.height * (1 - process))
+            animationActor.center = CGPoint(x: self.animationActorDefaultCenter.x + translationInView.x, y: self.animationActorDefaultCenter.y + translationInView.y)
             self.view.backgroundColor = UIColor.init(red: 0, green: 0, blue: 0, alpha: 1 - process)
         case .ended, .cancelled:
             let velocity = sender.velocity(in: self.view)
@@ -224,8 +225,8 @@ extension Previewer {
         // 放弃 dismiss 操作
         func discardDismissOperation() {
             UIView.animate(withDuration: 0.3) {
-                animationActor.frame.size = Self.animationActorDefaultSize
-                animationActor.center = Self.animationActorDefaultCenter
+                animationActor.frame.size = self.animationActorDefaultSize
+                animationActor.center = self.animationActorDefaultCenter
                 self.view.backgroundColor = .black
             } completion: { finish in
                 self.cus_console?.isHidden = false
@@ -308,22 +309,6 @@ extension Previewer {
         self.collectionView.setContentOffset(CGPoint(x: x, y: 0), animated: animated)
     }
     
-    /// 默认状态下, 视频层(videoView)位于图片层(zoomingScrollView)之上
-    /// 此方法可使当前显示的cell隐藏视频层(videoView)
-    /// 当这个 cell 被移出屏幕后, 此值会被重置到默认状态
-    public func hideVideoViewAtCurrentItem() {
-        let cell = self.collectionView.cellForItem(at: IndexPath(item: self.currentIdx, section: 0)) as? CZImagePreviewer.CollectionViewCell
-        cell?.videoContainer.isHidden = true
-    }
-    
-    /// 默认状态下, 视频层(videoView)位于图片层(zoomingScrollView)之上
-    /// 此方法可使当前显示的cell隐藏图片层(zoomingScrollView)
-    /// 当这个 cell 被移出屏幕后, 此值会被重置到默认状态
-    public func hideImageViewAtCurrentItem() {
-        let cell = self.collectionView.cellForItem(at: IndexPath(item: self.currentIdx, section: 0)) as? CZImagePreviewer.CollectionViewCell
-        cell?.zoomingScrollView.isHidden = true
-    }
-    
 }
 
 // MARK: ScrollViewDelegate, CollectionViewDelegate, CollectionViewDataSource, UICollectionViewDataSourcePrefetching
@@ -338,33 +323,46 @@ extension Previewer: UICollectionViewDelegateFlowLayout, UICollectionViewDataSou
     }
     
     public func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: CZImagePreviewer.CollectionViewCell.description(), for: indexPath) as! CZImagePreviewer.CollectionViewCell
-        cell.delegate = self
-        return cell
+        let resourceProvider = self.dataSource?.imagePreviewer(self, resourceForItemAtIndex: indexPath.item)
+        var cell: CollectionViewCell?
+        if let resourceProvider = resourceProvider as? CZImagePreviewer.ImageProvider {
+            cell = collectionView.dequeueReusableCell(withReuseIdentifier: CZImagePreviewer.ImageResourceCollectionViewCell.description(), for: indexPath) as! CZImagePreviewer.ImageResourceCollectionViewCell
+            cell?.item = CellItem(resource: resourceProvider, idx: indexPath.item)
+        }
+        if let resourceProvider = resourceProvider as? CZImagePreviewer.VideoProvider {
+            cell = collectionView.dequeueReusableCell(withReuseIdentifier: CZImagePreviewer.VideoResourceCollectionViewCell.description(), for: indexPath) as! CZImagePreviewer.VideoResourceCollectionViewCell
+            cell?.item = CellItem(resource: resourceProvider, idx: indexPath.item)
+        }
+        cell?.delegate = self
+        return cell!
     }
     
     public func collectionView(_ collectionView: UICollectionView, willDisplay cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
-        guard let cell = cell as? CZImagePreviewer.CollectionViewCell else { return }
-        // 从 dataSource 取得 数据
-        let imgRes: ImageProvider? = self.dataSource?.imagePreviewer(self, imageResourceForItemAtIndex: indexPath.item)
-        cell.videoLayer = self.dataSource?.imagePreviewer(self, videoLayerForCell: cell, at: indexPath.item)
+        guard let cell = cell as? CollectionViewCell else { return }
+        // 如果是 Video 类型, 尝试从 dataSource 中取得 playLayer
+        if let cell = cell as? CZImagePreviewer.VideoResourceCollectionViewCell {
+            cell.videoLayer = self.dataSource?.imagePreviewer(self, videoLayerForCell: cell, at: indexPath.item)
+            self.dataSource?.imagePreviewer(self, videoSizeForCell: cell, at: indexPath.item, videoSizeSettingHandler: cell.videoSizeSettingHandler)
+        }
+        // 获取辅助视图
         cell.accessoryView = self.dataSource?.imagePreviewer(self, accessoryViewForCell: cell, at: indexPath.item)
-        cell.item = PreviewerCellItem(resource: imgRes, idx: indexPath.item)
-        self.dataSource?.imagePreviewer(self, videoSizeForCell: cell, at: indexPath.item, videoSizeSettingHandler: cell.videoSizeSettingHandler)
     }
     
     public func collectionView(_ collectionView: UICollectionView, didEndDisplaying cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
         guard let cell = cell as? CZImagePreviewer.CollectionViewCell else { return }
-        // 在 cell 离开屏幕后, 重置其 zoomingScrollView 和 videoView 的隐藏状态. 默认是 图像层 不隐藏, 视频层 隐藏
-        cell.videoContainer.isHidden = true
-        cell.zoomingScrollView.isHidden = false
+        cell.didEndDisplay()
     }
     
     /// 数据预加载
     public func collectionView(_ collectionView: UICollectionView, prefetchItemsAt indexPaths: [IndexPath]) {
-        indexPaths.forEach { idxPath in
-            let imgRes: ImageProvider? = self.dataSource?.imagePreviewer(self, imageResourceForItemAtIndex: idxPath.item)
-            imgRes?.loadImage(progress: nil, completion: nil)
+        indexPaths.forEach {
+            let resource: ResourceProvider? = self.dataSource?.imagePreviewer(self, resourceForItemAtIndex: $0.item)
+            if let resource = resource as? VideoProvider {
+                resource.cover?.loadImage(options: nil, progress: nil, completion: nil)
+            }
+            if let resource = resource as? ImageProvider {
+                resource.loadImage(options: nil, progress: nil, completion: nil)
+            }
         }
     }
     
@@ -471,8 +469,8 @@ extension Previewer: AnimatedTransitioningContentProvider {
     
     // 提供一个视图, 作为展示时的转场动画发生时的动画元素
     func transitioningElementForDisplay(animatedTransitioning: AnimatedTransitioning) -> ElementForDisplayTransition {
-        let imgRes = self.dataSource?.imagePreviewer(self, imageResourceForItemAtIndex: self.currentIdx)
-        return ElementForDisplayTransition(self.imageTriggerContainer, imgRes)
+        let resource = self.dataSource?.imagePreviewer(self, resourceForItemAtIndex: self.currentIdx)
+        return ElementForDisplayTransition(self.imageTriggerContainer, resource)
     }
     
     func transitioningElementForDismiss(animatedTransitioning: AnimatedTransitioning) -> ElementForDismissTransition {
@@ -482,7 +480,7 @@ extension Previewer: AnimatedTransitioningContentProvider {
         guard let container = self.delegate?.imagePreviewer(self, willDismissWithCell: cell, at: self.currentIdx) else {
             return (nil, nil)
         }
-        return ElementForDismissTransition(container, cell.draginglyActor)
+        return ElementForDismissTransition(container, cell.dragingActor)
     }
 
 }

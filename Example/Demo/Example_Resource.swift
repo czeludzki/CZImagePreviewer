@@ -11,52 +11,55 @@ import UIKit
 import AVFoundation
 import CZImagePreviewer
 
-class ResourceItem {
-    var imagePath: String
-    var videoURL: URL? {
-        didSet {
-            guard let videoURL = videoURL else { return }
-            self.videoItem = VideoPlayerItem.init(videoURL: videoURL)
-        }
-    }
-    var videoItem: VideoPlayerItem?
+class VideoResource: CZImagePreviewer.VideoProvider {
     
-    var resType: String {
-        return self.videoURL == nil ? "Image" : "Video"
+    var cover: CZImagePreviewer.ImageProvider?
+    
+    var isPlaying: Bool {
+        self.videoItem.isPlaying
     }
     
-    init(imgPath: String) {
-        self.imagePath = imgPath
+    func play() {
+        self.videoItem.player.play()
+    }
+    
+    func pause() {
+        self.videoItem.player.pause()
+    }
+    
+    let videoItem: VideoPlayerItem
+    
+    init(videoPath: String, cover: ImageProvider? = nil) {
+        self.videoItem = VideoPlayerItem.init(videoURL: URL.init(string: videoPath)!)!
     }
     
 }
 
-
 extension ExampleViewController {
-    static var imagePaths: [String] = {
-        var res = [
-            "file://" + Bundle.main.path(forResource: "largeImg0", ofType: "jpg")!,
-            "file://" + Bundle.main.path(forResource: "largeImg1", ofType: "jpg")!,
-            "file://" + Bundle.main.path(forResource: "largeImg2", ofType: "jpg")!,
-            "file://" + Bundle.main.path(forResource: "gif0", ofType: "gif")!,
-            "file://" + Bundle.main.path(forResource: "gif1", ofType: "gif")!,
-            "file://" + Bundle.main.path(forResource: "gif2", ofType: "gif")!,
-            "file://" + Bundle.main.path(forResource: "gif3", ofType: "gif")!,
-            "file://" + Bundle.main.path(forResource: "gif4", ofType: "gif")!,
-            "file://" + Bundle.main.path(forResource: "gif5", ofType: "gif")!
-        ]
+    
+    static var imagePaths: [String] = [
+        "file://" + Bundle.main.path(forResource: "largeImg0", ofType: "jpg")!,
+        "file://" + Bundle.main.path(forResource: "largeImg1", ofType: "jpg")!,
+        "file://" + Bundle.main.path(forResource: "largeImg2", ofType: "jpg")!,
+        "file://" + Bundle.main.path(forResource: "gif0", ofType: "gif")!,
+        "file://" + Bundle.main.path(forResource: "gif1", ofType: "gif")!,
+        "file://" + Bundle.main.path(forResource: "gif2", ofType: "gif")!,
+        "file://" + Bundle.main.path(forResource: "gif3", ofType: "gif")!,
+        "file://" + Bundle.main.path(forResource: "gif4", ofType: "gif")!,
+        "file://" + Bundle.main.path(forResource: "gif5", ofType: "gif")!
+    ]
+    
+    static var videoPaths: [String] = [
+        "file://" + Bundle.main.path(forResource: "1", ofType: "mp4")!,
+        "file://" + Bundle.main.path(forResource: "2", ofType: "mp4")!,
+        "file://" + Bundle.main.path(forResource: "3", ofType: "mp4")!
+    ]
+    
+    static func resourcePaths() -> [String] {
+        var res = Self.imagePaths + Self.videoPaths
         res += res
         res += res
         return res
-    }()
-    
-    static var videoURLs: [URL] = {
-        var ret: [URL] = []
-        for n in 1...3 {
-            let url = Bundle.main.url(forResource: String(n), withExtension: "mp4")!
-            ret.append(url)
-        }
-        return ret
-    }()
+    }
     
 }

@@ -29,3 +29,19 @@ public extension Result where Success == RetrieveImageResult, Failure == Kingfis
         return nil
     }
 }
+
+public extension Result where Success == UIImage, Failure == KingfisherError {
+    var image: UIImage? {
+        if case let .success(result) = self {
+            return result
+        }
+        return nil
+    }
+}
+
+public extension UIImage {
+    var isAnimatedImage: Bool {
+        guard let imageFrameCount = self.kf.imageFrameCount else { return false }
+        return imageFrameCount > 0
+    }
+}

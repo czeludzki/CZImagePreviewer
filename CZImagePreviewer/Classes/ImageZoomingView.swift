@@ -58,6 +58,10 @@ public class ImageZoomingView: UIView {
     func clearZooming(animate: Bool = true) {
         self.scrollView.setZoomScale(1, animated: animate)
     }
+    
+    func zoom(to: CGRect, animated: Bool) {
+        self.scrollView.zoom(to: to, animated: animated)
+    }
 }
 
 extension ImageZoomingView {

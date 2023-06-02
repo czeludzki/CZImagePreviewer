@@ -15,7 +15,7 @@ public protocol DataSource: AnyObject {
     
     /// 数据源方法
     /// 返回值类型默认可以是 String, URL, UIImage, 或者是任何自定义遵循了 ImageResourceProtocol 协议的类型, 具体操作见 CZImageSourceProtocol.swift
-    func imagePreviewer(_ imagePreviewer: Previewer, imageResourceForItemAtIndex index: Int) -> ImageProvider?
+    func imagePreviewer(_ imagePreviewer: Previewer, resourceForItemAtIndex index: Int) -> ResourceProvider?
     
     /// 图片加载状态改变
     func imagePreviewer(_ imagePreviewer: Previewer, imageLoadingStateDidChanged state: Previewer.ImageLoadingState, at index: Int, accessoryView: AccessoryView?)
@@ -31,7 +31,7 @@ public protocol DataSource: AnyObject {
     /// 为每一个 Cell 提供自定义操作视图, 这个视图会覆盖在每个Cell的顶部
     func imagePreviewer(_ imagePreviewer: Previewer, accessoryViewForCell cell: CollectionViewCell, at index: Int) -> AccessoryView?
     
-    /// 为每一个 Cell 提供视频播放容器, 你可以将你的视频播放器 Layer, 添加到 videoView.layer 中
+    /// 为 VideoProvider 类型 的 Cell 提供视频播放 layer
     func imagePreviewer(_ imagePreviewer: Previewer, videoLayerForCell cell: CollectionViewCell, at index: Int) -> CALayer?
     
     typealias VideoSizeSettingHandler = (CGSize?) -> Void

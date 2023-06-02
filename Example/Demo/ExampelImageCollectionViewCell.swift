@@ -8,14 +8,17 @@
 
 import UIKit
 import Kingfisher
+import CZImagePreviewer
 
 class ExampelImageCollectionViewCell: UICollectionViewCell {
     @IBOutlet weak var resourceTypeLabel: UILabel!
     @IBOutlet var imageView: UIImageView!
-    var imageURL: String? {
+    var image: ImageProvider? {
         didSet {
-            guard let url = imageURL else { return }
-            self.imageView.kf.setImage(with: URL.init(string: url), placeholder: nil, options: [.processor(ResizingImageProcessor(referenceSize: self.bounds.size))])
+            oldValue?.cancel()
+            image?.loadImage(options: [.processor(ResizingImageProcessor(referenceSize: self.bounds.size))], progress: nil, completion: { [weak self] result in
+                self?.imageView.image = result.image
+            })
         }
     }
 }

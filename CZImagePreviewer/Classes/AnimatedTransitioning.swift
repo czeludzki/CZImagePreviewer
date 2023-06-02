@@ -12,7 +12,7 @@ import Kingfisher
 protocol AnimatedTransitioningContentProvider: UIViewController {
 
     /// 要求取得展示时的转场关键元素
-    typealias ElementForDisplayTransition = (container: UIView?, resource: ImageProvider?)
+    typealias ElementForDisplayTransition = (container: UIView?, resource: ResourceProvider?)
     func transitioningElementForDisplay(animatedTransitioning: AnimatedTransitioning) -> ElementForDisplayTransition
     
     /// 要求取得消失时的转场关键元素
@@ -33,7 +33,7 @@ class AnimatedTransitioning: NSObject, UIViewControllerAnimatedTransitioning {
         self.transitionFor = transitionFor
     }
     
-    func transitionDuration(using transitionContext: UIViewControllerContextTransitioning?) -> TimeInterval { 0.3 }
+    func transitionDuration(using transitionContext: UIViewControllerContextTransitioning?) -> TimeInterval { 3 }
     
     func animateTransition(using transitionContext: UIViewControllerContextTransitioning) {
         if self.transitionFor == .dismiss {
@@ -83,10 +83,22 @@ class AnimatedTransitioning: NSObject, UIViewControllerAnimatedTransitioning {
         imageView.backgroundColor = .clear
         imageView.contentMode = .scaleAspectFit
         
-        // UIImageView 加载图片
-        elementResource.loadImage(progress: nil) {
-            if case let .success(img) = $0 {
-                imageView.image = img
+        // UIImageView 加载图片,
+        // 这里考虑一下对传入的 elementContainer 进行截图
+//        let imageView = elementContainer.snapshotView(afterScreenUpdates: false)
+        if let elementResource = elementResource as? ImageProvider {
+            elementResource.loadImage(options: nil, progress: nil) {
+                if case let .success(img) = $0 {
+                    imageView.image = img
+                }
+            }
+        }
+        
+        if let elementResource = elementResource as? VideoProvider {
+            elementResource.cover?.loadImage(options: nil, progress: nil) {
+                if case let .success(img) = $0 {
+                    imageView.image = img
+                }
             }
         }
         
@@ -144,8 +156,8 @@ class AnimatedTransitioning: NSObject, UIViewControllerAnimatedTransitioning {
         }
         
         // 对 targetFrame 进行微调, 防止当 animationActor.superview 是 scrollView 时, targetFrame.origin 不准确
-        targetFrame.origin.x += animationActor.superview?.bounds.origin.x ?? 0
-        targetFrame.origin.y += animationActor.superview?.bounds.origin.y ?? 0
+//        targetFrame.origin.x += animationActor.superview?.bounds.origin.x ?? 0
+//        targetFrame.origin.y += animationActor.superview?.bounds.origin.y ?? 0
         
         UIView.animate(withDuration: self.transitionDuration(using: transitionContext)) {
             animationActor.frame = targetFrame

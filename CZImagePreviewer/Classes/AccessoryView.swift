@@ -9,7 +9,7 @@ import UIKit
 
 /// 辅助视图类型
 public enum ViewType {
-    /// 放在 Previewer 顶部的控制面板
+    /// 放在 VideoCollectionCell 顶部的控制面板
     case console
     /// 放在 Cell 上的辅助视图
     case accessoryView

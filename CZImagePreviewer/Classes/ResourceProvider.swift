@@ -20,14 +20,20 @@ public protocol ImageProvider: ResourceProvider {
     
     /// 加载图片的方法.
     /// 使用者只需遵循此协议, 在此方法参数两个闭包中提供内容, 即可作为数据源返回值
-    func loadImage(progress: Kingfisher.DownloadProgressBlock?, completion: LoadImageCompletion?)
+    func loadImage(options: KingfisherOptionsInfo?, progress: Kingfisher.DownloadProgressBlock?, completion: LoadImageCompletion?)
+    
+    func cancel()
 }
 
 // MARK: VideoProvider
-protocol VideoProvider: ResourceProvider {
-    var cover: ImageProvider { get }
-    var videoLayer: CALayer { get }
-    var accessoryContainer: UIView { get }
+public protocol VideoProvider: ResourceProvider {
+    // 视频封面
+    var cover: ImageProvider? { get }
+    // 播放/暂停状态.
+    var isPlaying: Bool { get }
+    // CZImgePreviewer 需要在 cell 离开屏幕时控制其暂停
+    func play()
+    func pause()
 }
 
 /*
@@ -35,9 +41,9 @@ protocol VideoProvider: ResourceProvider {
 */
 extension String: ImageProvider {
     
-    public func loadImage(progress: LoadImageProgress?, completion: LoadImageCompletion?) {
+    public func loadImage(options: KingfisherOptionsInfo?, progress: LoadImageProgress?, completion: LoadImageCompletion?) {
         guard let url = URL(string: self) else { return }
-        KingfisherManager.shared.retrieveImage(with: url, options: [], progressBlock: progress, downloadTaskUpdated: nil) {
+        KingfisherManager.shared.retrieveImage(with: url, options: options, progressBlock: progress) {
             if case let .success(res) = $0 {
                 completion?(.success(res.image))
             }
@@ -47,12 +53,16 @@ extension String: ImageProvider {
         }
     }
     
+    public func cancel() {
+        guard let url = URL(string: self) else { return }
+        KingfisherManager.shared.downloader.cancel(url: url)
+    }
 }
 
 extension URL: ImageProvider {
     
-    public func loadImage(progress: LoadImageProgress?, completion: LoadImageCompletion?) {
-        KingfisherManager.shared.retrieveImage(with: self, options: [], progressBlock: progress, downloadTaskUpdated: nil) {
+    public func loadImage(options: KingfisherOptionsInfo?, progress: LoadImageProgress?, completion: LoadImageCompletion?) {
+        KingfisherManager.shared.retrieveImage(with: self, options: options, progressBlock: progress) {
             if case let .success(res) = $0 {
                 completion?(.success(res.image))
             }
@@ -62,16 +72,21 @@ extension URL: ImageProvider {
         }
     }
     
+    public func cancel() {
+        KingfisherManager.shared.downloader.cancel(url: self)
+    }
 }
 
 extension UIImage: ImageProvider {
     
-    public func loadImage(progress: LoadImageProgress?, completion: LoadImageCompletion?) {
+    public func loadImage(options: KingfisherOptionsInfo?, progress: LoadImageProgress?, completion: LoadImageCompletion?) {
         let imgSize: Int = Int(self.size.height * self.size.width)
         if let progress = progress {
             progress(Int64(imgSize), Int64(imgSize))
         }
         completion?(.success(self))
     }
+    
+    public func cancel() {}
     
 }
