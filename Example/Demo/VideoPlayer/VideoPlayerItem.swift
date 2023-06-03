@@ -46,7 +46,7 @@ class VideoPlayerItem: NSObject {
         self.playerLayer = AVPlayerLayer.init(player: self.player)
         self.videoConsole.totalTimeLabelText = self.playItem.asset.duration.timeStr
         
-        self.player.addPeriodicTimeObserver(forInterval: CMTime.init(value: CMTimeValue.init(1), timescale: CMTimeScale.init(1)), queue: nil) { [weak self] time in
+        self.player.addPeriodicTimeObserver(forInterval: CMTime.init(value: CMTimeValue.init(1), timescale: CMTimeScale.init(600)), queue: nil) { [weak self] time in
             self?.videoConsole.progressTimeLabelText = time.timeStr
             if let totalDuration = self?.playItem.asset.duration {
                 let progress = (time.seconds / totalDuration.seconds).isNaN ? 0 : (time.seconds / totalDuration.seconds)
@@ -55,7 +55,7 @@ class VideoPlayerItem: NSObject {
         }
         
         let token = NotificationCenter.default.addObserver(forName: Notification.Name.AVPlayerItemDidPlayToEndTime, object: self.playItem, queue: nil) { [weak self] notification in
-            self?.player.seek(to: CMTime(value: 0, timescale: 1))
+            self?.player.seek(to: CMTime(value: 0, timescale: 600))
         }
         self.notificationTokens.append(token)
         

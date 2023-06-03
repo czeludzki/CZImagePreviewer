@@ -10,14 +10,14 @@ import Foundation
 import UIKit
 import AVFoundation
 import CZImagePreviewer
+import Combine
 
 class VideoResource: CZImagePreviewer.VideoProvider {
     
-    var cover: CZImagePreviewer.ImageProvider?
+    // MARK: VideoProvider
+    var videoView: VideoView?
     
-    var isPlaying: Bool {
-        self.videoItem.isPlaying
-    }
+    var displayAnimationActor: ImageProvider?
     
     func play() {
         self.videoItem.player.play()
@@ -29,8 +29,30 @@ class VideoResource: CZImagePreviewer.VideoProvider {
     
     let videoItem: VideoPlayerItem
     
+    var videoSize: CGSize {
+        return self.videoItem.playItem.presentationSize
+    }
+    
+    var videoSizeProvider: VideoSizeProvider? {
+        didSet {
+            self.videoSizeProvider?(self.videoItem.playItem.presentationSize)
+        }
+    }
+    
+    private var anyCancellable: Set<AnyCancellable> = []
+    
     init(videoPath: String, cover: ImageProvider? = nil) {
         self.videoItem = VideoPlayerItem.init(videoURL: URL.init(string: videoPath)!)!
+        self.displayAnimationActor = cover
+        
+        if let playerLayer = self.videoItem.playerLayer {
+            self.videoView = CZImagePreviewer.VideoView.init(playerLayer: playerLayer)
+        }
+        
+        // 监听 videoItem.playerItem.presentationSize 的变化
+        self.videoItem.playItem.publisher(for: \.presentationSize).sink { [weak self] size in
+            self?.videoSizeProvider?(size)
+        }.store(in: &self.anyCancellable)
     }
     
 }

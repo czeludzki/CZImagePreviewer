@@ -22,19 +22,36 @@ open class AccessoryView: UIView {
     
     public var viewType: ViewType = .console
     
-    /// 对 hitTest 方法进行处理, 防止 AccessoryView 参与事件处理
+    /// 对 hitTest 方法进行处理,
+    /// 防止 AccessoryView 自身参与事件处理
     open override func hitTest(_ point: CGPoint, with event: UIEvent?) -> UIView? {
-        guard let ret = super.hitTest(point, with: event) else {
-            return nil
-        }
         // 当找到的响应者是自己, 就返回 nil, 不参与事件响应
-        if ret == self {
-            return nil
+        if !self.isUserInteractionEnabled || self.isHidden || self.alpha <= 0.01 { return nil }
+        if self.point(inside: point, with: event) {
+            for sub in self.subviews.reversed() {
+                let convertPoint = sub.convert(point, from: self)
+                if let target = sub.hitTest(convertPoint, with: event) {
+                    return target
+                }
+            }
+            // 即使在子视图中找不到目标也不 return self
         }
-        return ret
+        return nil
     }
     
-    var videoLayer: CALayer?
+}
+
+open class VideoView: AccessoryView {
+    
+    weak var videoLayer: CALayer?
+    
+    public required init(playerLayer: CALayer) {
+        super.init(frame: .zero)
+        self.viewType = .videoView
+        self.videoLayer = playerLayer
+        self.layer.addSublayer(playerLayer)
+    }
+    
     open override func layoutSubviews() {
         super.layoutSubviews()
         if self.viewType == .videoView {
@@ -53,4 +70,5 @@ open class AccessoryView: UIView {
         }
     }
     
+    public required init?(coder: NSCoder) { fatalError("init(coder:) has not been implemented") }
 }

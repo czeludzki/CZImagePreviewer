@@ -73,7 +73,7 @@ extension ExampleViewController: UICollectionViewDataSource, UICollectionViewDel
             cell.resourceTypeLabel.text = "Image"
         }
         if let videoResource = self.dataSources[indexPath.item] as? VideoResource {
-            cell.image = videoResource.cover
+            cell.image = videoResource.displayAnimationActor
             cell.resourceTypeLabel.text = "Video"
         }
         return cell
@@ -157,17 +157,6 @@ extension ExampleViewController: DataSource {
         guard let videoResource = self.dataSources[index] as? VideoResource else { return nil }
         let view = videoResource.videoItem.videoConsole
         return view
-    }
-    
-    func imagePreviewer(_ imagePreviewer: Previewer, videoLayerForCell cell: CollectionViewCell, at index: Int) -> CALayer? {
-        guard let videoResource = self.dataSources[index] as? VideoResource else { return nil }
-        return videoResource.videoItem.playerLayer
-    }
-    
-    func imagePreviewer(_ imagePreviewer: Previewer, videoSizeForCell cell: CollectionViewCell, at index: Int, videoSizeSettingHandler: (CGSize?) -> Void) {
-        guard let videoResource = self.dataSources[index] as? VideoResource else { return }
-        let videoItem = videoResource.videoItem
-        videoSizeSettingHandler(videoItem.player.currentItem?.presentationSize ?? .zero)
     }
     
 }

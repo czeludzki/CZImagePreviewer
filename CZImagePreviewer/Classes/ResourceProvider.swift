@@ -26,14 +26,36 @@ public protocol ImageProvider: ResourceProvider {
 }
 
 // MARK: VideoProvider
-public protocol VideoProvider: ResourceProvider {
-    // 视频封面
-    var cover: ImageProvider? { get }
-    // 播放/暂停状态.
-    var isPlaying: Bool { get }
-    // CZImgePreviewer 需要在 cell 离开屏幕时控制其暂停
+/// CZImagePreviewer 不关心视频是怎样播放的, 只要提供 playerLayer, 视频封面 等数据即可
+public protocol VideoProvider: ResourceProvider, AnyObject {
+    
+    /// 播放视图
+    var videoView: CZImagePreviewer.VideoView? { get }
+    
+    /// 播放动画时需要显示的图片
+    var displayAnimationActor: ImageProvider? { get }
+        
+    // CZImagePreviewer 需要监听 video size 的改变, 以便提供更好的 dismiss 动画效果
+    typealias VideoSizeProvider = (_ videoSize: CGSize) -> Void
+    // VideoProvider 应该在视频尺寸发生变化时调用此闭包告知 CZImagePreviewer
+    var videoSizeProvider: VideoSizeProvider? { get set }
+    
+    // CZImgePreviewer 需要在 cell 离开屏幕时控制其播放状态
     func play()
     func pause()
+    
+    /// cell 即将要离开画面了
+    func cellDidEndDisplay()
+    
+    /// 在这个方法里告诉 VideoProvider 实例, 可以对视频数据进行预加载了
+    func perload()
+}
+
+public extension CZImagePreviewer.VideoProvider {
+    func cellDidEndDisplay() {}
+    
+    /// 在这个方法里告诉 VideoProvider 实例, 可以对视频数据进行预加载了
+    func perload() {}
 }
 
 /*

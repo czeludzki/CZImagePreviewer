@@ -24,8 +24,14 @@ public class ImageResourceCollectionViewCell: CollectionViewCell {
     }
     
     private var isAnimatedResource: Bool = true
-    /// 拖拽事件发生时, 需要判断该由 imageView 或是 videoView 作为拖拽主角
+    
+    /// 拖拽事件发生时, 需要判断该由 animatedImageZoomingView 或是 tiledImageZoomingView 作为拖拽主角
     override var dragingActor: UIView? {
+        return self.isAnimatedResource ? self.animatedImageView : self.tiledImageView
+    }
+    
+    /// 让外部快速获取当前的 zoomingView
+    var zoomingView: ImageZoomingView {
         return self.isAnimatedResource ? self.animatedImageZoomingView : self.tiledImageZoomingView
     }
     
@@ -56,14 +62,14 @@ public class ImageResourceCollectionViewCell: CollectionViewCell {
         return ret
     }()
     
-    lazy var animatedImageZoomingView: ImageZoomingView = {
+    private lazy var animatedImageZoomingView: ImageZoomingView = {
         let zoomingScrollView = ImageZoomingView.init(self.animatedImageView)
         return zoomingScrollView
     }()
     
     lazy var tiledImageView: TiledImageView = TiledImageView.init()
     
-    lazy var tiledImageZoomingView: ImageZoomingView = {
+    private lazy var tiledImageZoomingView: ImageZoomingView = {
         let zoomingScrollView = ImageZoomingView.init(self.tiledImageView)
         return zoomingScrollView
     }()
@@ -129,5 +135,12 @@ extension ImageResourceCollectionViewCell {
         self.isAnimatedResource = image.isAnimatedImage
         self.tiledImageZoomingView.isHidden = self.isAnimatedResource
         self.animatedImageZoomingView.isHidden = !self.isAnimatedResource
+        if self.isAnimatedResource {
+            self.animatedImageView.image = image
+            self.animatedImageZoomingView.updateScrollViewConfiguration()
+        }else{
+            self.tiledImageView.image = image
+            self.tiledImageZoomingView.updateScrollViewConfiguration()
+        }
     }
 }

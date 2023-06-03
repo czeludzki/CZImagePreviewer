@@ -45,10 +45,7 @@ class VideoConsole: AccessoryView {
         return res
     }()
     
-    lazy var asshole: UIActivityIndicatorView = {
-        let res = UIActivityIndicatorView.init(style: UIActivityIndicatorView.Style.white)
-        return res
-    }()
+    lazy var asshole: UIActivityIndicatorView = .init(style: .large)
     
     override init(frame: CGRect) {
         super.init(frame: .zero)

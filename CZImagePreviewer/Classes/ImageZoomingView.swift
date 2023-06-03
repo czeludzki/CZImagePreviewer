@@ -38,17 +38,12 @@ public class ImageZoomingView: UIView {
     public init(_ target: ImageZoomingViewTarget) {
         self.target = target
         super.init(frame: .zero)
-        self.initSetup()
+        self.scrollView.addSubview(target)
+        self.addSubview(self.scrollView)
+        self.scrollView.snp.makeConstraints { $0.edges.equalToSuperview() }
     }
     
     required init?(coder: NSCoder) { fatalError("init(coder:) has not been implemented") }
-    
-    func initSetup() {
-        self.addSubview(self.scrollView)
-        self.scrollView.snp.makeConstraints { make in
-            make.edges.equalToSuperview()
-        }
-    }
     
     public override func layoutSubviews() {
         super.layoutSubviews()

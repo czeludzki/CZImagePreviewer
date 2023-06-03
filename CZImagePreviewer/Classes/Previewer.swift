@@ -34,7 +34,6 @@ open class Previewer: UIViewController {
     public private(set) var currentIdx = -1 {
         didSet {
             if oldValue != -1, oldValue != currentIdx {
-                print("currentIdx = \(currentIdx)")
                 self.updateConsole(for: currentIdx)
                 // 通知代理
                 self.delegate?.imagePreviewer(self, indexDidChangedTo: currentIdx, fromOldIndex: oldValue)
@@ -48,8 +47,9 @@ open class Previewer: UIViewController {
     lazy private var animatedTransitioning_display: AnimatedTransitioning = AnimatedTransitioning(transitionFor: .present)
     /// dismiss 转场动画处理
     lazy private var animatedTransitioning_dismiss: AnimatedTransitioning = AnimatedTransitioning(transitionFor: .dismiss)
+    
     /// 记录图片弹出的容器, 用于 diaplay 时的动画
-    private weak var imageTriggerContainer: UIView?
+    private weak var triggerContainer: UIView?
     
     private lazy var collectionViewFlowLayout: CollectionViewFlowLayout = {
         let flowLayout = CollectionViewFlowLayout.init()
@@ -76,7 +76,7 @@ open class Previewer: UIViewController {
     }()
     
     private lazy var tap: UITapGestureRecognizer = {
-        let tap = UITapGestureRecognizer.init(target: self, action: #selector(tapOnView(sender:)))
+        let tap = UITapGestureRecognizer.init(target: self, action: #selector(self.tapOnView(sender:)))
         return tap
     }()
     
@@ -84,19 +84,19 @@ open class Previewer: UIViewController {
     private var animationActorDefaultSize: CGSize = .zero
     private var animationActorDefaultCenter: CGPoint = .zero
     private lazy var pan: UIPanGestureRecognizer = {
-        let pan = UIPanGestureRecognizer.init(target: self, action: #selector(panOnView(sender:)))
+        let pan = UIPanGestureRecognizer.init(target: self, action: #selector(self.panOnView(sender:)))
         pan.delegate = self
         return pan
     }()
     
     private lazy var doubleTap: UITapGestureRecognizer = {
-        let doubleTap = UITapGestureRecognizer.init(target: self, action: #selector(doubleTapOnView(sender:)))
+        let doubleTap = UITapGestureRecognizer.init(target: self, action: #selector(self.doubleTapOnView(sender:)))
         doubleTap.numberOfTapsRequired = 2
         return doubleTap
     }()
     
     private lazy var longPress: UILongPressGestureRecognizer = {
-        let longPress = UILongPressGestureRecognizer.init(target: self, action: #selector(longPressOnView(sender:)))
+        let longPress = UILongPressGestureRecognizer.init(target: self, action: #selector(self.longPressOnView(sender:)))
         return longPress
     }()
     
@@ -178,14 +178,12 @@ extension Previewer {
     }
     
     @objc func doubleTapOnView(sender: UITapGestureRecognizer) {
-        guard let cell = self.collectionView.cellForItem(at: IndexPath(item: self.currentIdx, section: 0)) as? CZImagePreviewer.ImageResourceCollectionViewCell,
-            let actor = cell.dragingActor as? ImageZoomingView else { return }
-        
-        if actor.scrollView.zoomScale != 1 {
-            actor.clearZooming()
+        guard let cell = self.collectionView.cellForItem(at: IndexPath(item: self.currentIdx, section: 0)) as? CZImagePreviewer.ImageResourceCollectionViewCell else { return }
+        if cell.zoomingView.scrollView.zoomScale != 1 {
+            cell.zoomingView.clearZooming()
         }else{
-            let touchOn = sender.location(in: actor.target)
-            actor.zoom(to: .init(x: touchOn.x, y: touchOn.y, width: 1, height: 1), animated: true)
+            let touchOn = sender.location(in: cell.zoomingView.target)
+            cell.zoomingView.zoom(to: .init(x: touchOn.x, y: touchOn.y, width: 1, height: 1), animated: true)
         }
     }
     
@@ -198,7 +196,6 @@ extension Previewer {
         let translationInView = sender.translation(in: self.view)
         var process = translationInView.y / self.view.bounds.size.height
         process = min(1.0, max(0.0, process))
-        print(process, translationInView.y)
         
         switch sender.state {
         case .began:
@@ -262,7 +259,7 @@ extension Previewer {
     ///   - index: 告知 Previewer 你点击的图片, 位于数据源的索引
     ///   - controller: 在哪个控制器进行模态弹框, 如 nil, 则在根控制器尝试弹框操作
     public func display(fromImageContainer container: UIView? = nil, presentingController: UIViewController? = nil, current index: Int = 0) {
-
+        
         self.currentIdx = index
         
         self.delegate?.imagePreviewer(self, willDisplayAtIndex: index)
@@ -271,7 +268,7 @@ extension Previewer {
             self.delegate?.imagePreviewer(self, didDisplayAtIndex: index)
         })
         
-        self.imageTriggerContainer = container
+        self.triggerContainer = container
     }
     
     public func dismiss(completion: (() -> Void)? = nil) {
@@ -339,11 +336,6 @@ extension Previewer: UICollectionViewDelegateFlowLayout, UICollectionViewDataSou
     
     public func collectionView(_ collectionView: UICollectionView, willDisplay cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
         guard let cell = cell as? CollectionViewCell else { return }
-        // 如果是 Video 类型, 尝试从 dataSource 中取得 playLayer
-        if let cell = cell as? CZImagePreviewer.VideoResourceCollectionViewCell {
-            cell.videoLayer = self.dataSource?.imagePreviewer(self, videoLayerForCell: cell, at: indexPath.item)
-            self.dataSource?.imagePreviewer(self, videoSizeForCell: cell, at: indexPath.item, videoSizeSettingHandler: cell.videoSizeSettingHandler)
-        }
         // 获取辅助视图
         cell.accessoryView = self.dataSource?.imagePreviewer(self, accessoryViewForCell: cell, at: indexPath.item)
     }
@@ -358,10 +350,10 @@ extension Previewer: UICollectionViewDelegateFlowLayout, UICollectionViewDataSou
         indexPaths.forEach {
             let resource: ResourceProvider? = self.dataSource?.imagePreviewer(self, resourceForItemAtIndex: $0.item)
             if let resource = resource as? VideoProvider {
-                resource.cover?.loadImage(options: nil, progress: nil, completion: nil)
+                resource.perload()
             }
             if let resource = resource as? ImageProvider {
-                resource.loadImage(options: nil, progress: nil, completion: nil)
+//                resource.loadImage(options: [.processor(ResizingImageProcessor(referenceSize: self.view.bounds.size, mode: .aspectFit))], progress: nil, completion: nil)
             }
         }
     }
@@ -470,7 +462,11 @@ extension Previewer: AnimatedTransitioningContentProvider {
     // 提供一个视图, 作为展示时的转场动画发生时的动画元素
     func transitioningElementForDisplay(animatedTransitioning: AnimatedTransitioning) -> ElementForDisplayTransition {
         let resource = self.dataSource?.imagePreviewer(self, resourceForItemAtIndex: self.currentIdx)
-        return ElementForDisplayTransition(self.imageTriggerContainer, resource)
+        var imageProvider: ImageProvider? = resource as? ImageProvider
+        if let viderProvider = resource as? VideoProvider {
+            imageProvider = viderProvider.displayAnimationActor
+        }
+        return ElementForDisplayTransition(self.triggerContainer, imageProvider)
     }
     
     func transitioningElementForDismiss(animatedTransitioning: AnimatedTransitioning) -> ElementForDismissTransition {

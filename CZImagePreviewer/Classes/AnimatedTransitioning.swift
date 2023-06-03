@@ -12,7 +12,7 @@ import Kingfisher
 protocol AnimatedTransitioningContentProvider: UIViewController {
 
     /// 要求取得展示时的转场关键元素
-    typealias ElementForDisplayTransition = (container: UIView?, resource: ResourceProvider?)
+    typealias ElementForDisplayTransition = (container: UIView?, resource: ImageProvider?)
     func transitioningElementForDisplay(animatedTransitioning: AnimatedTransitioning) -> ElementForDisplayTransition
     
     /// 要求取得消失时的转场关键元素
@@ -33,7 +33,7 @@ class AnimatedTransitioning: NSObject, UIViewControllerAnimatedTransitioning {
         self.transitionFor = transitionFor
     }
     
-    func transitionDuration(using transitionContext: UIViewControllerContextTransitioning?) -> TimeInterval { 3 }
+    func transitionDuration(using transitionContext: UIViewControllerContextTransitioning?) -> TimeInterval { 0.3 }
     
     func animateTransition(using transitionContext: UIViewControllerContextTransitioning) {
         if self.transitionFor == .dismiss {
@@ -49,9 +49,7 @@ class AnimatedTransitioning: NSObject, UIViewControllerAnimatedTransitioning {
         
         guard let keyWindow = Previewer.keyWindow,
               let toView = transitionContext.view(forKey: .to),
-              let toVC = transitionContext.viewController(forKey: .to) as? AnimatedTransitioningContentProvider,
-              let elementResource = toVC.transitioningElementForDisplay(animatedTransitioning: self).resource
-        else {
+              let toVC = transitionContext.viewController(forKey: .to) as? AnimatedTransitioningContentProvider else {
             transitionContext.completeTransition(!transitionContext.transitionWasCancelled)
             return
         }
@@ -59,7 +57,8 @@ class AnimatedTransitioning: NSObject, UIViewControllerAnimatedTransitioning {
         toView.frame = transitionContext.containerView.bounds
         transitionContext.containerView.addSubview(toView)
         
-        guard let elementContainer = toVC.transitioningElementForDisplay(animatedTransitioning: self).container else {
+        let transitioningElementForDisplay = toVC.transitioningElementForDisplay(animatedTransitioning: self)
+        guard let elementContainer = transitioningElementForDisplay.container, let resource = transitioningElementForDisplay.resource else {
             toView.alpha = 0
             UIView.animate(withDuration: self.transitionDuration(using: transitionContext), delay: 0, options: .curveEaseOut) {
                 toView.alpha = 1
@@ -69,7 +68,7 @@ class AnimatedTransitioning: NSObject, UIViewControllerAnimatedTransitioning {
             return
         }
 
-        // 计算 targetContainer 在keyWindow中的位置
+        // 计算 targetContainer 在 keyWindow 中的位置
         let targetFrame = elementContainer.convert(elementContainer.bounds, to: keyWindow)
         // 如果该视图不在屏幕中, 执行 planB 动画
         if !keyWindow.bounds.contains(targetFrame) {
@@ -77,46 +76,27 @@ class AnimatedTransitioning: NSObject, UIViewControllerAnimatedTransitioning {
             return
         }
         
-        // 创建 UIImageView 作为动画关键元素
-        let imageView = UIImageView.init(frame: .zero)
-        imageView.clipsToBounds = true
-        imageView.backgroundColor = .clear
-        imageView.contentMode = .scaleAspectFit
-        
-        // UIImageView 加载图片,
-        // 这里考虑一下对传入的 elementContainer 进行截图
-//        let imageView = elementContainer.snapshotView(afterScreenUpdates: false)
-        if let elementResource = elementResource as? ImageProvider {
-            elementResource.loadImage(options: nil, progress: nil) {
-                if case let .success(img) = $0 {
-                    imageView.image = img
-                }
-            }
+        // 创建动画关键元素
+        let actor = UIImageView()
+        actor.contentMode = .scaleAspectFit
+        resource.loadImage(options: [.processor(ResizingImageProcessor(referenceSize: targetFrame.size, mode: .aspectFill))], progress: nil) {
+            guard case let .success(img) = $0 else { return }
+            actor.image = img
         }
         
-        if let elementResource = elementResource as? VideoProvider {
-            elementResource.cover?.loadImage(options: nil, progress: nil) {
-                if case let .success(img) = $0 {
-                    imageView.image = img
-                }
-            }
-        }
-        
-        // 计算图片以 scaleAspectFiting 的模式显示在屏幕上的实际大小
-        let scaleAspectFitingSize = imageView.image?.size.scaleAspectFiting(toSize: transitionContext.containerView.bounds.size)
-        transitionContext.containerView.addSubview(imageView)
+        transitionContext.containerView.addSubview(actor)
         // 将触发视图frame赋值到imageView
-        imageView.frame = targetFrame
+        actor.frame = targetFrame
         toView.isHidden = true
         transitionContext.containerView.backgroundColor = .clear
         // 开始动画
         UIView.animate(withDuration: self.transitionDuration(using: transitionContext)) {
-            imageView.frame = CGRect.init(origin: CGPoint.zero, size: scaleAspectFitingSize ?? transitionContext.containerView.bounds.size)
-            imageView.center = transitionContext.containerView.center
+            actor.frame = CGRect.init(origin: CGPoint.zero, size: transitionContext.containerView.bounds.size)
+            actor.center = transitionContext.containerView.center
             transitionContext.containerView.backgroundColor = .black
         } completion: { finish in
             toView.isHidden = false
-            imageView.removeFromSuperview()
+            actor.removeFromSuperview()
             transitionContext.containerView.backgroundColor = .clear
             transitionContext.completeTransition(!transitionContext.transitionWasCancelled)
         }
@@ -156,8 +136,8 @@ class AnimatedTransitioning: NSObject, UIViewControllerAnimatedTransitioning {
         }
         
         // 对 targetFrame 进行微调, 防止当 animationActor.superview 是 scrollView 时, targetFrame.origin 不准确
-//        targetFrame.origin.x += animationActor.superview?.bounds.origin.x ?? 0
-//        targetFrame.origin.y += animationActor.superview?.bounds.origin.y ?? 0
+        targetFrame.origin.x += animationActor.superview?.bounds.origin.x ?? 0
+        targetFrame.origin.y += animationActor.superview?.bounds.origin.y ?? 0
         
         UIView.animate(withDuration: self.transitionDuration(using: transitionContext)) {
             animationActor.frame = targetFrame

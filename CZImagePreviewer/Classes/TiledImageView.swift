@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import Kingfisher
 
 class TiledLayer: CATiledLayer {
 //    override class func fadeDuration() -> CFTimeInterval { 0.1 }

@@ -13,11 +13,17 @@ import CZImagePreviewer
 class ExampelImageCollectionViewCell: UICollectionViewCell {
     @IBOutlet weak var resourceTypeLabel: UILabel!
     @IBOutlet var imageView: UIImageView!
+    
+    @IBOutlet weak var asshole: UIActivityIndicatorView!
+    
     var image: ImageProvider? {
         didSet {
-            oldValue?.cancel()
-            image?.loadImage(options: [.processor(ResizingImageProcessor(referenceSize: self.bounds.size))], progress: nil, completion: { [weak self] result in
+            self.asshole.isHidden = false
+            self.imageView.isHidden = true
+            image?.loadImage(options: [.processor(ResizingImageProcessor(referenceSize: self.bounds.size, mode: .aspectFill))], progress: nil, completion: { [weak self] result in
                 self?.imageView.image = result.image
+                self?.asshole.isHidden = true
+                self?.imageView.isHidden = false
             })
         }
     }
