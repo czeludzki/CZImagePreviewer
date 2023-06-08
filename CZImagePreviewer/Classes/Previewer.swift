@@ -50,6 +50,8 @@ open class Previewer: UIViewController {
     
     /// 记录图片弹出的容器, 用于 diaplay 时的动画
     private weak var triggerContainer: UIView?
+    /// display 动画发生时需要的图片资源
+    private var triggerSource: UIImage?
     
     private lazy var collectionViewFlowLayout: CollectionViewFlowLayout = {
         let flowLayout = CollectionViewFlowLayout.init()
@@ -109,10 +111,6 @@ open class Previewer: UIViewController {
     
     required public init?(coder: NSCoder) { fatalError("init(coder:) has not been implemented") }
     
-#if DEBUG
-    deinit { print(self, "deinit") }
-#endif
-    
     public override func viewDidLoad() {
         super.viewDidLoad()
         self.view.backgroundColor = .black
@@ -168,7 +166,7 @@ extension Previewer {
         let cell = self.collectionView.cellForItem(at: IndexPath(item: self.currentIdx, section: 0)) as? CZImagePreviewer.CollectionViewCell
         cell?.accessoryView?.isHidden = true
         self.cus_console?.isHidden = true
-        self.dismiss()
+        self.dismiss(animated: true)
     }
     
     @objc func longPressOnView(sender: UILongPressGestureRecognizer) {
@@ -183,7 +181,7 @@ extension Previewer {
             cell.zoomingView.clearZooming()
         }else{
             let touchOn = sender.location(in: cell.zoomingView.target)
-            cell.zoomingView.zoom(to: .init(x: touchOn.x, y: touchOn.y, width: 1, height: 1), animated: true)
+            cell.zoomingView.zoom(to: .init(x: touchOn.x, y: touchOn.y, width: 100, height: 100), animated: true)
         }
     }
     
@@ -203,15 +201,17 @@ extension Previewer {
             self.animationActorDefaultSize = animationActor.frame.size
             self.cus_console?.isHidden = true
             cell.accessoryView?.isHidden = true
+            cell.isDismissGustureDraging = true
             self.isPaning = true
         case .changed:
             animationActor.frame.size = CGSize(width: self.animationActorDefaultSize.width * (1 - process), height: self.animationActorDefaultSize.height * (1 - process))
             animationActor.center = CGPoint(x: self.animationActorDefaultCenter.x + translationInView.x, y: self.animationActorDefaultCenter.y + translationInView.y)
             self.view.backgroundColor = UIColor.init(red: 0, green: 0, blue: 0, alpha: 1 - process)
-        case .ended, .cancelled:
+        case .ended:
+            cell.isDismissGustureDraging = false
             let velocity = sender.velocity(in: self.view)
             if velocity.y > 0 && (self.delegate?.imagePreviewer(self, shouldDismissWithGesture: sender, at: self.currentIdx) ?? true) {
-                self.dismiss()
+                self.dismiss(animated: true)
             }else{
                 discardDismissOperation()
             }
@@ -221,6 +221,7 @@ extension Previewer {
         
         // 放弃 dismiss 操作
         func discardDismissOperation() {
+            cell.isDismissGustureDraging = false
             UIView.animate(withDuration: 0.3) {
                 animationActor.frame.size = self.animationActorDefaultSize
                 animationActor.center = self.animationActorDefaultCenter
@@ -255,10 +256,12 @@ extension Previewer {
     /// - Parameters:
     ///   - container: 告知 Previewer 点击了哪个图片的容器以触发此方法的, 以便进行弹出 Previewer 的动画.
     ///   如为nil, 则通过默认的动画进行展示 Previewer
+    ///   - fromSource: 在展示动画发生时, 为了避免一些大图或网络资源加载较慢导致卡顿, 可选择手动展示动画需要的图片.
+    ///   如果传 nil, 则根据传入的 current index 从 dataSource 中获取执行动画时需要的资源
     ///   注意: 目前只支持 UIImageView 类型, 即使可以传入 UIView 及其子类, 但只对 UIImageView 做处理, 其他类型都只执行默认的动画
     ///   - index: 告知 Previewer 你点击的图片, 位于数据源的索引
     ///   - controller: 在哪个控制器进行模态弹框, 如 nil, 则在根控制器尝试弹框操作
-    public func display(fromImageContainer container: UIView? = nil, presentingController: UIViewController? = nil, current index: Int = 0) {
+    public func display(fromImageContainer container: UIView? = nil, fromSource source: UIImage? = nil, presentingController: UIViewController? = nil, current index: Int = 0) {
         
         self.currentIdx = index
         
@@ -268,14 +271,15 @@ extension Previewer {
             self.delegate?.imagePreviewer(self, didDisplayAtIndex: index)
         })
         
+        self.triggerSource = source
         self.triggerContainer = container
     }
     
-    public func dismiss(completion: (() -> Void)? = nil) {
+    open override func dismiss(animated flag: Bool, completion: (() -> Void)? = nil) {
         let cell = self.collectionView.cellForItem(at: IndexPath(item: self.currentIdx, section: 0)) as? CZImagePreviewer.CollectionViewCell
         self.cus_console?.isHidden = true
         cell?.accessoryView?.isHidden = true
-        self.dismiss(animated: true) {
+        super.dismiss(animated: flag) {
             cell?.accessoryView?.isHidden = false
             self.cus_console?.isHidden = false
             self.delegate?.imagePreviewerDidDismiss(self)
@@ -336,6 +340,7 @@ extension Previewer: UICollectionViewDelegateFlowLayout, UICollectionViewDataSou
     
     public func collectionView(_ collectionView: UICollectionView, willDisplay cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
         guard let cell = cell as? CollectionViewCell else { return }
+        cell.willDisplay()
         // 获取辅助视图
         cell.accessoryView = self.dataSource?.imagePreviewer(self, accessoryViewForCell: cell, at: indexPath.item)
     }
@@ -353,7 +358,7 @@ extension Previewer: UICollectionViewDelegateFlowLayout, UICollectionViewDataSou
                 resource.perload()
             }
             if let resource = resource as? ImageProvider {
-//                resource.loadImage(options: [.processor(ResizingImageProcessor(referenceSize: self.view.bounds.size, mode: .aspectFit))], progress: nil, completion: nil)
+                resource.loadImage(options: [.processor(ResizingImageProcessor(referenceSize: UIScreen.main.bounds.size, mode: .aspectFit))], progress: nil, completion: nil)
             }
         }
     }
@@ -465,6 +470,9 @@ extension Previewer: AnimatedTransitioningContentProvider {
         var imageProvider: ImageProvider? = resource as? ImageProvider
         if let viderProvider = resource as? VideoProvider {
             imageProvider = viderProvider.displayAnimationActor
+        }
+        if let triggerSource = self.triggerSource {
+            imageProvider = triggerSource
         }
         return ElementForDisplayTransition(self.triggerContainer, imageProvider)
     }

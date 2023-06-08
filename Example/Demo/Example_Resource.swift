@@ -66,6 +66,8 @@ extension ExampleViewController {
         "file://" + Bundle.main.path(forResource: "gif0", ofType: "gif")!,
         "file://" + Bundle.main.path(forResource: "gif1", ofType: "gif")!,
         "file://" + Bundle.main.path(forResource: "gif2", ofType: "gif")!,
+        "file://" + Bundle.main.path(forResource: "small0", ofType: "jpg")!,
+        "file://" + Bundle.main.path(forResource: "small1", ofType: "jpg")!,
         "file://" + Bundle.main.path(forResource: "gif3", ofType: "gif")!,
         "file://" + Bundle.main.path(forResource: "gif4", ofType: "gif")!,
         "file://" + Bundle.main.path(forResource: "gif5", ofType: "gif")!

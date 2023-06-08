@@ -25,6 +25,13 @@ public class ImageResourceCollectionViewCell: CollectionViewCell {
     
     private var isAnimatedResource: Bool = true
     
+    // dismiss 手势发生时, 隐藏 tiledImageView
+    override var isDismissGustureDraging: Bool {
+        didSet {
+            self.tiledImageView.tiledImageView?.isHidden = self.isDismissGustureDraging
+        }
+    }
+    
     /// 拖拽事件发生时, 需要判断该由 animatedImageZoomingView 或是 tiledImageZoomingView 作为拖拽主角
     override var dragingActor: UIView? {
         return self.isAnimatedResource ? self.animatedImageView : self.tiledImageView
@@ -38,19 +45,6 @@ public class ImageResourceCollectionViewCell: CollectionViewCell {
     private var imageProvider: ImageProvider? {
         guard let imageProvider = self.item?.resource as? ImageProvider else { return nil }
         return imageProvider
-    }
-    
-    override var item: CellItem? {
-        didSet {
-            self.tiledImageView.image = nil
-            self.animatedImageView.image = nil
-            guard let resource = self.item?.resource as? ImageProvider else { return }
-            resource.loadImage(options: nil) { [weak self] receivedSize, totalSize in
-                self?.progress(receivedSize: receivedSize, expectedSize: totalSize)
-            } completion: { [weak self] result in
-                self?.completion(result: result)
-            }
-        }
     }
     
     // Subviews
@@ -67,7 +61,7 @@ public class ImageResourceCollectionViewCell: CollectionViewCell {
         return zoomingScrollView
     }()
     
-    lazy var tiledImageView: TiledImageView = TiledImageView.init()
+    lazy var tiledImageView: TiledImageViewWrapper = TiledImageViewWrapper.init()
     
     private lazy var tiledImageZoomingView: ImageZoomingView = {
         let zoomingScrollView = ImageZoomingView.init(self.tiledImageView)
@@ -84,26 +78,35 @@ public class ImageResourceCollectionViewCell: CollectionViewCell {
     }
     
     required init?(coder: NSCoder) { fatalError("init(coder:) has not been implemented") }
-    
-    deinit { print(self, "DEINIT") }
-    
-    public override func layoutSubviews() {
-        super.layoutSubviews()
-    }
-    
+        
     public func clearZooming(animate: Bool = true) {
         self.animatedImageZoomingView.clearZooming(animate: animate)
         self.tiledImageZoomingView.clearZooming(animate: animate)
     }
     
     public func zoom(rect: CGRect, animate: Bool = true) {
-        guard let actor = self.dragingActor as? ImageZoomingView else { return }
-        actor.zoom(to: rect, animated: animate)
+        self.animatedImageZoomingView.zoom(to: rect, animated: animate)
+        self.tiledImageZoomingView.zoom(to: rect, animated: animate)
+    }
+    
+    /// 加载内容
+    override func willDisplay() {
+        super.willDisplay()
+        guard let resource = self.item?.resource as? ImageProvider else { return }
+        resource.loadImage(options: nil) { [weak self] receivedSize, totalSize in
+            self?.progress(receivedSize: receivedSize, expectedSize: totalSize)
+        } completion: { [weak self] result in
+            self?.completion(result: result)
+        }
     }
     
     override func didEndDisplay() {
         super.didEndDisplay()
-        self.imageProvider?.cancel()
+        self.tiledImageView.clearImage()
+        self.animatedImageView.image = nil
+        self.tiledImageZoomingView.clearZooming(animate: false)
+        self.animatedImageZoomingView.clearZooming(animate: false)
+        self.imageProvider?.downloadCancel()
     }
 }
 
@@ -119,7 +122,7 @@ extension ImageResourceCollectionViewCell {
     // 图片加载结果
     func completion(result: Result<UIImage, KingfisherError>) {
         guard let item = self.item else { return }
-        self.updateImage(result.image)
+        self.display(image: result.image)
         if case .success = result {
             self.delegate?.collectionViewCell(self, resourceLoadingStateDidChanged: .default, idx: item.idx, accessoryView: self.accessoryView)
         }else{
@@ -128,10 +131,8 @@ extension ImageResourceCollectionViewCell {
     }
     
     // 更新显示
-    func updateImage(_ image: UIImage?) {
-        guard let image = image else {
-            return
-        }
+    func display(image: UIImage?) {
+        guard let image = image else { return }
         self.isAnimatedResource = image.isAnimatedImage
         self.tiledImageZoomingView.isHidden = self.isAnimatedResource
         self.animatedImageZoomingView.isHidden = !self.isAnimatedResource
@@ -139,7 +140,7 @@ extension ImageResourceCollectionViewCell {
             self.animatedImageView.image = image
             self.animatedImageZoomingView.updateScrollViewConfiguration()
         }else{
-            self.tiledImageView.image = image
+            self.tiledImageView.display(imageProvider: self.imageProvider, image: image)
             self.tiledImageZoomingView.updateScrollViewConfiguration()
         }
     }

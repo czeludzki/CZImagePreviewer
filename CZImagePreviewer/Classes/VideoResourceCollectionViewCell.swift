@@ -29,18 +29,6 @@ class VideoResourceCollectionViewCell: CollectionViewCell {
         return videoProvider
     }
     
-    override var item: CellItem? {
-        didSet {
-            self.videoProvider?.pause()
-            // 获取视频尺寸 及 监听其变化
-            self.videoProvider?.videoSizeProvider = { [weak self] size in
-                self?.videoSize = size
-            }
-            // 获取视频内容视图
-            self.videoView = self.videoProvider?.videoView
-        }
-    }
-    
     /// 记录视频尺寸, 在闭包 var videoSizeSettingHandler 被调用时赋值
     public private(set) var videoSize: CGSize = .zero {
         didSet {
@@ -70,13 +58,23 @@ class VideoResourceCollectionViewCell: CollectionViewCell {
     
     required init?(coder: NSCoder) { fatalError("init(coder:) has not been implemented") }
     
-    deinit { print("Cell销毁了") }
-    
     /// 拖拽事件发生时, 拖拽动画主角
     override var dragingActor: UIView? { self.videoView }
 
+    /// 加载内容
+    override func willDisplay() {
+        super.willDisplay()
+        // 获取视频尺寸 及 监听其变化
+        self.videoProvider?.videoSizeProvider = { [weak self] size in
+            self?.videoSize = size
+        }
+        // 获取视频内容视图
+        self.videoView = self.videoProvider?.videoView
+    }
+    
     // 在 cell 离开屏幕后调用
     override func didEndDisplay() {
+        super.didEndDisplay()
         self.videoProvider?.pause()
     }
 }

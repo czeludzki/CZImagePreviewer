@@ -42,6 +42,7 @@
 		403213EA2572E0BC943BBEDAEF49761C /* ConstraintDescription.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7A75B7DD7F756CB09D159FF6678E301E /* ConstraintDescription.swift */; };
 		404D9F351B30E592A9DF8AA4B0A32B8E /* ImageDataProcessor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 169B9DECC72B315174A8EA7DB1BE1F54 /* ImageDataProcessor.swift */; };
 		4282B6F4B67AF44752E96990D2A2F50E /* SnapKit-umbrella.h in Headers */ = {isa = PBXBuildFile; fileRef = 73857FBF2149A05F9A30079610C05AB8 /* SnapKit-umbrella.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		4345EC572A2C93E500E5A1F9 /* TiledImageViewWrapper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4345EC562A2C93E500E5A1F9 /* TiledImageViewWrapper.swift */; };
 		434A79992A27384300CF54B6 /* ImageZoomingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 434A79972A27384300CF54B6 /* ImageZoomingView.swift */; };
 		434A799A2A27384300CF54B6 /* TiledImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 434A79982A27384300CF54B6 /* TiledImageView.swift */; };
 		434A79B32A2878D800CF54B6 /* VideoResourceCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 434A79B22A2878D800CF54B6 /* VideoResourceCollectionViewCell.swift */; };
@@ -214,6 +215,7 @@
 		3DB2FF2D74B4072F757E191846D7E50D /* ImagePrefetcher.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = ImagePrefetcher.swift; path = Sources/Networking/ImagePrefetcher.swift; sourceTree = "<group>"; };
 		4207BEE6DFA63E5CF69828DD467E9674 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS14.0.sdk/System/Library/Frameworks/Foundation.framework; sourceTree = DEVELOPER_DIR; };
 		42BB0E11D569F6DBA939DE4DE48675F1 /* CZImagePreviewer-prefix.pch */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "CZImagePreviewer-prefix.pch"; sourceTree = "<group>"; };
+		4345EC562A2C93E500E5A1F9 /* TiledImageViewWrapper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = TiledImageViewWrapper.swift; path = CZImagePreviewer/Classes/TiledImageViewWrapper.swift; sourceTree = "<group>"; };
 		434A79972A27384300CF54B6 /* ImageZoomingView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = ImageZoomingView.swift; path = CZImagePreviewer/Classes/ImageZoomingView.swift; sourceTree = "<group>"; };
 		434A79982A27384300CF54B6 /* TiledImageView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = TiledImageView.swift; path = CZImagePreviewer/Classes/TiledImageView.swift; sourceTree = "<group>"; };
 		434A79B22A2878D800CF54B6 /* VideoResourceCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = VideoResourceCollectionViewCell.swift; path = CZImagePreviewer/Classes/VideoResourceCollectionViewCell.swift; sourceTree = "<group>"; };
@@ -443,6 +445,7 @@
 				434A79972A27384300CF54B6 /* ImageZoomingView.swift */,
 				434A79B62A28792700CF54B6 /* Views+ImageZoomingViewTarget.swift */,
 				434A79982A27384300CF54B6 /* TiledImageView.swift */,
+				4345EC562A2C93E500E5A1F9 /* TiledImageViewWrapper.swift */,
 				AE1062980D0FB235CC1C9BCAFD8F3840 /* AccessoryView.swift */,
 				0A49845E42E7B7AFB5512D5F1DF36DDA /* AnimatedTransitioning.swift */,
 				F5B263DA6CA03850E4163A906DEF0DB9 /* Helper.swift */,
@@ -1020,6 +1023,7 @@
 				9238A15E5F6249391C365C150E6CBAC5 /* ResourceProvider.swift in Sources */,
 				434A79992A27384300CF54B6 /* ImageZoomingView.swift in Sources */,
 				564401500B0494D3D31E4537A2CCDDC7 /* Helper.swift in Sources */,
+				4345EC572A2C93E500E5A1F9 /* TiledImageViewWrapper.swift in Sources */,
 				434A79B92A28792700CF54B6 /* CollectionViewCell.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

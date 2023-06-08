@@ -11,10 +11,12 @@ import UIKit
 public protocol ImageZoomingViewTarget: UIView {
     var contentSize: CGSize? { get }
     func imageZoomingView(_ view: ImageZoomingView, maximumZoomScaleDidUpdate scale: CGFloat)
+    func imageZoomingViewDidZoom(_ view: ImageZoomingView)
 }
 
 public extension ImageZoomingViewTarget {
     func imageZoomingView(_ view: ImageZoomingView, maximumZoomScaleDidUpdate scale: CGFloat) {}
+    func imageZoomingViewDidZoom(_ view: ImageZoomingView) {}
 }
 
 public class ImageZoomingView: UIView {
@@ -45,11 +47,6 @@ public class ImageZoomingView: UIView {
     
     required init?(coder: NSCoder) { fatalError("init(coder:) has not been implemented") }
     
-    public override func layoutSubviews() {
-        super.layoutSubviews()
-        self.updateScrollViewConfiguration()
-    }
-    
     func clearZooming(animate: Bool = true) {
         self.scrollView.setZoomScale(1, animated: animate)
     }
@@ -57,6 +54,29 @@ public class ImageZoomingView: UIView {
     func zoom(to: CGRect, animated: Bool) {
         self.scrollView.zoom(to: to, animated: animated)
     }
+    
+    var orientation: UIInterfaceOrientation? {
+        didSet {
+            // 当屏幕方向发生改变时, 更新 scrollView 配置
+            if oldValue != self.orientation {
+                self.clearZooming(animate: false)
+                self.updateScrollViewConfiguration()
+            }
+        }
+    }
+    
+    // layoutSubview 时记录当前屏幕方向
+    public override func layoutSubviews() {
+        self.orientation = {
+            if #available(iOS 13.0, *) {
+                return self.window?.windowScene?.interfaceOrientation
+            } else {
+                return UIApplication.shared.statusBarOrientation
+            }
+        }()
+        super.layoutSubviews()
+    }
+    
 }
 
 extension ImageZoomingView {
@@ -111,6 +131,7 @@ extension ImageZoomingView: UIScrollViewDelegate {
     public func viewForZooming(in scrollView: UIScrollView) -> UIView? { self.target }
     
     public func scrollViewDidZoom(_ scrollView: UIScrollView) {
+        self.target.imageZoomingViewDidZoom(self)
         self.keepCentral()
     }
 }

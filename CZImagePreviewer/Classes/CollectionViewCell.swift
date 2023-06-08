@@ -25,5 +25,7 @@ public class CollectionViewCell: UICollectionViewCell {
     weak var delegate: CollectionViewCellDelegate?
     // 在发生拖拽dismiss事件时, 执行拖拽手势的响应的主角及动画主角. 子类重写
     var dragingActor: UIView? { nil }
+    var isDismissGustureDraging: Bool = false
+    func willDisplay() {}
     func didEndDisplay() {}
 }

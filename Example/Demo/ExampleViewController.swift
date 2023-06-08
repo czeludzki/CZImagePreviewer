@@ -8,13 +8,14 @@
 
 import UIKit
 import CZImagePreviewer
+import Kingfisher
 
 class ExampleViewController: UIViewController {
     
     lazy var dataSources: [CZImagePreviewer.ResourceProvider] = {
-        let res = Self.resourcePaths().reduce(into: [CZImagePreviewer.ResourceProvider]()) { partialResult, path in
+        var res = Self.resourcePaths().reduce(into: [CZImagePreviewer.ResourceProvider]()) { partialResult, path in
             if (path as NSString).pathExtension == "mp4" {
-                // 从 Self.imagePaths 中随机抽取一个元素来充当视频封面图
+                // 从 Self.imagePaths 中随机选择一个元素来充当视频封面图
                 let idx = Int.random(in: 0...Self.imagePaths.count - 1)
                 let cover = Self.imagePaths[idx]
                 // 组建 VideoResource
@@ -24,6 +25,7 @@ class ExampleViewController: UIViewController {
                 partialResult.append(path)
             }
         }
+        print(res)
         return res
     }()
     
@@ -34,13 +36,6 @@ class ExampleViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view, typically from a nib.
-        
-//        let imgView = ImageZoomingView.init(.init(contentsOfFile: Bundle.main.path(forResource: "largeImg1", ofType: "jpg")!))
-        
-//        self.view.addSubview(imgView)
-//        imgView.snp.makeConstraints { make in
-//            make.edges.equalToSuperview()
-//        }
     }
     
     override var shouldAutorotate: Bool { true }
@@ -91,7 +86,7 @@ extension ExampleViewController: UICollectionViewDataSource, UICollectionViewDel
     
 }
 
-extension ExampleViewController: Delegate {
+extension ExampleViewController: CZImagePreviewer.Delegate {
     func imagePreviewer(_ imagePreviewer: Previewer, willDismissWithCell cell: CollectionViewCell, at index: Int) -> UIView? {
         self.collectionView.cellForItem(at: IndexPath(item: index, section: 0))
     }
@@ -99,10 +94,14 @@ extension ExampleViewController: Delegate {
     func imagePreviewer(_ imagePreviewer: Previewer, index oldIndex: Int, didChangedTo newIndex: Int) {
         
     }
+    
+    func imagePreviewer(_ imagePreviewer: Previewer, didLongPressAtIndex index: Int) {
+        
+    }
 
 }
 
-extension ExampleViewController: DataSource {
+extension ExampleViewController: CZImagePreviewer.DataSource {
     
     func numberOfItems(in imagePreviewer: Previewer) -> Int {
         self.dataSources.count

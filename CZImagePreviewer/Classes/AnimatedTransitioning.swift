@@ -79,8 +79,8 @@ class AnimatedTransitioning: NSObject, UIViewControllerAnimatedTransitioning {
         // 创建动画关键元素
         let actor = UIImageView()
         actor.contentMode = .scaleAspectFit
-        resource.loadImage(options: [.processor(ResizingImageProcessor(referenceSize: targetFrame.size, mode: .aspectFill))], progress: nil) {
-            guard case let .success(img) = $0 else { return }
+        resource.loadImage(options: [.processor(ResizingImageProcessor(referenceSize: transitionContext.containerView.bounds.size, mode: .aspectFill))], progress: nil) {
+            guard case let img = $0.image else { return }
             actor.image = img
         }
         
@@ -135,7 +135,11 @@ class AnimatedTransitioning: NSObject, UIViewControllerAnimatedTransitioning {
             return
         }
         
-        // 对 targetFrame 进行微调, 防止当 animationActor.superview 是 scrollView 时, targetFrame.origin 不准确
+        if let animationActor = animationActor as? TiledImageViewWrapper {
+            animationActor.tiledImageView?.isHidden = true
+        }
+        
+        // 对 targetFrame 进行调整, 防止当 animationActor.superview 是 scrollView 时 且 正处于放大时, targetFrame.origin 不准确
         targetFrame.origin.x += animationActor.superview?.bounds.origin.x ?? 0
         targetFrame.origin.y += animationActor.superview?.bounds.origin.y ?? 0
         

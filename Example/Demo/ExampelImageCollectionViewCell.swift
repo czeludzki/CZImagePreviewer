@@ -20,7 +20,9 @@ class ExampelImageCollectionViewCell: UICollectionViewCell {
         didSet {
             self.asshole.isHidden = false
             self.imageView.isHidden = true
-            image?.loadImage(options: [.processor(ResizingImageProcessor(referenceSize: self.bounds.size, mode: .aspectFill))], progress: nil, completion: { [weak self] result in
+            guard let provider = image else { return }
+            provider.loadImage(options: [.processor(ResizingImageProcessor(referenceSize: self.bounds.size, mode: .aspectFill)), .processingQueue(.dispatch(DispatchQueue.global()))], progress: nil, completion: { [weak self] result in
+                if self?.image?.cacheKey != provider.cacheKey { return }
                 self?.imageView.image = result.image
                 self?.asshole.isHidden = true
                 self?.imageView.isHidden = false
