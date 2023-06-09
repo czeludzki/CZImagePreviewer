@@ -279,6 +279,7 @@ extension Previewer {
         let cell = self.collectionView.cellForItem(at: IndexPath(item: self.currentIdx, section: 0)) as? CZImagePreviewer.CollectionViewCell
         self.cus_console?.isHidden = true
         cell?.accessoryView?.isHidden = true
+        cell?.didEndDisplay()
         super.dismiss(animated: flag) {
             cell?.accessoryView?.isHidden = false
             self.cus_console?.isHidden = false

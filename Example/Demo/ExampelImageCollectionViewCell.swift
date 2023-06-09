@@ -21,7 +21,7 @@ class ExampelImageCollectionViewCell: UICollectionViewCell {
             self.asshole.isHidden = false
             self.imageView.isHidden = true
             guard let provider = image else { return }
-            provider.loadImage(options: [.processor(DownsamplingImageProcessor(size: self.bounds.size)), .processingQueue(.dispatch(DispatchQueue.global()))], progress: nil, completion: { [weak self] result in
+            provider.loadImage(options: [.processor(ResizingImageProcessor(referenceSize: UIScreen.main.bounds.size, mode: .aspectFit))], progress: nil, completion: { [weak self] result in
                 if self?.image?.cacheKey != provider.cacheKey { return }
                 self?.imageView.image = result.image
                 self?.asshole.isHidden = true

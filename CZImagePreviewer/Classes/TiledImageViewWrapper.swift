@@ -52,6 +52,7 @@ public class TiledImageViewWrapper: UIView {
         
         // IS LARGE IMAGE
         self.createNewTiledImageView()
+        self.backImageView.image = nil
         
         // 尝试从 provider 中取缩略图
         imageProvider?.loadImage(options: [.processor(ResizingImageProcessor(referenceSize: UIScreen.main.bounds.size, mode: .aspectFit))], progress: nil, completion: { [weak self] result in
@@ -63,8 +64,6 @@ public class TiledImageViewWrapper: UIView {
     }
     
     func clearImage() {
-        self.image = nil
-        self.backImageView.image = nil
         // 因为 tiledLayer 不能手动停止渲染, 所以每次设置新的 image, 都将 tiledImageView 移除
         self.tiledImageView?.removeFromSuperview()
         self.tiledImageView = nil

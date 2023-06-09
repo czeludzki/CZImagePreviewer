@@ -28,13 +28,13 @@ public class ImageResourceCollectionViewCell: CollectionViewCell {
     // dismiss 手势发生时, 隐藏 tiledImageView
     override var isDismissGustureDraging: Bool {
         didSet {
-            self.tiledImageView.tiledImageView?.isHidden = self.isDismissGustureDraging
+            self.tiledImageViewWrapper.tiledImageView?.isHidden = self.isDismissGustureDraging
         }
     }
     
     /// 拖拽事件发生时, 需要判断该由 animatedImageZoomingView 或是 tiledImageZoomingView 作为拖拽主角
     override var dragingActor: UIView? {
-        return self.isAnimatedResource ? self.animatedImageView : self.tiledImageView
+        return self.isAnimatedResource ? self.animatedImageView : self.tiledImageViewWrapper
     }
     
     /// 让外部快速获取当前的 zoomingView
@@ -61,10 +61,10 @@ public class ImageResourceCollectionViewCell: CollectionViewCell {
         return zoomingScrollView
     }()
     
-    lazy var tiledImageView: TiledImageViewWrapper = TiledImageViewWrapper.init()
+    lazy var tiledImageViewWrapper: TiledImageViewWrapper = TiledImageViewWrapper.init()
     
     private lazy var tiledImageZoomingView: ImageZoomingView = {
-        let zoomingScrollView = ImageZoomingView.init(self.tiledImageView)
+        let zoomingScrollView = ImageZoomingView.init(self.tiledImageViewWrapper)
         return zoomingScrollView
     }()
         
@@ -102,7 +102,7 @@ public class ImageResourceCollectionViewCell: CollectionViewCell {
     
     override func didEndDisplay() {
         super.didEndDisplay()
-        self.tiledImageView.clearImage()
+        self.tiledImageViewWrapper.clearImage()
         self.animatedImageView.image = nil
         self.tiledImageZoomingView.clearZooming(animate: false)
         self.animatedImageZoomingView.clearZooming(animate: false)
@@ -142,7 +142,7 @@ extension ImageResourceCollectionViewCell {
             self.animatedImageView.image = image
             self.animatedImageZoomingView.updateScrollViewConfiguration()
         }else{
-            self.tiledImageView.display(imageProvider: self.imageProvider, image: image)
+            self.tiledImageViewWrapper.display(imageProvider: self.imageProvider, image: image)
             self.tiledImageZoomingView.updateScrollViewConfiguration()
         }
     }
