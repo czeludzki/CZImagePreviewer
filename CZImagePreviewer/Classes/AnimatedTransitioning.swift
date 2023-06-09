@@ -79,7 +79,7 @@ class AnimatedTransitioning: NSObject, UIViewControllerAnimatedTransitioning {
         // 创建动画关键元素
         let actor = UIImageView()
         actor.contentMode = .scaleAspectFit
-        resource.loadImage(options: [.processor(ResizingImageProcessor(referenceSize: transitionContext.containerView.bounds.size, mode: .aspectFill))], progress: nil) {
+        resource.loadImage(options: [.processor(ResizingImageProcessor(referenceSize: transitionContext.containerView.bounds.size, mode: .aspectFit))], progress: nil) {
             guard case let img = $0.image else { return }
             actor.image = img
         }

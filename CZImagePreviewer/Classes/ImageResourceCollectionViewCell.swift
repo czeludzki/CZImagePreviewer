@@ -126,6 +126,8 @@ extension ImageResourceCollectionViewCell {
         if case .success = result {
             self.delegate?.collectionViewCell(self, resourceLoadingStateDidChanged: .default, idx: item.idx, accessoryView: self.accessoryView)
         }else{
+            // 图片下载失败
+            self.didEndDisplay()
             self.delegate?.collectionViewCell(self, resourceLoadingStateDidChanged: .loadingFaiure, idx: item.idx, accessoryView: self.accessoryView)
         }
     }

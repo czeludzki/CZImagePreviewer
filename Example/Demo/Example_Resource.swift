@@ -70,7 +70,11 @@ extension ExampleViewController {
         "file://" + Bundle.main.path(forResource: "small1", ofType: "jpg")!,
         "file://" + Bundle.main.path(forResource: "gif3", ofType: "gif")!,
         "file://" + Bundle.main.path(forResource: "gif4", ofType: "gif")!,
-        "file://" + Bundle.main.path(forResource: "gif5", ofType: "gif")!
+        "file://" + Bundle.main.path(forResource: "gif5", ofType: "gif")!,
+        "https://farm6.staticflickr.com/5720/22076039308_4e2fc21c5f_o.jpg",
+        "https://s-media-cache-ak0.pinimg.com/originals/19/e9/58/19e9581dbdc756a2dbbb38ae39a3419c.jpg",
+        "https://orig11.deviantart.net/1062/f/2015/315/9/6/abstract__7_by_thejsyve1-d9gciwk.jpg",
+        "https://www.bing.com"  // 模拟加载失败
     ]
     
     static var videoPaths: [String] = [

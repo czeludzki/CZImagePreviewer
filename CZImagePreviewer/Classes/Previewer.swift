@@ -358,7 +358,7 @@ extension Previewer: UICollectionViewDelegateFlowLayout, UICollectionViewDataSou
                 resource.perload()
             }
             if let resource = resource as? ImageProvider {
-                resource.loadImage(options: [.processor(ResizingImageProcessor(referenceSize: UIScreen.main.bounds.size, mode: .aspectFit))], progress: nil, completion: nil)
+                resource.loadImage(options: nil, progress: nil, completion: nil)
             }
         }
     }

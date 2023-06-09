@@ -25,6 +25,10 @@ class ExampleViewController: UIViewController {
                 partialResult.append(path)
             }
         }
+//        res.append(UIImage.init(contentsOfFile: Bundle.main.path(forResource: "gif3", ofType: "gif")!)!)
+//        res.append(UIImage.init(contentsOfFile: Bundle.main.path(forResource: "gif2", ofType: "gif")!)!)
+//        res.append(UIImage.init(contentsOfFile: Bundle.main.path(forResource: "gif1", ofType: "gif")!)!)
+//        res.append(UIImage.init(contentsOfFile: Bundle.main.path(forResource: "largeImg0", ofType: "jpg")!)!)
         print(res)
         return res
     }()
