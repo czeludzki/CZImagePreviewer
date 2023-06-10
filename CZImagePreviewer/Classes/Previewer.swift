@@ -292,12 +292,11 @@ extension Previewer {
     }
     
     public func deleteItems(at indexs: [Int]) {
-        let idxPaths: [IndexPath] = indexs.compactMap { i in
-            return IndexPath(item: i, section: 0)
-        }
-        self.collectionView.performBatchUpdates({
-            self.collectionView.deleteItems(at: idxPaths)
-        }, completion: { finish in
+        let idxPaths: [IndexPath] = indexs.map { IndexPath(item: $0, section: 0) }
+        self.collectionView.performBatchUpdates({ [weak self] in
+            self?.collectionView.deleteItems(at: idxPaths)
+        }, completion: { [weak self] finish in
+            guard let self = self else { return }
             // 删除完毕后更新 currentIdx
             self.currentIdx = Int((self.collectionView.contentOffset.x + self.collectionView.bounds.size.width * 0.5) / self.collectionView.bounds.size.width)
             // 删除操作完成

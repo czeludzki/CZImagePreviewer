@@ -152,8 +152,8 @@ public protocol Delegate: AnyObject {
     /// longPress gesture event happened with Previewer
     func imagePreviewer(_ previewer: Previewer, didLongPressAtIndex index: Int)
     
-    /// By default, Previewer did add two kind of gesture for dismiss: UITapGesture and UIPanningGesture.
-    /// Call when Tap or Panning gesture did happened. The returning Boolean value is deciding this dismiss should be happen.
+    /// By default, Previewer did add two kinds of gesture for dismiss: UITapGesture and UIPanningGesture.
+    /// Call when Tap or Panning gesture been trigger. The returning Boolean value is deciding this dismiss should be happen or not.
     func imagePreviewer(_ previewer: Previewer, shouldDismissWithGesture gesture: UIGestureRecognizer, at index: Int) -> Bool
     
     /// Call after Previewer executed method: `deleteItems(at indexs: [Int])`
