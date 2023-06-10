@@ -55,6 +55,9 @@ To run the example project, clone the repo, and run `pod install` from the Examp
 ![视频播放](introduction/videoplay.gif)  
 
 ## Usage
+### Primary Class
+class Previewer: UIViewController { ... }
+
 ### Primary Parameters
 ``` swift
 public weak var delegate: Delegate?
