@@ -29,3 +29,27 @@ public extension Result where Success == RetrieveImageResult, Failure == Kingfis
         return nil
     }
 }
+
+public extension Result where Success == UIImage, Failure == KingfisherError {
+    var image: UIImage? {
+        if case let .success(result) = self {
+            return result
+        }
+        return nil
+    }
+}
+
+public extension UIImage {
+    
+    var isAnimatedImage: Bool {
+        guard let imageFrameCount = self.kf.imageFrameCount else { return false }
+        return imageFrameCount > 0
+    }
+    
+    /// 是否将 图片当作 large image 来处理
+    /// 判断标准是 图片面积 是否大于 屏幕面积 * 4
+    var isLargeImage: Bool {
+        self.size.width * self.size.height > UIScreen.main.bounds.width * UIScreen.main.bounds.height * 4
+    }
+    
+}

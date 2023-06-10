@@ -15,7 +15,7 @@ public protocol DataSource: AnyObject {
     
     /// 数据源方法
     /// 返回值类型默认可以是 String, URL, UIImage, 或者是任何自定义遵循了 ImageResourceProtocol 协议的类型, 具体操作见 CZImageSourceProtocol.swift
-    func imagePreviewer(_ imagePreviewer: Previewer, imageResourceForItemAtIndex index: Int) -> ImageProvider?
+    func imagePreviewer(_ imagePreviewer: Previewer, resourceForItemAtIndex index: Int) -> ResourceProvider?
     
     /// 图片加载状态改变
     func imagePreviewer(_ imagePreviewer: Previewer, imageLoadingStateDidChanged state: Previewer.ImageLoadingState, at index: Int, accessoryView: AccessoryView?)
@@ -31,12 +31,6 @@ public protocol DataSource: AnyObject {
     /// 为每一个 Cell 提供自定义操作视图, 这个视图会覆盖在每个Cell的顶部
     func imagePreviewer(_ imagePreviewer: Previewer, accessoryViewForCell cell: CollectionViewCell, at index: Int) -> AccessoryView?
     
-    /// 为每一个 Cell 提供视频播放容器, 你可以将你的视频播放器 Layer, 添加到 videoView.layer 中
-    func imagePreviewer(_ imagePreviewer: Previewer, videoLayerForCell cell: CollectionViewCell, at index: Int) -> CALayer?
-    
-    typealias VideoSizeSettingHandler = (CGSize?) -> Void
-    /// 通过此代理方法告知 Previewer 视频尺寸
-    func imagePreviewer(_ imagePreviewer: Previewer, videoSizeForCell cell: CollectionViewCell, at index: Int, videoSizeSettingHandler: VideoSizeSettingHandler)
 }
 
 public extension DataSource {
@@ -47,14 +41,13 @@ public extension DataSource {
     
     func imagePreviewer(_ imagePreviewer: Previewer, accessoryViewForCell cell: CollectionViewCell, at index: Int) -> AccessoryView? { nil }
     
-    func imagePreviewer(_ imagePreviewer: Previewer, videoLayerForCell cell: CollectionViewCell, at index: Int) -> CALayer? { nil }
-    
-    func imagePreviewer(_ imagePreviewer: Previewer, videoSizeForCell cell: CollectionViewCell, at index: Int, videoSizeSettingHandler: VideoSizeSettingHandler) {}
-    
 }
 
 public protocol Delegate: AnyObject {
     
+    /// 将要显示 imagePreviewer
+    /// 返回值 fromContainer 决定展示动画从哪里弹出, resource 是图片资源
+    /// 展示动画出现前, 会创建 UIImageView 展示 resource 图片, 该 UIImageView 会作为展示动画的主角, 从 fromContrainer 中弹出
     func imagePreviewer(_ imagePreviewer: Previewer, willDisplayAtIndex index: Int)
     
     func imagePreviewer(_ imagePreviewer: Previewer, didDisplayAtIndex index: Int)

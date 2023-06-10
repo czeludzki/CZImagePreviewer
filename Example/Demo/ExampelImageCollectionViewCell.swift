@@ -8,14 +8,25 @@
 
 import UIKit
 import Kingfisher
+import CZImagePreviewer
 
 class ExampelImageCollectionViewCell: UICollectionViewCell {
     @IBOutlet weak var resourceTypeLabel: UILabel!
     @IBOutlet var imageView: UIImageView!
-    var imageURL: String? {
+    
+    @IBOutlet weak var asshole: UIActivityIndicatorView!
+    
+    var image: ImageProvider? {
         didSet {
-            guard let url = imageURL else { return }
-            self.imageView.kf.setImage(with: URL.init(string: url), placeholder: nil, options: [.processor(ResizingImageProcessor(referenceSize: self.bounds.size))])
+            self.asshole.isHidden = false
+            self.imageView.isHidden = true
+            guard let provider = image else { return }
+            provider.loadImage(options: [.processor(ResizingImageProcessor(referenceSize: UIScreen.main.bounds.size, mode: .aspectFit))], progress: nil, completion: { [weak self] result in
+                if self?.image?.cacheKey != provider.cacheKey { return }
+                self?.imageView.image = result.image
+                self?.asshole.isHidden = true
+                self?.imageView.isHidden = false
+            })
         }
     }
 }

@@ -10,6 +10,8 @@
 		041CFC05EF53DDDE8287F5D4 /* Pods_CZImagePreviewer_Example.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 63A0A4BC96B72D27732E67A9 /* Pods_CZImagePreviewer_Example.framework */; };
 		1962DA3B691B8BF08BE7242D /* Pods_CZImagePreviewer_Tests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 98B7A2824F2AE11C46EA6751 /* Pods_CZImagePreviewer_Tests.framework */; };
 		2A4BF85026E853D6001D7759 /* ExampelImageCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A4BF84F26E853D6001D7759 /* ExampelImageCollectionViewCell.swift */; };
+		4345EC5A2A30977F00E5A1F9 /* small0.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 4345EC582A30977F00E5A1F9 /* small0.jpg */; };
+		4345EC5B2A30977F00E5A1F9 /* small1.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 4345EC592A30977F00E5A1F9 /* small1.jpg */; };
 		434A79922A2729C800CF54B6 /* largeImg1.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 434A79912A2729C800CF54B6 /* largeImg1.jpg */; };
 		434A799C2A274D5600CF54B6 /* largeImg0.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 434A799B2A274D5500CF54B6 /* largeImg0.jpg */; };
 		434A799E2A27A68100CF54B6 /* largeImg2.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 434A799D2A27A68100CF54B6 /* largeImg2.jpg */; };
@@ -49,6 +51,8 @@
 		2A4BF84F26E853D6001D7759 /* ExampelImageCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExampelImageCollectionViewCell.swift; sourceTree = "<group>"; };
 		2B6B452F1563A486151A7FDF /* CZImagePreviewer.podspec */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; name = CZImagePreviewer.podspec; path = ../CZImagePreviewer.podspec; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.ruby; };
 		3BFEFA685F9F34B66A8A38C1 /* LICENSE */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; name = LICENSE; path = ../LICENSE; sourceTree = "<group>"; };
+		4345EC582A30977F00E5A1F9 /* small0.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = small0.jpg; sourceTree = "<group>"; };
+		4345EC592A30977F00E5A1F9 /* small1.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = small1.jpg; sourceTree = "<group>"; };
 		434A79912A2729C800CF54B6 /* largeImg1.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = largeImg1.jpg; sourceTree = "<group>"; };
 		434A799B2A274D5500CF54B6 /* largeImg0.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = largeImg0.jpg; sourceTree = "<group>"; };
 		434A799D2A27A68100CF54B6 /* largeImg2.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = largeImg2.jpg; sourceTree = "<group>"; };
@@ -109,6 +113,8 @@
 		43DA12BF26F0EB8100F98F77 /* Resource */ = {
 			isa = PBXGroup;
 			children = (
+				4345EC582A30977F00E5A1F9 /* small0.jpg */,
+				4345EC592A30977F00E5A1F9 /* small1.jpg */,
 				434A799F2A27B7F000CF54B6 /* gif0.gif */,
 				434A79A12A27B7F100CF54B6 /* gif1.gif */,
 				434A79A22A27B7F100CF54B6 /* gif2.gif */,
@@ -321,6 +327,7 @@
 			files = (
 				43FEEBBB26E7C37900E2350D /* Main.storyboard in Resources */,
 				434A79A62A27B7F200CF54B6 /* gif3.gif in Resources */,
+				4345EC5A2A30977F00E5A1F9 /* small0.jpg in Resources */,
 				607FACE01AFB9204008FA782 /* LaunchScreen.xib in Resources */,
 				434A79AA2A27B7F200CF54B6 /* gif5.gif in Resources */,
 				607FACDD1AFB9204008FA782 /* Images.xcassets in Resources */,
@@ -334,6 +341,7 @@
 				43DA12C526F0EBAF00F98F77 /* 1.mp4 in Resources */,
 				434A79A72A27B7F200CF54B6 /* gif1.gif in Resources */,
 				434A79A52A27B7F200CF54B6 /* gif0.gif in Resources */,
+				4345EC5B2A30977F00E5A1F9 /* small1.jpg in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -583,7 +591,7 @@
 				CODE_SIGN_ENTITLEMENTS = CZImagePreviewer_Example.entitlements;
 				DEVELOPMENT_TEAM = 5YG2N89PSR;
 				INFOPLIST_FILE = Demo/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				MODULE_NAME = ExampleApp;
 				PRODUCT_BUNDLE_IDENTIFIER = "org.cocoapods.demo.$(PRODUCT_NAME:rfc1034identifier)";
@@ -605,7 +613,7 @@
 				CODE_SIGN_ENTITLEMENTS = CZImagePreviewer_Example.entitlements;
 				DEVELOPMENT_TEAM = 5YG2N89PSR;
 				INFOPLIST_FILE = Demo/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				MODULE_NAME = ExampleApp;
 				PRODUCT_BUNDLE_IDENTIFIER = "org.cocoapods.demo.$(PRODUCT_NAME:rfc1034identifier)";

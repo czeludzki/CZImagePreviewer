@@ -9,38 +9,46 @@
 
 To run the example project, clone the repo, and run `pod install` from the Example directory first.
 
-## 自 1.1.0 起改造成100%的斯威夫特实现, 比起以前的OC实现兼容的使用场景更多, 旋转更流畅
+## Feature
+✅ Kingfisher image loading and caching base  
+✅ Large Image(Testing with 100 million pixel image) Display Supported, Steady Memory Consumption  
+✅ Gif Supported  
+✅ Zooming by double tap and pinch gesture  
+✅ Display and dismiss animation customizable  
+✅ Screen rotate supported  
+✅ Customizable accessory view cover on each cell  
+✅ Customizable accessory view fulltime cover  
+✅ Customizable video view as your provide  
 
-## 介绍
-#### 概览
- **放大缩小** | **滑动dismiss**  
-![放大缩小](introduction/zooming.gif) ![滑动dismiss](introduction/dismiss.gif)  
- **旋转** | **视频播放**  
-![旋转](introduction/rotate.gif) ![视频播放](introduction/videoplay.gif)  
+## Views Struct
+- Controller.View  
+    - CollectionView  
+        - ImageCell  
+            - Cell.ContentView  
+                - ScrollViewForImageZooming  
+                    - UIImageView  
+                - ScrollViewForImageZooming(Only appear when large image displaying)  
+                    - TiledImageView  
+                - AccessoryView(As your provide)  
+        - VideoCell  
+            - Cell.ContentView  
+                - VideoView (As your provide)  
+                - AccessoryView(As your provide)  
+    - Custom console (the basic custom on Controller.view, front of the CollectionView)
 
-#### 设计
-为了保证图片浏览器的简单易用, 也可应付尽可能广泛的需求, 它提供以下功能:  
-1.图片放大和缩小;  
-2.显示动画, 滑动dismiss及返回动画;  
-3.配合系统级别的旋转触发且动画流畅;  
-4.自定义辅助视图. 例如图片浏览器上有不同的按钮, 有些按钮需要跟随图片滑动而滑动的, 有些不需要. 所以, 我提供了相关的方法和视图供开发者自由设置.  
-5.视频播放容器视图. 它没有集成视频播放器, 以免在项目中造成播放器冲突或其他不好的结果. 但是在视频播放器容器视图的帮助下, 也可以实现联动图片浏览器的交互方式播放视频. 因为我提供了相关的方法和视图, 开发者可以将自己的视频播放器 layer 添加到视图中, 既兼顾了交互, 也能保证高度自定义的目的.  
+## Screen Record
+**Large Image Displaying**  
+![巨图显示](introduction/largeImage.gif)  
+**Zooming**  
+![放大缩小](introduction/zooming.gif)  
+**Dismiss on drag**  
+![滑动dismiss](introduction/dismiss.gif)  
+**Screen Rotate**  
+![旋转](introduction/rotate.gif)  
+**Video Playing**  
+![视频播放](introduction/videoplay.gif)  
 
-为了兼容图片浏览器上各种自定义的操作需求, 以及广泛的视频播放器支持, 我将 CZImagePreviewer 设计成以下视图结构:
-
-```
-> Controller.View  
-    > CollectionView  
-        > Cell  
-            > Cell.ContentView  
-                > ScrollViewForImageZooming  
-                    > UIImageView  
-                > Video View (the player layer add to here)
-                > AccessoryViewForCell  (add custom components here, like play button, pause button, loading indicator...)
-    > Custom console (the basic custom on Controller.view, front of the CollectionView)
-```
-
-#### 重要的方法
+## Usage
 ``` swift
 /// 展示
 public func display(fromImageContainer container: UIView? = nil, current index: Int = 0)

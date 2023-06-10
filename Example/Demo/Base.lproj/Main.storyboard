@@ -46,18 +46,24 @@
                                                     <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
+                                                <activityIndicatorView opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" animating="YES" style="medium" translatesAutoresizingMaskIntoConstraints="NO" id="0Va-rk-6Cv">
+                                                    <rect key="frame" x="40" y="40" width="20" height="20"/>
+                                                </activityIndicatorView>
                                             </subviews>
                                         </view>
                                         <constraints>
                                             <constraint firstItem="yjT-F6-ccc" firstAttribute="leading" secondItem="1d5-eb-lkN" secondAttribute="leading" id="0rQ-ec-Gnw"/>
                                             <constraint firstAttribute="trailing" secondItem="yjT-F6-ccc" secondAttribute="trailing" id="5Tq-uj-hWi"/>
+                                            <constraint firstItem="0Va-rk-6Cv" firstAttribute="centerX" secondItem="1d5-eb-lkN" secondAttribute="centerX" id="7C1-lj-oFC"/>
                                             <constraint firstItem="C1d-8B-DMx" firstAttribute="top" secondItem="1d5-eb-lkN" secondAttribute="top" id="Uc7-ZK-skh"/>
+                                            <constraint firstItem="0Va-rk-6Cv" firstAttribute="centerY" secondItem="1d5-eb-lkN" secondAttribute="centerY" id="Wlz-eg-JKC"/>
                                             <constraint firstAttribute="bottom" secondItem="C1d-8B-DMx" secondAttribute="bottom" id="Wmi-wn-dhX"/>
                                             <constraint firstItem="C1d-8B-DMx" firstAttribute="leading" secondItem="1d5-eb-lkN" secondAttribute="leading" id="ZjU-Bx-W2d"/>
                                             <constraint firstAttribute="trailing" secondItem="C1d-8B-DMx" secondAttribute="trailing" id="hDc-h5-p4j"/>
                                             <constraint firstAttribute="bottom" secondItem="yjT-F6-ccc" secondAttribute="bottom" id="kcn-9K-Uwr"/>
                                         </constraints>
                                         <connections>
+                                            <outlet property="asshole" destination="0Va-rk-6Cv" id="E0K-zV-1nx"/>
                                             <outlet property="imageView" destination="C1d-8B-DMx" id="6UC-n2-v8N"/>
                                             <outlet property="resourceTypeLabel" destination="yjT-F6-ccc" id="osV-S9-G3X"/>
                                         </connections>
