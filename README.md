@@ -56,7 +56,9 @@ To run the example project, clone the repo, and run `pod install` from the Examp
 
 ## Usage
 ### Primary Class
+``` swift
 class Previewer: UIViewController { ... }
+```
 
 ### Primary Parameters
 ``` swift
