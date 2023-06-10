@@ -53,7 +53,7 @@ open class Previewer: UIViewController {
     /// display 动画发生时需要的图片资源
     private var triggerSource: UIImage?
     
-    private lazy var collectionViewFlowLayout: CollectionViewFlowLayout = {
+    private(set) lazy var collectionViewFlowLayout: CollectionViewFlowLayout = {
         let flowLayout = CollectionViewFlowLayout.init()
         flowLayout.scrollDirection = .horizontal
         flowLayout.sectionInset = .init(top: 0, left: self.spacingBetweenItem * 0.5, bottom: 0, right: self.spacingBetweenItem * 0.5)
@@ -62,7 +62,7 @@ open class Previewer: UIViewController {
         return flowLayout
     }()
     
-    private lazy var collectionView: UICollectionView = {
+    private(set) lazy var collectionView: UICollectionView = {
         let collectionView = UICollectionView(frame: CGRect.zero, collectionViewLayout: self.collectionViewFlowLayout)
         collectionView.isPagingEnabled = true
         collectionView.showsVerticalScrollIndicator = false
@@ -258,7 +258,6 @@ extension Previewer {
     ///   如为nil, 则通过默认的动画进行展示 Previewer
     ///   - fromSource: 在展示动画发生时, 为了避免一些大图或网络资源加载较慢导致卡顿, 可选择手动展示动画需要的图片.
     ///   如果传 nil, 则根据传入的 current index 从 dataSource 中获取执行动画时需要的资源
-    ///   注意: 目前只支持 UIImageView 类型, 即使可以传入 UIView 及其子类, 但只对 UIImageView 做处理, 其他类型都只执行默认的动画
     ///   - index: 告知 Previewer 你点击的图片, 位于数据源的索引
     ///   - controller: 在哪个控制器进行模态弹框, 如 nil, 则在根控制器尝试弹框操作
     public func display(fromImageContainer container: UIView? = nil, fromSource source: UIImage? = nil, presentingController: UIViewController? = nil, current index: Int = 0) {
@@ -469,9 +468,6 @@ extension Previewer: AnimatedTransitioningContentProvider {
     func transitioningElementForDisplay(animatedTransitioning: AnimatedTransitioning) -> ElementForDisplayTransition {
         let resource = self.dataSource?.imagePreviewer(self, resourceForItemAtIndex: self.currentIdx)
         var imageProvider: ImageProvider? = resource as? ImageProvider
-        if let viderProvider = resource as? VideoProvider {
-            imageProvider = viderProvider.displayAnimationActor
-        }
         if let triggerSource = self.triggerSource {
             imageProvider = triggerSource
         }
