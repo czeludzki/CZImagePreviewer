@@ -36,6 +36,10 @@ To run the example project, clone the repo, and run `pod install` from the Examp
                 - AccessoryView(As your provide)  
     - Custom console (the basic custom on Controller.view, front of the CollectionView)
 
+## Performance
+**The Memory consumption during viewed all resources in demo**
+![Performance](introduction/performance.jpg)
+
 ## Screen Record
 **Large Image Displaying**  
 ![巨图显示](introduction/largeImage.gif)  
@@ -49,6 +53,12 @@ To run the example project, clone the repo, and run `pod install` from the Examp
 ![视频播放](introduction/videoplay.gif)  
 
 ## Usage
+### Primary Parameters
+``` swift
+public weak var delegate: Delegate?
+public weak var dataSource: DataSource?
+```
+
 ### For shown off
 ``` swift
 /// - Parameters:
@@ -61,8 +71,9 @@ To run the example project, clone the repo, and run `pod install` from the Examp
 public func display(fromImageContainer container: UIView? = nil, fromSource source: UIImage? = nil, presentingController: UIViewController? = nil, current index: Int = 0)
 ```
 
-### Resource Provider: whcih is being the member of the `dataSource`
+### Resource Provider: Which can being the member of the `dataSources` array.
 ``` swift
+/// The base resource provider of ImageProvider and VideoProvider
 public protocol ResourceProvider {}
 ```
 #### ImageProvider
