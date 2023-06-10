@@ -37,7 +37,7 @@ To run the example project, clone the repo, and run `pod install` from the Examp
     - Custom console (the basic custom on Controller.view, front of the CollectionView)
 
 ## Performance
-**The Memory consumption during viewed all resources in demo**
+**Memory consumption during viewed all resources in demo which is running on a old device(iPhone6s, iOS13, 80% battery health)**
 ![Performance](introduction/performance.jpg)
 
 ## Screen Record
