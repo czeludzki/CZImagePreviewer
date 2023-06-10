@@ -10,7 +10,7 @@
 To run the example project, clone the repo, and run `pod install` from the Example directory first.
 
 ## Feature
-✅ Kingfisher image loading and caching base  
+✅ [Kingfisher](https://github.com/onevcat/Kingfisher) image loading and caching base  
 ✅ Large Image(Testing with 100 million pixel image) Display Supported, Steady Memory Consumption  
 ✅ Gif Supported  
 ✅ Zooming by double tap and pinch gesture  
@@ -49,45 +49,103 @@ To run the example project, clone the repo, and run `pod install` from the Examp
 ![视频播放](introduction/videoplay.gif)  
 
 ## Usage
+### For shown off
 ``` swift
-/// 展示
-public func display(fromImageContainer container: UIView? = nil, current index: Int = 0)
+/// - Parameters:
+///   - container: Tell Previewer which view component tirggers this display operation, all is for the display animation.
+///   if nil, Previewer will provide a fade animate.
+///   - fromSource: When displaying animate play, Previewer should known who is the animation acort.
+///   Of course you can passing nil, then Previewer will get that from 'dataSource' by 'currentIndex'.
+///   - index: Tell Previewer which resource you wanna show from the 'dataSource' at index
+///   - controller: The controller which is presenting Previewer
+public func display(fromImageContainer container: UIView? = nil, fromSource source: UIImage? = nil, presentingController: UIViewController? = nil, current index: Int = 0)
 ```
 
+### Resource Provider: whcih is being the member of the `dataSource`
 ``` swift
-// MARK: PreviewerDataSource
-
-/// 只要是 ResourceProtocol 的实例/结构体/枚举, 都可以作为数据源返回值
-/// 而 String, URL, UIImage 三种类型实例, 可通过 .asImgRes 直接返回
-func imagePreviewer(_ imagePreviewer: CZImagePreviewer, imageResourceForItemAtIndex index: Int) -> ResourceProtocol?
-
-/// 为图片浏览器提供自定义操作视图, 该视图会平铺在图片浏览器子视图集顶部, 不参与缩放, 不受滑动交互影响
-func imagePreviewer(_ imagePreviewer: CZImagePreviewer, consoleForItemAtIndex index: Int) -> CZImagePreviewer.AccessoryView?
-
-/// 为每一个 Cell 提供自定义操作视图, 这个视图会覆盖在每个Cell的顶部, 参与滚动
-func imagePreviewer(_ imagePreviewer: CZImagePreviewer, accessoryViewForCellWith viewModel: PreviewerCellViewModel) -> CZImagePreviewer.AccessoryView?
-
-/// 为每一个 Cell 提供视频播放容器, 返回的播放器layer, 会被添加到 视频容器视图 中
-func imagePreviewer(_ imagePreviewer: CZImagePreviewer, videoLayerForCellWith viewModel: PreviewerCellViewModel) -> CALayer?
-
-/// 通过此方法告知 Previewer 视频尺寸
-func imagePreviewer(_ imagePreviewer: CZImagePreviewer, videoSizeForItemWith viewModel: PreviewerCellViewModel, videoSizeSettingHandler: VideoSizeSettingHandler)
+public protocol ResourceProvider {}
+```
+#### ImageProvider
+``` swift
+public protocol ImageProvider: ResourceProvider, Kingfisher.ImageDataProvider {}
+```
+#### VideoProvider
+``` swift
+public protocol VideoProvider: ResourceProvider, AnyObject {
+    
+    /// Video Content View
+    var videoView: CZImagePreviewer.VideoView? { get }
+        
+    // Previewer should lintening the video size's changing, returning the new size in this closure
+    typealias VideoSizeProvider = (_ videoSize: CGSize) -> Void
+    var videoSizeProvider: VideoSizeProvider? { get set }
+    
+    func play()
+    func pause()
+    
+    func cellDidEndDisplay()
+    
+    // You can do some preparing opreation for the video resource right here
+    func perload()
+}
 ```
 
+#### DataSource
 ``` swift
-// MARK: PreviewerDelegate
-
-/// 当 imagePreviewer 即将要退出显示时调用
-/// - Returns: 根据返回值决定返回动画: 退回到某个UIView视图的动画
-func imagePreviewer(_ imagePreviewer: CZImagePreviewer, willDismissWithCellViewModel viewModel: PreviewerCellViewModel) -> UIView?
-
-/// 接收到长按事件
-func imagePreviewer(_ imagePreviewer: CZImagePreviewer, didLongPressAtIndex index: Int)
+public protocol DataSource: AnyObject {
+    
+    func numberOfItems(in previewer: Previewer) -> Int
+    
+    func imagePreviewer(_ previewer: Previewer, resourceForItemAtIndex index: Int) -> ResourceProvider?
+    
+    func imagePreviewer(_ previewer: Previewer, imageLoadingStateDidChanged state: Previewer.ImageLoadingState, at index: Int, accessoryView: AccessoryView?)
+    
+    /// Provide the accessory view for Previewer, this accessory view is not a part of scrolling or zooming effect. 
+    /// Will calling when the index changed.
+    /// - imagePreviewer: Previewer
+    /// - index: which index of item need accessory view
+    func imagePreviewer(_ imagePreviewer: Previewer, consoleForItemAtIndex index: Int) -> AccessoryView?
+    
+    /// Provider the accessory view for Previewer on each cell item. this is not part of zooming effect, but scrolling is.
+    /// This accessory view will cover on the cell.
+    /// Will calling when the index changed.
+    /// - imagePreviewer: Previewer
+    /// - cell: which cell adding this AccessoryView as the subview.
+    /// - index: which index of item need accessory view
+    func imagePreviewer(_ imagePreviewer: Previewer, accessoryViewForCell cell: CollectionViewCell, at index: Int) -> AccessoryView?
+    
+}
 ```
 
-#### 更具体的使用可参照项目中的 demo, demo中提供了比较基本的使用方法以及配合AVPlayer做了一个比较简单的视频播放例子
+#### PreviewerDelegate
+``` swift
+public protocol Delegate: AnyObject {
+    
+    func imagePreviewer(_ previewer: Previewer, willDisplayAtIndex index: Int)
+    
+    func imagePreviewer(_ previewer: Previewer, didDisplayAtIndex index: Int)
+    
+    func imagePreviewer(_ previewer: Previewer, indexDidChangedTo newIndex: Int, fromOldIndex oldIndex: Int)
+    
+    func imagePreviewer(_ previewer: Previewer, willDismissWithCell cell: CollectionViewCell, at index: Int) -> UIView?
+    
+    func imagePreviewerDidDismiss(_ previewer: Previewer)
 
-## 如有问题欢迎提 issues 或者 pull request
+    /// longPress gesture event happened with Previewer
+    func imagePreviewer(_ previewer: Previewer, didLongPressAtIndex index: Int)
+    
+    /// By default, Previewer did add two kind of gesture for dismiss: UITapGesture and UIPanningGesture.
+    /// Call when Tap or Panning gesture did happened. The returning Boolean value is deciding this dismiss should be happen.
+    func imagePreviewer(_ previewer: Previewer, shouldDismissWithGesture gesture: UIGestureRecognizer, at index: Int) -> Bool
+    
+    /// Call after Previewer executed method: `deleteItems(at indexs: [Int])`
+    func imagePreviewer(_ previewer: Previewer, didFinishDeletedItems indexs: [Int])   
+}
+```
+
+## And more usage can view in demo. 
+
+## Any kind of issues is welcome.
 
 ## Requirements
 

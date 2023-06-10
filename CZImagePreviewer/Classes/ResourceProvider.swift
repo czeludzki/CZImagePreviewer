@@ -19,6 +19,7 @@ public protocol ImageProvider: ResourceProvider, Kingfisher.ImageDataProvider {
 }
 
 public extension CZImagePreviewer.ImageProvider {
+    
     func downloadCancel() {}
     
     /// 对 Kingfisher retrieveImage 方法进行包装, 为 ImageProvider 提供一个 加载图片的方法
@@ -46,9 +47,6 @@ public protocol VideoProvider: ResourceProvider, AnyObject {
     
     /// 播放视图
     var videoView: CZImagePreviewer.VideoView? { get }
-    
-    /// 播放动画时需要显示的图片
-    var displayAnimationActor: ImageProvider? { get }
         
     // CZImagePreviewer 需要监听 video size 的改变, 以便提供更好的 dismiss 动画效果
     typealias VideoSizeProvider = (_ videoSize: CGSize) -> Void
