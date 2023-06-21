@@ -18,8 +18,6 @@ class ExampelImageCollectionViewCell: UICollectionViewCell {
     
     var image: ImageProvider? {
         didSet {
-            self.imageView?.kf.setImage(with: URL.init(string: "https://th.bing.com/th/id/R.c0e7c30f2b81a52a9fbed13ba9f28a48?rik=c6lndw8w1nWBqA&riu=http%3a%2f%2fwww.rw-designer.com%2ficon-image%2f14102-128x128x32.png&ehk=zUcHJ0A7%2bEz1Jq6hqRy9QmTmpbEfbwmcN6lzzD%2bpnjY%3d&risl=&pid=ImgRaw&r=0")!)
-            return
             self.asshole.isHidden = false
             self.imageView.isHidden = true
             guard let provider = image else { return }
