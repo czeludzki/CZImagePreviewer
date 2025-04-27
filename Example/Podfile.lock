@@ -1,5 +1,5 @@
 PODS:
-  - CZImagePreviewer (1.1.9):
+  - CZImagePreviewer (1.2.2):
     - Kingfisher
     - SnapKit
   - Kingfisher (6.3.1)
@@ -18,10 +18,10 @@ EXTERNAL SOURCES:
     :path: "../"
 
 SPEC CHECKSUMS:
-  CZImagePreviewer: 5031d50be0c81a947aef3973f9e53537af431628
+  CZImagePreviewer: ea85722b5be7e06d5bf1771ae65b9efa415cd3c8
   Kingfisher: 016c8b653a35add51dd34a3aba36b580041acc74
   SnapKit: 97b92857e3df3a0c71833cce143274bf6ef8e5eb
 
 PODFILE CHECKSUM: 51ed314df5877ccd7b793ce085cf1568ffe3e588
 
-COCOAPODS: 1.12.1
+COCOAPODS: 1.15.2
