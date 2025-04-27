@@ -40,6 +40,7 @@ class VideoResourceCollectionViewCell: CollectionViewCell {
     public weak var videoView: VideoView? {
         willSet {
             if newValue === videoView { return }
+            videoView?.removeFromSuperview()
             guard let newView = newValue else { return }
             self.contentView.addSubview(newView)
             self.updateVideoContainerFrame()
