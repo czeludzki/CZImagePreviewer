@@ -166,7 +166,7 @@ extension Previewer {
         let cell = self.collectionView.cellForItem(at: IndexPath(item: self.currentIdx, section: 0)) as? CZImagePreviewer.CollectionViewCell
         cell?.accessoryView?.isHidden = true
         self.cus_console?.isHidden = true
-        self.dismiss(animated: true)
+        self.endDisplaying(animated: true)
     }
     
     @objc func longPressOnView(sender: UILongPressGestureRecognizer) {
@@ -211,7 +211,7 @@ extension Previewer {
             cell.isDismissGustureDraging = false
             let velocity = sender.velocity(in: self.view)
             if velocity.y > 0 && (self.delegate?.imagePreviewer(self, shouldDismissWithGesture: sender, at: self.currentIdx) ?? true) {
-                self.dismiss(animated: true)
+                self.endDisplaying(animated: true)
             }else{
                 discardDismissOperation()
             }
@@ -273,12 +273,12 @@ extension Previewer {
         self.triggerSource = source
         self.triggerContainer = container
     }
-    
-    open override func dismiss(animated flag: Bool, completion: (() -> Void)? = nil) {
+
+    public func endDisplaying(animated flag: Bool, completion:(() -> Void)? = nil) {
         let cell = self.collectionView.cellForItem(at: IndexPath(item: self.currentIdx, section: 0)) as? CZImagePreviewer.CollectionViewCell
         self.cus_console?.isHidden = true
         cell?.accessoryView?.isHidden = true
-        super.dismiss(animated: flag) {
+        self.dismiss(animated: flag) {
             cell?.didEndDisplay()
             cell?.accessoryView?.isHidden = false
             self.cus_console?.isHidden = false
